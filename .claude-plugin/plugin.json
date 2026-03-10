@@ -1,0 +1,15 @@
+{
+  "name": "sp",
+  "version": "0.1.0",
+  "description": "Маркетплейс скиллов и команд для Claude Code",
+  "author": "Heliotic",
+  "repository": "https://github.com/projectory-com/sp",
+  "license": "MIT",
+  "keywords": [
+    "marketplace",
+    "skills",
+    "commands",
+    "workflow",
+    "productivity"
+  ]
+}

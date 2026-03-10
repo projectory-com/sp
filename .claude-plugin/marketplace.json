@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    {
+      "name": "sp",
+      "description": "Маркетплейс скиллов и команд для Claude Code",
+      "version": "0.1.0",
+      "source": "github:projectory-com/sp"
+    }
+  ]
+}
