@@ -16,25 +16,33 @@ sp/
 │       └── SKILL.md
 ├── commands/                # slash-команды
 │   └── hello.md
+├── docs/                    # документация
 ├── _skills/                 # черновики (не часть плагина)
 └── README.md
 ```
 
 ## Установка
 
-### Из GitHub (рекомендуемый способ)
+### Добавить маркетплейс
 
-```bash
-claude /install-plugin https://github.com/projectory-com/sp
+```
+/plugin marketplace add projectory-com/sp
 ```
 
-### Вручную
+### Установить плагин
 
-Клонируй репозиторий и укажи путь:
+```
+/plugin install sp@sp
+```
+
+### Локально (для разработки)
 
 ```bash
 git clone https://github.com/projectory-com/sp.git
-claude /install-plugin /path/to/sp
+```
+
+```
+/plugin marketplace add ./sp
 ```
 
 ## Использование
