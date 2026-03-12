@@ -10,6 +10,50 @@
       "description": "Маркетплейс скиллов и команд для Claude Code",
       "version": "0.2.0",
       "source": "./"
+    },
+    {
+      "name": "feature-dev",
+      "description": "Guided feature development with codebase understanding and architecture focus",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/feature-dev"
+      }
+    },
+    {
+      "name": "code-simplifier",
+      "description": "Simplifies and refines code for clarity, consistency, and maintainability",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/code-simplifier"
+      }
+    },
+    {
+      "name": "frontend-design",
+      "description": "Create distinctive, production-grade frontend interfaces with high design quality",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/frontend-design"
+      }
+    },
+    {
+      "name": "typescript-lsp",
+      "description": "TypeScript LSP integration for enhanced type checking and diagnostics",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/typescript-lsp"
+      }
+    },
+    {
+      "name": "the-elements-of-style",
+      "description": "Writing rules from Strunk & White applied to documentation and prose",
+      "source": {
+        "source": "github",
+        "repo": "obra/the-elements-of-style"
+      }
     }
   ]
 }

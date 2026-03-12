@@ -2,7 +2,11 @@
 
 ![sp — обзор команд и воркфлоу](sp.png)
 
-Маркетплейс скиллов и команд для Claude Code, вдохновлённый [obra/superpowers](https://github.com/obra/superpowers).
+Маркетплейс скиллов и команд для Claude Code, вдохновлённый: 
+
+- [obra/superpowers](https://github.com/obra/superpowers).
+- [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style)
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official)
 
 ## Структура
 
@@ -16,8 +20,7 @@ sp/
 │   │   └── SKILL.md
 │   └── task/
 │       └── SKILL.md
-├── commands/                # slash-команды
-│   └── hello.md
+├── commands/                # slash-команды (пока пусто)
 ├── docs/                    # документация
 ├── _skills/                 # черновики (не часть плагина)
 └── README.md
@@ -51,11 +54,10 @@ git clone https://github.com/projectory-com/sp.git
 
 После установки доступны:
 
-| Компонент | Тип     | Описание                                               |
-| --------- | ------- | ------------------------------------------------------ |
-| `hello`   | skill   | Приветствие и обзор структуры маркетплейса             |
-| `task`    | skill   | Создание задачи из тикета (GitHub Issues, YouTrack)    |
-| `/hello`  | command | Приветственное сообщение со списком доступных плагинов |
+| Компонент | Тип   | Вызов       | Описание                                            |
+| --------- | ----- | ----------- | --------------------------------------------------- |
+| `hello`   | skill | `/sp:hello` | Приветствие и обзор структуры маркетплейса           |
+| `task`    | skill | `/sp:task`  | Создание задачи из тикета (GitHub Issues, YouTrack)  |
 
 ## Планируемые команды
 
@@ -76,6 +78,17 @@ commands/<имя-команды>.md
 ```
 
 Оба формата используют YAML frontmatter с полями `name` и `description`.
+
+## Поиск правильного решения
+
+- https://github.com/Q00/ouroboros
+- https://github.com/Yeachan-Heo/oh-my-claudecode
+- https://plannotator.ai/
+
+## Посмотреть и понять зачем эти плагины нужны? как их использовать? 
+
+- superpowers-lab
+- 
 
 ## Лицензия
 
