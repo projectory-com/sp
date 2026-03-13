@@ -24,7 +24,7 @@ Frontend-задачи проваливаются не потому что реа
 ## Шаг 1 — Design context: что найти в Investigate
 
 Перед Synthesize у тебя должны быть answers на эти вопросы.
-Если code-explorer не нашёл — добавь в уточняющие вопросы.
+Если task-explorer не нашёл — добавь в уточняющие вопросы.
 
 **Typography:**
 - Какие font-family используются в проекте? (из CSS variables, tailwind config, или globals)

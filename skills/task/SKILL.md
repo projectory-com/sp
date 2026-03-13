@@ -64,13 +64,12 @@ description: >-
 
 ### Фаза 2 — Investigate
 
-Агенты вызываются через Agent tool (subagent_type из плагина feature-dev).
+Агенты вызываются через Agent tool (task-explorer и task-architect определены в `agents/`).
 Порядок строго последовательный — architect зависит от findings explorer.
 
 **Шаг 1 — Предварительная оценка сложности:**
 По тексту тикета определи ориентировочную сложность — это влияет на набор агентов:
-- **trivial / simple** → task-explorer, затем task-architect
-- **medium / complex** → task-explorer, затем task-architect
+- **trivial / simple / medium / complex** → task-explorer, затем task-architect
 
 **Шаг 2 — Запусти task-explorer через Agent tool:**
 

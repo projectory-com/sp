@@ -32,7 +32,7 @@ Figma: https://figma.com/file/aB3k.../forgot-password
 > Этот блок — внутренние заметки оркестратора, в итоговый файл не попадает.
 > Показывает как findings агентов трансформируются в секции Context / Constraints / Verification.
 
-**code-explorer нашёл:**
+**task-explorer нашёл:**
 - Аутентификация: `src/auth/` — `login.ts`, `register.ts`, `middleware.ts`
 - User model: `src/models/User.ts:1–89`, поле `passwordHash` (bcrypt), поля `resetToken` и `resetTokenExpiry` **уже есть в схеме** (строки 34–35), но не используются
 - Email: `src/services/email.ts` — обёртка над nodemailer, метод `send(to, subject, html)` (строка 12)
@@ -41,7 +41,7 @@ Figma: https://figma.com/file/aB3k.../forgot-password
 - Нет тестов на email.ts
 - Essential files: `src/models/User.ts`, `src/auth/login.ts`, `src/services/email.ts`, `src/routes/auth.ts`
 
-**code-architect нашёл:**
+**task-architect нашёл:**
 - Паттерн handler: все auth-handlers — async функции `(req, res) => void`, валидация через `zod` (src/auth/login.ts:8–19), ошибки через `AppError` (src/utils/errors.ts:5)
 - Конфиг: `src/config/index.ts` — `APP_URL`, `EMAIL_FROM` уже есть
 - Токены в проекте генерируются через `crypto.randomBytes` (пример: src/auth/register.ts:31)

@@ -3,7 +3,7 @@
 Полный one-shot пример. Показывает:
 - как работают параллельные агенты на сложной задаче
 - Context с data flow и `file:line` ссылками для сложности **complex**
-- Output Format «2 подхода с trade-offs» когда code-architect нашёл конфликт паттернов
+- Output Format «2 подхода с trade-offs» когда task-architect нашёл конфликт паттернов
 - Constraints из конкретных архитектурных рисков
 - Verification для многослойных изменений
 
@@ -34,9 +34,9 @@ Leaderboard сейчас обновляется только при переза
 ## Что нашли агенты (findings фазы Investigate)
 
 > Внутренние заметки оркестратора — в итоговый файл не попадают.
-> Три параллельных запуска: code-explorer ×2, code-architect ×2.
+> Три параллельных запуска: task-explorer ×2, task-architect ×2.
 
-### code-explorer — архитектура leaderboard
+### task-explorer — архитектура leaderboard
 
 **Клиент (`apps/leaderboard-screen/`):**
 - `src/components/Leaderboard.tsx:1–120` — главный компонент, данные через
@@ -59,7 +59,7 @@ Leaderboard сейчас обновляется только при переза
 `src/routes/game-events.ts`, `src/services/leaderboard.service.ts`,
 `src/routes/leaderboard.ts`
 
-### code-explorer — похожие паттерны в проекте
+### task-explorer — похожие паттерны в проекте
 
 - `apps/player-station/src/services/ws.service.ts:1–112` — **WebSocket уже есть**
   в player-station для связи с game-api. Паттерн: `ws://`, reconnect логика,
@@ -70,7 +70,7 @@ Leaderboard сейчас обновляется только при переза
 - **Конфликт:** player-station использует `ws` пакет напрямую. В `package.json`
   game-api нет Socket.IO — только нативный `ws`.
 
-### code-architect — анализ архитектуры (запуск 1: minimal changes)
+### task-architect — анализ архитектуры (запуск 1: minimal changes)
 
 **Подход A — расширить существующий WS-сервер:**
 `ws.server.ts` уже умеет broadcast. Добавить leaderboard-screen как второй тип клиента.
@@ -81,7 +81,7 @@ Leaderboard сейчас обновляется только при переза
 типов сообщений). Добавление второго типа клиента потребует рефакторинга
 connection management.
 
-### code-architect — анализ архитектуры (запуск 2: clean architecture)
+### task-architect — анализ архитектуры (запуск 2: clean architecture)
 
 **Подход B — SSE (Server-Sent Events):**
 Leaderboard — read-only поток данных в одну сторону (сервер → клиент).
@@ -96,7 +96,7 @@ SSE проще WebSocket для этого случая: нативный бра
 (memory leak если не закрывать). Не работает через HTTP/1.1 с лимитом 6 соединений
 на домен — но leaderboard-screen всегда один таб, не проблема.
 
-**Вывод code-architect:** оба подхода валидны. Подход A быстрее (меньше новых файлов),
+**Вывод task-architect:** оба подхода валидны. Подход A быстрее (меньше новых файлов),
 Подход B чище архитектурно и не трогает player-station протокол.
 
 ---
