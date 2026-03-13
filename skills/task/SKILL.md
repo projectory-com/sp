@@ -48,7 +48,17 @@ description: >-
 
 Правило: извлеки ID из URL + 2–4 слова описания. Без URL — только описание.
 
-**Переход:** slug сформирован, материалы сохранены → Фаза 2.
+**4. Определи тип задачи — frontend или нет:**
+
+Задача **frontend** если тикет содержит хотя бы одно из:
+- технологии: `React`, `Vue`, `CSS`, `Tailwind`, `SCSS`, `styled-components`, `Framer Motion`, `Three.js`
+- артефакты: `component`, `page`, `layout`, `screen`, `UI`, `modal`, `drawer`, `animation`, `transition`
+- визуальные: `design`, `typography`, `color`, `theme`, `dark mode`, `responsive`, `breakpoint`
+- файлы: `.tsx`, `.jsx`, `.css`, `.scss` в путях из тикета
+
+Запиши результат: `TASK_TYPE = frontend | general`
+
+**Переход:** slug сформирован, тип определён, материалы сохранены → Фаза 2.
 
 ---
 
@@ -59,7 +69,7 @@ description: >-
 
 **Шаг 1 — Предварительная оценка сложности:**
 По тексту тикета определи ориентировочную сложность — это влияет на набор агентов:
-- **trivial / simple** → только task-explorer
+- **trivial / simple** → task-explorer, затем task-architect
 - **medium / complex** → task-explorer, затем task-architect
 
 **Шаг 2 — Запусти task-explorer через Agent tool:**
@@ -81,7 +91,7 @@ description: >-
 **Шаг 3 — Прочитай все файлы из essential file list агента.**
 Не пропускать. Это строит твой контекст для Synthesize.
 
-**Шаг 4 — Запусти task-architect через Agent tool** *(только для medium / complex):*
+**Шаг 4 — Запусти task-architect через Agent tool**
 
 Задача агенту:
 ```
@@ -117,7 +127,12 @@ description: >-
 
 **WARNING:** Прочитай `reference/synthesize-guide.md` прямо сейчас, перед тем как писать что-либо.
 
-Примени 5 измерений из guide к findings фазы 2. Для каждого измерения — сначала одно предложение рассуждения вслух, потом формулировка.
+**Если `TASK_TYPE = frontend`:** дополнительно прочитай `reference/frontend-guide.md`.
+Оба файла читаются один раз до начала работы, не в процессе.
+
+Примени 5 измерений из synthesize-guide к findings фазы 2. Для каждого измерения — сначала одно предложение рассуждения вслух, потом формулировка.
+
+**Если `TASK_TYPE = frontend`:** для измерений Requirements, Constraints и Verification дополнительно применяй frontend-контрольные списки из frontend-guide.
 
 Определи сложность: trivial / simple / medium / complex.
 
