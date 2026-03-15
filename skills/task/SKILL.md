@@ -154,6 +154,7 @@ description: >-
 ```
 # <Заголовок задачи>
 
+**Slug:** <task-slug>
 **Тикет:** <URL или "—">
 **Сложность:** <trivial | simple | medium | complex>
 

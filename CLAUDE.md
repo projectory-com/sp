@@ -53,9 +53,14 @@ claude --plugin-dir .
 - **Plugin source**: `"./"` для self-contained (плагин в корне маркетплейса), `{ "source": "github", "repo": "owner/repo" }` для внешних
 - **SKILL.md frontmatter**: `name` (идентификатор), `description` (когда активировать)
 
+## Implemented skills
+
+- `/task` — формирование задач для AI-реализации
+- `/plan` — построение плана реализации по task-файлу
+
 ## Planned skills
 
-`/task` `/brain` `/plan` `/do` `/polish` `/pr` `/review` `/qa` `/fix` `/memorize` `/merge`
+`/brain` `/do` `/polish` `/pr` `/review` `/qa` `/fix` `/memorize` `/merge`
 
 ## Reference docs
 
