@@ -15,12 +15,20 @@ sp/
 ├── .claude-plugin/
 │   ├── plugin.json          # манифест плагина
 │   └── marketplace.json     # реестр плагинов маркетплейса
-├── skills/                  # скиллы (автообнаружение)
-│   ├── hello/
+├── skills/                  # скиллы (автообнаружение по SKILL.md)
+│   ├── hi/
 │   │   └── SKILL.md
-│   └── task/
-│       └── SKILL.md
-├── commands/                # slash-команды (пока пусто)
+│   ├── task/
+│   │   ├── SKILL.md
+│   │   ├── agents/          # субагенты (task-explorer, task-architect)
+│   │   ├── reference/       # справочные материалы
+│   │   └── examples/        # примеры task-файлов
+│   └── plan/
+│       ├── SKILL.md
+│       ├── agents/          # субагенты (plan-explorer, plan-designer)
+│       ├── reference/       # routing rules, формат plan-файла
+│       └── examples/        # примеры планов (simple, complex)
+├── commands/                # slash-команды
 ├── docs/                    # документация
 ├── _skills/                 # черновики (не часть плагина)
 └── README.md
@@ -56,12 +64,15 @@ git clone https://github.com/projectory-com/sp.git
 
 | Компонент | Тип   | Вызов       | Описание                                            |
 | --------- | ----- | ----------- | --------------------------------------------------- |
-| `hello`   | skill | `/sp:hello` | Приветствие и обзор структуры маркетплейса           |
-| `task`    | skill | `/sp:task`  | Создание задачи из тикета (GitHub Issues, YouTrack)  |
+| `hi`      | skill | `/sp:hi`    | Приветствие и обзор структуры маркетплейса           |
+| `task`    | skill | `/sp:task`  | Формирование задачи для AI-реализации из тикета или описания фичи |
+| `plan`    | skill | `/sp:plan`  | Построение плана реализации по task-файлу            |
 
-## Планируемые команды
+Pipeline: `/sp:task` → `/sp:plan` → `/sp:do` (будущий)
 
-`/brain` `/plan` `/do` `/polish` `/pr` `/review` `/qa` `/fix` `/memorize` `/merge`
+## Планируемые скиллы
+
+`/brain` `/do` `/polish` `/pr` `/review` `/qa` `/fix` `/memorize` `/merge`
 
 ## Разработка
 
@@ -79,15 +90,12 @@ commands/<имя-команды>.md
 
 Оба формата используют YAML frontmatter с полями `name` и `description`.
 
-## Поиск правильного решения
+## Документация
 
-- https://github.com/Q00/ouroboros
-- https://github.com/Yeachan-Heo/oh-my-claudecode
-- https://plannotator.ai/
-
-## Посмотреть и понять зачем эти плагины нужны? как их использовать? 
-
-- superpowers-lab
+- `docs/plan.md` — описание скилла /plan (фазы, routing, субагенты)
+- `docs/plugins.md` — создание плагинов (структура, компоненты, тестирование)
+- `docs/plugin-marketplaces.md` — схема маркетплейса, sources, дистрибуция
+- `docs/roadmap.md` — roadmap: pipeline task → plan → do → review
 
 ## Лицензия
 
