@@ -48,22 +48,23 @@ description: >-
 **2.** Извлеки:
 - `SLUG` — из пути (`docs/ai/<slug>/`)
 - `COMPLEXITY` — из поля «Complexity»
-- `MODE` — из поля «Mode» (inline | sub-agents | agent-team)
-- `PARALLEL` — из поля «Parallel» (true | false)
-- `TASKS[]` — все tasks из секции «Tasks» (Task N: ...)
-- `CONSTRAINTS` — из plan header (для передачи sub-agents)
+- `TASKS[]` — все tasks из секции «Tasks», в порядке из «Execution / Order» (если есть) или в порядке появления
+- `CONSTRAINTS` — из plan header
 - `VERIFICATION` — из секции «Verification»
-- `EXECUTION_ORDER` — из секции «Execution / Order»
 
-**3.** Определи фактический mode:
+**3.** Определи mode:
 - `COMPLEXITY` = trivial / simple → **inline**
 - `COMPLEXITY` = medium / complex → **sub-agents sequential**
-- `MODE` = agent-team → fallback на **sub-agents sequential** (V1)
-- `PARALLEL` = true → игнорировать (V1), выполнять sequential
+
+
 
 **4.** Найди task-файл: `docs/ai/<SLUG>/<SLUG>-task.md`
 
-**5.** Создай todo list через TodoWrite:
+**5.** Проверь секцию «Уточняющие вопросы» в plan-файле.
+Если есть вопросы без отмеченных чекбоксов — сообщи пользователю и не продолжай:
+«В плане есть неотвеченные вопросы. Ответьте на них в файле перед запуском.»
+
+**6.** Создай todo list через TodoWrite:
 
 ```
 [ ] Execute: Task 1 — <название>
@@ -77,8 +78,6 @@ description: >-
 [ ] Report: составить отчёт
 [ ] Format: прогнать форматер
 ```
-
-**6.** Запиши todo list в task-файл — добавь секцию «Выполнение» в конец.
 
 **Переход:** план загружен, todo создан → Фаза 2.
 
@@ -95,8 +94,7 @@ description: >-
 2. Выполни task.What
 3. Запусти task.Verify
    - Если fail → одна попытка исправить → если снова fail → записать BLOCKED
-4. Коммит: feat(<SLUG>): <task name>
-   - Тип коммита: feat для реализации, test для тестов
+4. Коммит по конвенции из `reference/commit-convention.md`.
 5. Отметь в TodoWrite: [x]
 ```
 
@@ -115,14 +113,11 @@ description: >-
    - Передай сформированный промт
    - Дождись результата
 
-3. Обработай status:
-   - DONE → запусти task.Verify → коммит → отметь в TodoWrite
-   - DONE_WITH_CONCERNS → коммит → записать concerns → отметь в TodoWrite
+3. Обработай status (по `reference/status-protocol.md`):
+   - DONE → отметь в TodoWrite
+   - DONE_WITH_CONCERNS → записать concerns → отметь в TodoWrite
    - NEEDS_CONTEXT → добавить контекст, re-dispatch (макс 1 retry)
    - BLOCKED → записать причину, пропустить зависимые tasks, продолжить
-
-4. Коммит: feat(<SLUG>): <task name>
-5. Отметь в TodoWrite: [x]
 ```
 
 **При BLOCKED:** не останавливать всё. Пропустить только tasks у которых
@@ -131,6 +126,11 @@ description: >-
 **Запомни:** список всех изменённых/созданных файлов — нужен для Фаз 3-6.
 
 **Переход:** все tasks выполнены (или BLOCKED) → Фаза 3.
+
+**Если изменённых файлов ноль** (все tasks BLOCKED/SKIPPED):
+пропустить Фазы 3 (Simplify), 4 (Cleanup), 6 (Document).
+Перейти сразу к Фазе 5 (Validate) — она тоже может быть пропущена
+если нет изменений. Затем Фаза 7 (Report) со статусом failed.
 
 ---
 
@@ -143,7 +143,7 @@ description: >-
 - CONSTRAINTS из плана (чтобы не нарушить)
 
 После завершения:
-- Коммит: `refactor(<SLUG>): simplify`
+- Коммит по конвенции из `reference/commit-convention.md`.
 - Отметь в TodoWrite: [x]
 
 **Переход →** Фаза 4.
@@ -158,7 +158,7 @@ description: >-
 - Те же файлы что в Фазе 3
 
 После завершения:
-- Коммит: `chore(<SLUG>): cleanup`
+- Коммит по конвенции из `reference/commit-convention.md`.
 - Отметь в TodoWrite: [x]
 
 **Переход →** Фаза 5.
@@ -182,7 +182,7 @@ npm run build         # если есть
 
 Если какая-то команда fails:
 1. Одна попытка исправить — запусти sub-agent с контекстом ошибки
-2. Коммит fix: `fix(<SLUG>): fix validation issues`
+2. Коммит по конвенции из `reference/commit-convention.md`.
 3. Перезапусти failed команды
 4. Если снова fails → записать как issue в report, продолжить
 
@@ -209,16 +209,29 @@ Sub-agent решает что обновить:
 **Не создавать документацию с нуля если её не было.**
 
 После завершения:
-- Коммит: `docs(<SLUG>): update documentation`
+- Коммит по конвенции из `reference/commit-convention.md`.
 - Отметь в TodoWrite: [x]
 
 **Переход →** Фаза 7.
 
 ---
 
-## Фаза 7 — Report + Format
+## Фаза 7 — Format + Report
 
-### 7a. Report
+### 7a. Format
+
+Определи formatter проекта:
+- `.prettierrc` или `prettier` в package.json → `npx prettier --write`
+- `.eslintrc` или `eslint` в package.json → `npx eslint --fix`
+- `biome.json` → `npx biome format --write`
+- Ничего не найдено → пропустить
+
+Прогнать на всех изменённых файлах.
+
+Коммит по конвенции из `reference/commit-convention.md`.
+Отметь в TodoWrite: [x]
+
+### 7b. Report
 
 Прочитай `reference/report-format.md`.
 
@@ -230,23 +243,6 @@ Sub-agent решает что обновить:
 - Post-implementation статусы (simplify, cleanup, validate, document)
 - Validation result (каждая команда: ✅/❌)
 - Changes summary (файл, action, описание)
-
-Запиши краткий отчёт в task-файл (обнови секцию «Выполнение»):
-- Список выполненных tasks со статусами
-- Итог: complete / partial / failed
-
-### 7b. Format
-
-Определи formatter проекта:
-- `.prettierrc` или `prettier` в package.json → `npx prettier --write`
-- `.eslintrc` или `eslint` в package.json → `npx eslint --fix`
-- `biome.json` → `npx biome format --write`
-- Ничего не найдено → пропустить
-
-Прогнать на всех изменённых файлах.
-
-Коммит: `chore(<SLUG>): format`
-Отметь в TodoWrite: [x]
 
 ### 7c. Notification
 
@@ -273,6 +269,5 @@ Report: docs/ai/<SLUG>/<SLUG>-report.md
 - **Работа в текущей директории.** Не создавать worktrees, не управлять ветками.
 - **Context isolation.** Sub-agent получает только свой task, не весь план.
 - **TodoWrite обновляется.** Каждый шаг отмечается сразу по завершении.
-- **Task-файл обновляется.** Секция «Выполнение» — при старте (todo list) и в конце (итог).
 - **При BLOCKED — продолжать.** Останавливать только зависимую ветку, не всё.
 - Язык контента — язык оригинального plan-файла.

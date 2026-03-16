@@ -1,6 +1,6 @@
 # Routing Rules
 
-Правила выбора стратегии выполнения. Читай в Фазе 4 (Route).
+Правила выбора стратегии выполнения. Читай в Фазе 3 (Route).
 
 ---
 
@@ -11,7 +11,7 @@
 | # | Complexity | Tasks | File intersections | Cross-layer | → Mode | → Parallel |
 |---|---|---|---|---|---|---|
 | 1 | trivial | 1-2 | — | — | `inline` | false |
-| 2 | simple | 1-3 | none | no | `inline` | false |
+| 2 | simple | 1-2 | none | no | `inline` | false |
 | 3 | simple | 2-3 | none | no | `sub-agents` | true |
 | 4 | medium | 3+ | none between groups | no | `sub-agents` | true |
 | 5 | medium | 3+ | some | no | `sub-agents` | mixed* |

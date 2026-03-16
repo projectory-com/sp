@@ -12,8 +12,6 @@ description: >-
 
 Ты НЕ реализуешь задачу. Ты формулируешь её.
 
-**WARNING:** `reference/synthesize-guide.md` занимает ~3,000 токенов. Читай его только в фазе Synthesize, непосредственно перед записью файла.
-
 ---
 
 ## Вход
@@ -48,17 +46,7 @@ description: >-
 
 Правило: извлеки ID из URL + 2–4 слова описания. Без URL — только описание.
 
-**4. Определи тип задачи — frontend или нет:**
-
-Задача **frontend** если тикет содержит хотя бы одно из:
-- технологии: `React`, `Vue`, `CSS`, `Tailwind`, `SCSS`, `styled-components`, `Framer Motion`, `Three.js`
-- артефакты: `component`, `page`, `layout`, `screen`, `UI`, `modal`, `drawer`, `animation`, `transition`
-- визуальные: `design`, `typography`, `color`, `theme`, `dark mode`, `responsive`, `breakpoint`
-- файлы: `.tsx`, `.jsx`, `.css`, `.scss` в путях из тикета
-
-Запиши результат: `TASK_TYPE = frontend | general`
-
-**Переход:** slug сформирован, тип определён, материалы сохранены → Фаза 2.
+**Переход:** slug сформирован, материалы сохранены → Фаза 2.
 
 ---
 
@@ -67,11 +55,7 @@ description: >-
 Агенты вызываются через Agent tool (task-explorer и task-architect определены в `agents/`).
 Порядок строго последовательный — architect зависит от findings explorer.
 
-**Шаг 1 — Предварительная оценка сложности:**
-По тексту тикета определи ориентировочную сложность — это влияет на набор агентов:
-- **trivial / simple / medium / complex** → task-explorer, затем task-architect
-
-**Шаг 2 — Запусти task-explorer через Agent tool:**
+**Шаг 1 — Запусти task-explorer через Agent tool:**
 
 Задача агенту:
 ```
@@ -87,10 +71,10 @@ description: >-
 В конце — составь список файлов ОБЯЗАТЕЛЬНЫХ для понимания темы (essential file list).
 ```
 
-**Шаг 3 — Прочитай все файлы из essential file list агента.**
+**Шаг 2 — Прочитай все файлы из essential file list агента.**
 Не пропускать. Это строит твой контекст для Synthesize.
 
-**Шаг 4 — Запусти task-architect через Agent tool**
+**Шаг 3 — Запусти task-architect через Agent tool**
 
 Задача агенту:
 ```
@@ -107,7 +91,7 @@ description: >-
 Будь конкретен: файлы, строки, имена функций.
 ```
 
-**Шаг 5 — Прочитай дополнительные файлы** если task-architect расширил список.
+**Шаг 4 — Прочитай дополнительные файлы** если task-architect расширил список.
 
 **Критерии остановки — Investigate завершена когда:**
 - [ ] Найдены точки входа (entry points) для изменений с номерами строк
@@ -124,6 +108,15 @@ description: >-
 
 ### Фаза 3 — Synthesize
 
+**Определи тип задачи — frontend или general:**
+
+Задача **frontend** если findings содержат:
+- технологии: React, Vue, CSS, Tailwind, SCSS, styled-components, Framer Motion, Three.js
+- файлы: .tsx, .jsx, .css, .scss в essential file list или карте изменений
+- артефакты: component, page, layout, screen, UI, modal, animation
+
+Запиши: `TASK_TYPE = frontend | general`
+
 **WARNING:** Прочитай `reference/synthesize-guide.md` прямо сейчас, перед тем как писать что-либо.
 
 **Если `TASK_TYPE = frontend`:** дополнительно прочитай `reference/frontend-guide.md`.
@@ -135,7 +128,7 @@ description: >-
 
 Определи сложность: trivial / simple / medium / complex.
 
-Сформируй уточняющие вопросы — **ровно 5, максимум 7** — только о пробелах которые заблокируют реализацию. Не задавай вопросы ради вопросов.
+Сформируй уточняющие вопросы по правилам из synthesize-guide.md.
 
 **Переход:** все 5 измерений применены, вопросы готовы → Фаза 4.
 
@@ -157,6 +150,7 @@ description: >-
 **Slug:** <task-slug>
 **Тикет:** <URL или "—">
 **Сложность:** <trivial | simple | medium | complex>
+**Тип:** <frontend | general>
 
 ## Task
 
@@ -164,7 +158,17 @@ description: >-
 
 ## Context
 
-<Архитектура области. Файлы с путями и номерами строк. Паттерны. Всё из фазы Investigate.>
+### Архитектура области
+<Data flow, точки входа, слои абстракций>
+
+### Файлы для изменения
+<Пути + строки — entry points для реализации>
+
+### Паттерны для повторения
+<Похожие реализации с путями — что переиспользовать>
+
+### Тесты
+<Существующее покрытие, что дотестировать>
 
 ## Requirements
 
@@ -196,7 +200,15 @@ description: >-
 - `path/to/file`
 ```
 
-**4.** Сообщи пользователю: путь к файлу и task-slug.
+**4.** Dispatch subagent для copyedit task-файла:
+- Передай путь к записанному файлу
+- Передай `reference/elements-of-style-rules.md`
+- Subagent правит прозу: активный залог, конкретный язык, убирает лишние слова
+- Перезаписывает файл
+
+**5.** Сообщи пользователю:
+- Путь к файлу и task-slug
+- Следующий шаг: `/sp:plan docs/ai/<task-slug>/<task-slug>-task.md`
 
 ---
 
@@ -204,6 +216,5 @@ description: >-
 
 - Язык контента — язык оригинального тикета
 - task-slug — всегда английский kebab-case
-- Секция «Материалы» обязательна (если пусто — пиши "—")
 - Одна задача — один файл, без декомпозиции
 - Пиши активным залогом. Опускай лишние слова. Называй конкретные файлы и строки, не абстракции.
