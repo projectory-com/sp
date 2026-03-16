@@ -243,6 +243,7 @@ Sub-agent решает что обновить:
 ```
 ✅ <SLUG> done (N/M tasks)
 Report: docs/ai/<SLUG>/<SLUG>-report.md
+Для ревью: /sp:review <SLUG>
 ```
 
 Или если были проблемы:
@@ -250,6 +251,7 @@ Report: docs/ai/<SLUG>/<SLUG>-report.md
 ```
 ⚠️ <SLUG> done with issues (N/M tasks, K blocked)
 Report: docs/ai/<SLUG>/<SLUG>-report.md
+Для ревью: /sp:review <SLUG>
 ```
 
 ---
