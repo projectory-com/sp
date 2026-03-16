@@ -8,12 +8,17 @@ description: >-
 
 # Выполнение задачи по плану
 
-Ты — execution orchestrator. Читаешь plan-файл, выполняешь tasks,
-прогоняешь post-implementation pipeline, пишешь отчёт.
+Ты — execution orchestrator. Читаешь plan-файл, dispatch-ишь sub-agents,
+проводишь двухэтапный review после каждого task, прогоняешь post-implementation
+pipeline, пишешь отчёт.
 
 Работаешь от начала до конца без остановки. Без подтверждений между шагами.
 
 **Принцип:** разработчик запускает и уходит. Возвращается по notification.
+
+**Почему sub-agents:** ты делегируешь задачи агентам с изолированным контекстом.
+Формируй промт точно — агент не наследует историю сессии.
+Это сохраняет твой контекст для координации.
 
 ---
 
@@ -27,16 +32,15 @@ description: >-
 
 ## Pipeline
 
-7 этапов. Каждый отмечается в TodoWrite.
+6 этапов. Каждый отмечается в TodoWrite.
 
 ```
-1. Parse        → прочитать план, создать todo list
-2. Execute      → выполнить tasks (inline или sub-agents)
-3. Simplify     → sub-agent: упростить код
-4. Cleanup      → sub-agent: удалить мусор
-5. Validate     → lint + types + tests + build
-6. Document     → sub-agent: обновить документацию
-7. Report       → записать отчёт + format + notification
+1. Parse        → прочитать план, проверить вопросы, создать todo
+2. Execute      → dispatch sub-agents + spec review + quality review
+3. Polish       → упростить и почистить код
+4. Validate     → lint + types + tests + build
+5. Document     → обновить документацию
+6. Finalize     → format + report + notification
 ```
 
 ---
@@ -48,15 +52,12 @@ description: >-
 **2.** Извлеки:
 - `SLUG` — из пути (`docs/ai/<slug>/`)
 - `COMPLEXITY` — из поля «Complexity»
-- `TASKS[]` — все tasks из секции «Tasks», в порядке из «Execution / Order» (если есть) или в порядке появления
+- `TASKS[]` — все tasks из секции «Tasks» с полным текстом (What, How, Files, Context, Verify)
 - `CONSTRAINTS` — из plan header
 - `VERIFICATION` — из секции «Verification»
+- `EXECUTION_ORDER` — из секции «Execution / Order» (parallel groups, barriers, sequence)
 
-**3.** Определи mode:
-- `COMPLEXITY` = trivial / simple → **inline**
-- `COMPLEXITY` = medium / complex → **sub-agents sequential**
-
-
+**3.** Извлеки ticket ID из slug для коммитов (по `reference/commit-convention.md`).
 
 **4.** Найди task-файл: `docs/ai/<SLUG>/<SLUG>-task.md`
 
@@ -71,12 +72,10 @@ description: >-
 [ ] Execute: Task 2 — <название>
 ...
 [ ] Execute: Task N — Validation (из плана)
-[ ] Simplify: упростить и отрефакторить код
-[ ] Cleanup: удалить мусор (комментарии, логи)
+[ ] Polish: упростить и почистить код
 [ ] Validate: lint + types + tests
 [ ] Documentation: обновить документацию
-[ ] Report: составить отчёт
-[ ] Format: прогнать форматер
+[ ] Finalize: format + report
 ```
 
 **Переход:** план загружен, todo создан → Фаза 2.
@@ -85,62 +84,68 @@ description: >-
 
 ## Фаза 2 — Execute
 
-### Если inline (trivial / simple):
+**Прочитай `reference/status-protocol.md`** — правила обработки статусов, review loop, parallel dispatch.
 
-Для каждого task в execution_order:
+### Dispatch по Execution Order
+
+Читай Order из плана:
+- **Parallel group** → dispatch все tasks группы одновременно через Agent tool
+- **Sequential** → dispatch по одному
+- **Barrier** → дождаться завершения всех tasks группы
+
+Если в плане нет явных parallel groups — выполнять sequential по порядку.
+
+### Для каждого task
 
 ```
-1. Прочитай файлы из task.Context
-2. Выполни task.What
-3. Запусти task.Verify
-   - Если fail → одна попытка исправить → если снова fail → записать BLOCKED
-4. Коммит по конвенции из `reference/commit-convention.md`.
+1. Сформируй промт для sub-agent'а:
+   - Прочитай agents/task-executor.md
+   - Подставь: task.What, task.How, task.Files, task.Context, CONSTRAINTS, task.Verify, SLUG
+   - Передай полный текст task — не заставляй agent читать plan-файл
+
+2. Dispatch через Agent tool
+   - Дождись результата
+
+3. Обработай status (по reference/status-protocol.md):
+   - DONE / DONE_WITH_CONCERNS → запусти Review Loop
+   - NEEDS_CONTEXT → добавить контекст, re-dispatch
+   - BLOCKED → оценить, re-dispatch с мощной моделью или записать
+
+4. Review Loop (для DONE / DONE_WITH_CONCERNS):
+   a. Dispatch agents/spec-reviewer.md
+      - Передать: task requirements + implementer report
+      - ✅ → шаг b
+      - ❌ → implementer фиксит → re-dispatch spec reviewer (макс 3)
+
+   b. Dispatch agents/quality-reviewer.md
+      - Передать: BASE_SHA, HEAD_SHA, task requirements
+      - ✅ → task complete
+      - ❌ Critical/Important → implementer фиксит → re-dispatch (макс 3)
+      - Minor → записать, не блокировать
+
 5. Отметь в TodoWrite: [x]
 ```
 
-### Если sub-agents sequential (medium / complex):
+**При BLOCKED:** не останавливать всё. Пропустить только tasks зависящие от заблокированного.
 
-**Прочитай `reference/status-protocol.md`** — правила обработки статусов.
-
-Для каждого task в execution_order:
-
-```
-1. Сформируй промт для sub-agent'а из task'а:
-   - Прочитай agents/task-executor.md
-   - Подставь: task.What, task.Files, task.Context, CONSTRAINTS, task.Verify, SLUG
-
-2. Dispatch через Agent tool:
-   - Передай сформированный промт
-   - Дождись результата
-
-3. Обработай status (по `reference/status-protocol.md`):
-   - DONE → отметь в TodoWrite
-   - DONE_WITH_CONCERNS → записать concerns → отметь в TodoWrite
-   - NEEDS_CONTEXT → добавить контекст, re-dispatch (макс 1 retry)
-   - BLOCKED → записать причину, пропустить зависимые tasks, продолжить
-```
-
-**При BLOCKED:** не останавливать всё. Пропустить только tasks у которых
-`Depends on` содержит заблокированный task. Независимые tasks — продолжать.
-
-**Запомни:** список всех изменённых/созданных файлов — нужен для Фаз 3-6.
+**Запомни:** список всех изменённых/созданных файлов — нужен для Фаз 3-5.
 
 **Переход:** все tasks выполнены (или BLOCKED) → Фаза 3.
 
 **Если изменённых файлов ноль** (все tasks BLOCKED/SKIPPED):
-пропустить Фазы 3 (Simplify), 4 (Cleanup), 6 (Document).
-Перейти сразу к Фазе 5 (Validate) — она тоже может быть пропущена
-если нет изменений. Затем Фаза 7 (Report) со статусом failed.
+пропустить Фазы 3 (Polish), 5 (Document).
+Перейти к Фазе 4 (Validate) — может быть пропущена если нет изменений.
+Затем Фаза 6 (Finalize) со статусом failed.
 
 ---
 
-## Фаза 3 — Simplify
+## Фаза 3 — Polish
 
-Запусти sub-agent через Agent tool. Промт — из `agents/code-simplifier.md`.
+Запусти sub-agent через Agent tool. Промт — из `agents/code-polisher.md`.
 
 Передай:
 - Список всех файлов изменённых/созданных в Фазе 2
-- CONSTRAINTS из плана (чтобы не нарушить)
+- CONSTRAINTS из плана
 
 После завершения:
 - Коммит по конвенции из `reference/commit-convention.md`.
@@ -150,22 +155,7 @@ description: >-
 
 ---
 
-## Фаза 4 — Cleanup
-
-Запусти sub-agent через Agent tool. Промт — из `agents/cleanup.md`.
-
-Передай:
-- Те же файлы что в Фазе 3
-
-После завершения:
-- Коммит по конвенции из `reference/commit-convention.md`.
-- Отметь в TodoWrite: [x]
-
-**Переход →** Фаза 5.
-
----
-
-## Фаза 5 — Validate
+## Фаза 4 — Validate
 
 Выполни напрямую через Bash (НЕ sub-agent):
 
@@ -188,11 +178,11 @@ npm run build         # если есть
 
 Отметь в TodoWrite: [x]
 
-**Переход →** Фаза 6.
+**Переход →** Фаза 5.
 
 ---
 
-## Фаза 6 — Document
+## Фаза 5 — Document
 
 Запусти sub-agent через Agent tool. Промт — из `agents/doc-updater.md`.
 
@@ -212,13 +202,13 @@ Sub-agent решает что обновить:
 - Коммит по конвенции из `reference/commit-convention.md`.
 - Отметь в TodoWrite: [x]
 
-**Переход →** Фаза 7.
+**Переход →** Фаза 6.
 
 ---
 
-## Фаза 7 — Format + Report
+## Фаза 6 — Finalize
 
-### 7a. Format
+### 6a. Format
 
 Определи formatter проекта:
 - `.prettierrc` или `prettier` в package.json → `npx prettier --write`
@@ -231,20 +221,22 @@ Sub-agent решает что обновить:
 Коммит по конвенции из `reference/commit-convention.md`.
 Отметь в TodoWrite: [x]
 
-### 7b. Report
+### 6b. Report
 
 Прочитай `reference/report-format.md`.
 
 Запиши `docs/ai/<SLUG>/<SLUG>-report.md`:
 - Статусы всех tasks (DONE / BLOCKED / SKIPPED)
 - Хэши и сообщения всех коммитов
+- Spec review результаты (✅/❌ + issues для каждого task)
+- Quality review результаты (✅/❌ + issues для каждого task)
 - Concerns (если были DONE_WITH_CONCERNS)
 - Blocked tasks (причины + impact)
-- Post-implementation статусы (simplify, cleanup, validate, document)
+- Post-implementation статусы (polish, validate, document)
 - Validation result (каждая команда: ✅/❌)
 - Changes summary (файл, action, описание)
 
-### 7c. Notification
+### 6c. Notification
 
 Выведи итог пользователю:
 
@@ -265,9 +257,10 @@ Report: docs/ai/<SLUG>/<SLUG>-report.md
 ## Правила
 
 - **Без остановки.** Никаких подтверждений между шагами. Запустил — работает до конца.
-- **Один коммит на этап.** feat для tasks, refactor для simplify, chore для cleanup/format, docs для documentation, fix для исправлений validation.
+- **Коммиты по конвенции.** Формат и ticket ID — из `reference/commit-convention.md`.
 - **Работа в текущей директории.** Не создавать worktrees, не управлять ветками.
-- **Context isolation.** Sub-agent получает только свой task, не весь план.
+- **Context isolation.** Sub-agent получает полный текст своего task, не весь план.
+- **Review после каждого task.** Spec compliance → code quality. Не пропускать.
 - **TodoWrite обновляется.** Каждый шаг отмечается сразу по завершении.
 - **При BLOCKED — продолжать.** Останавливать только зависимую ветку, не всё.
 - Язык контента — язык оригинального plan-файла.

@@ -56,7 +56,15 @@
 - **Parallel:** <true | false>
 - **Reasoning:** <одно предложение — почему этот mode>
 - **Order:**
-  <текстовый DAG или sequence>
+  Group 1 (parallel): Task 1, Task 2
+  ─── barrier ───
+  Group 2 (sequential): Task 3 → Task 4
+  ─── barrier ───
+  Group 3 (parallel): Task 5, Task 6
+
+Формат Order: parallel группы dispatch-атся одновременно, sequential — по порядку.
+Barrier = дождаться завершения всех tasks группы перед следующей.
+Если все tasks sequential — записать как `Task 1 → Task 2 → Task 3`.
 
 ## Resolved questions (из задачи)
 
