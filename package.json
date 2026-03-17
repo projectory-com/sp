@@ -1,0 +1,23 @@
+{
+  "name": "sp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Маркетплейс скиллов и команд для Claude Code",
+  "author": { "name": "Heliotic" },
+  "license": "MIT",
+  "keywords": ["marketplace", "skills", "commands", "workflow", "productivity"],
+  "repository": "https://github.com/projectory-com/sp",
+  "scripts": {
+    "prepare": "husky",
+    "format": "prettier --write \"**/*.{md,json}\"",
+    "format:check": "prettier --check \"**/*.{md,json}\""
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.3"
+  },
+  "lint-staged": {
+    "*.{md,json}": "prettier --write"
+  }
+}
