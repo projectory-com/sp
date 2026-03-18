@@ -1,6 +1,7 @@
 # Пример: simple-задача
 
 Полный one-shot пример. Показывает:
+
 - правильный уровень детализации Context для сложности **simple**
 - Verification с конкретными командами
 - 5 уточняющих вопросов про реализацию
@@ -33,6 +34,7 @@ Figma: https://figma.com/file/aB3k.../forgot-password
 > Показывает как findings агентов трансформируются в секции Context / Constraints / Verification.
 
 **task-explorer нашёл:**
+
 - Аутентификация: `src/auth/` — `login.ts`, `register.ts`, `middleware.ts`
 - User model: `src/models/User.ts:1–89`, поле `passwordHash` (bcrypt), поля `resetToken` и `resetTokenExpiry` **уже есть в схеме** (строки 34–35), но не используются
 - Email: `src/services/email.ts` — обёртка над nodemailer, метод `send(to, subject, html)` (строка 12)
@@ -42,6 +44,7 @@ Figma: https://figma.com/file/aB3k.../forgot-password
 - Essential files: `src/models/User.ts`, `src/auth/login.ts`, `src/services/email.ts`, `src/routes/auth.ts`
 
 **task-architect нашёл:**
+
 - Паттерн handler: все auth-handlers — async функции `(req, res) => void`, валидация через `zod` (src/auth/login.ts:8–19), ошибки через `AppError` (src/utils/errors.ts:5)
 - Конфиг: `src/config/index.ts` — `APP_URL`, `EMAIL_FROM` уже есть
 - Токены в проекте генерируются через `crypto.randomBytes` (пример: src/auth/register.ts:31)
@@ -119,27 +122,27 @@ Email: `src/services/email.ts:12` — метод `send(to, subject, html)`, го
 1. **Какой срок жизни токена сброса пароля?**
    - [ ] 1 час — стандарт для чувствительных операций
    - [ ] 24 часа — удобнее для пользователя, менее безопасно
-   - [ ] Свой вариант: ___
+   - [ ] Свой вариант: \_\_\_
 
 2. **Что делать если пользователь запрашивает сброс повторно до истечения токена?**
    - [ ] Перезаписать токен — новый запрос инвалидирует старый
    - [ ] Вернуть ошибку "уже отправлено, подождите N минут"
-   - [ ] Свой вариант: ___
+   - [ ] Свой вариант: \_\_\_
 
 3. **Нужен ли rate limiting на `POST /auth/forgot-password`?**
    - [ ] Да — защита от перебора email-адресов (например, 5 запросов / час на IP)
    - [ ] Нет — вне скоупа этой задачи, отдельный тикет
-   - [ ] Свой вариант: ___
+   - [ ] Свой вариант: \_\_\_
 
 4. **Формат ссылки в письме — относительный путь или полный URL?**
    - [ ] Полный URL через `APP_URL` из конфига — `https://example.com/reset-password?token=xxx`
    - [ ] Только токен в письме, пользователь вводит его вручную (нестандартно)
-   - [ ] Свой вариант: ___
+   - [ ] Свой вариант: \_\_\_
 
 5. **Нужна ли страница `/forgot-password` на фронтенде или только API?**
    - [ ] Только API endpoints — фронтенд делает другая команда / другой тикет
    - [ ] Нужна базовая HTML-страница в этом же PR
-   - [ ] Свой вариант: ___
+   - [ ] Свой вариант: \_\_\_
 
 ## Материалы
 

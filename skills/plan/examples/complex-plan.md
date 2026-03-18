@@ -1,6 +1,7 @@
 # Пример: complex-план
 
 Показывает:
+
 - sub-agents mode с параллельными группами
 - Design decisions «2 подхода → выбор» (зафиксированный, не открытый)
 - Cross-file intersection matrix
@@ -45,16 +46,19 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 ## Design decisions
 
 ### DD-1: Транспорт — SSE вместо WebSocket
+
 **Решение:** Server-Sent Events через новый endpoint `GET /api/leaderboard/stream`.
 **Обоснование:** Leaderboard — read-only поток (сервер → клиент). SSE: нативный `EventSource`, нет handshake, работает через стандартный HTTP. Не трогает `ws.server.ts` и player-station протокол.
 **Альтернатива:** Расширить WS-сервер (подход A) — требует рефакторинга `ws.server.ts:23-45` (хардкод типов), ломает isolation player-station.
 
 ### DD-2: Push payload — полный state, не diff
+
 **Решение:** При событии отправлять полный leaderboard state (массив до 20 записей).
 **Обоснование:** Размер payload ~2KB. Diff-подход сложнее (мерж на клиенте), выигрыш минимален при таком объёме.
 **Альтернатива:** Только изменившиеся строки — экономия ~1.5KB, сложнее реализация.
 
 ### DD-3: Fallback — polling как degradation
+
 **Решение:** `useLeaderboard.ts` подключает EventSource, при ошибке/обрыве — fallback на polling 30 сек. Индикатор "live" / "offline" в UI.
 **Обоснование:** Leaderboard на выставке, сеть нестабильна. Polling уже работает — оставить как safety net.
 **Альтернатива:** Только SSE без fallback — пользователь видит стейл данные при обрыве.
@@ -62,6 +66,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 ## Tasks
 
 ### Task 1: SSE endpoint на сервере
+
 - **Files:** `apps/game-api/src/routes/leaderboard-stream.ts` (create), `apps/game-api/src/routes/index.ts` (edit — зарегистрировать)
 - **Depends on:** none
 - **Scope:** M
@@ -70,6 +75,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Verify:** `curl -N http://localhost:3000/api/leaderboard/stream` — получает `data:` с JSON
 
 ### Task 2: Push logic в leaderboard.service
+
 - **Files:** `apps/game-api/src/services/leaderboard.service.ts` (edit — добавить SSE push)
 - **Depends on:** none
 - **Scope:** M
@@ -78,6 +84,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Verify:** unit test: processEvent() вызывает write() на всех зарегистрированных клиентах
 
 ### Task 3: Клиент — EventSource + fallback
+
 - **Files:** `apps/leaderboard-screen/src/hooks/useLeaderboard.ts` (edit)
 - **Depends on:** none
 - **Scope:** M
@@ -86,6 +93,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Verify:** Компонент получает обновления без перезагрузки. При kill SSE → fallback polling.
 
 ### Task 4: Анимация positionChanged
+
 - **Files:** `apps/leaderboard-screen/src/components/Leaderboard.tsx` (edit — передать prop)
 - **Depends on:** Task 3
 - **Scope:** S
@@ -94,6 +102,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Verify:** При изменении позиции в рейтинге — CSS transition срабатывает
 
 ### Task 5: Тесты
+
 - **Files:** `apps/game-api/src/routes/__tests__/leaderboard-stream.test.ts` (create), `apps/leaderboard-screen/src/hooks/__tests__/useLeaderboard.test.ts` (create)
 - **Depends on:** Task 1, Task 2, Task 3
 - **Scope:** M
@@ -102,6 +111,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Verify:** `npm test --workspace=apps/game-api && npm test --workspace=apps/leaderboard-screen` — зелёные
 
 ### Task 6: Validation
+
 - **Files:** —
 - **Depends on:** all
 - **Scope:** S

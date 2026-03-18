@@ -33,6 +33,7 @@ description: >-
 **1.** Прочитай task-файл целиком.
 
 **2.** Извлеки и запомни:
+
 - `TASK_TITLE` — заголовок
 - `TASK_SLUG` — из поля `Slug` в task-файле
 - `TASK_COMPLEXITY` — из поля «Сложность»
@@ -57,13 +58,14 @@ description: >-
 
 ### Фаза 2 — Explore
 
-Цель: понять *как именно* реализовать задачу. Task-файл описывает *что* и *где*.
-Plan-explorer ищет *how*: какие файлы создавать, какие паттерны повторить,
+Цель: понять _как именно_ реализовать задачу. Task-файл описывает _что_ и _где_.
+Plan-explorer ищет _how_: какие файлы создавать, какие паттерны повторить,
 какие интеграционные точки задействовать.
 
 **Запусти plan-explorer через Agent tool:**
 
 Задача агенту:
+
 ```
 На основе task-файла: [вставить TASK_TITLE и полную секцию Context из task-файла]
 
@@ -100,6 +102,7 @@ Constraints:
 **Запусти plan-designer через Agent tool:**
 
 Задача агенту:
+
 ```
 Task: [TASK_TITLE]
 Complexity: [TASK_COMPLEXITY]
@@ -156,18 +159,21 @@ Constraints из task-файла:
 Определи стратегию выполнения на основе `reference/routing-rules.md`.
 
 **Входные данные для routing:**
+
 - `TASK_COMPLEXITY` из task-файла
 - Количество задач из decomposition
 - File intersection matrix из architect
 - Наличие cross-layer задач (frontend + backend + tests в разных tasks)
 
 **Применяй таблицу из routing-rules.md.** Запиши результат:
+
 - `MODE` = inline | sub-agents | agent-team
 - `PARALLEL` = true | false
 - `PARALLEL_GROUPS` = какие задачи можно параллелить (если parallel=true)
 - `REASONING` = одно предложение почему именно этот mode
 
 **Перед записью — проверь согласованность плана:**
+
 - [ ] Каждый requirement из task-файла покрыт хотя бы одним task
 - [ ] Все depends_on ссылаются на существующие tasks (нет висячих ссылок)
 - [ ] Нет циклических зависимостей
@@ -185,6 +191,7 @@ Dispatch subagent для ревью плана перед записью.
 **Запусти plan-reviewer через Agent tool:**
 
 Передай:
+
 - Design decisions
 - Decomposition (все tasks с What, How, Files, Context, Verify)
 - Execution order
@@ -193,6 +200,7 @@ Dispatch subagent для ревью плана перед записью.
 Агент определён в `agents/plan-reviewer.md`.
 
 **Обработка результата:**
+
 - Если ✅ Approved → Фаза 6 (Write)
 - Если ❌ Issues → исправь проблемы, re-dispatch (макс 5 итераций)
 - Если 5 итераций без approve → запиши план как есть, пометь нерешённые issues в секции
@@ -206,12 +214,14 @@ Dispatch subagent для ревью плана перед записью.
 **1.** Прочитай `reference/plan-format.md` — формат выходного файла.
 
 **2.** Прочитай пример для калибровки:
+
 - trivial / simple → `examples/simple-plan.md`
 - medium / complex → `examples/complex-plan.md`
 
 **3.** Запиши файл: `docs/ai/<TASK_SLUG>/<TASK_SLUG>-plan.md`
 
 Используй формат из plan-format.md. Включи:
+
 - Все design decisions с reasoning
 - Все задачи с файлами, зависимостями, scope
 - Routing decision
@@ -223,12 +233,14 @@ Dispatch subagent для ревью плана перед записью.
   Если вопросов нет — поставь «—».
 
 **4.** Dispatch subagent для copyedit плана:
+
 - Передай путь к записанному plan-файлу
 - Передай `reference/elements-of-style-rules.md`
 - Subagent правит прозу: активный залог, конкретный язык, убирает лишние слова
 - Перезаписывает файл
 
 **5.** Сообщи пользователю:
+
 ```
 План записан: docs/ai/<TASK_SLUG>/<TASK_SLUG>-plan.md
 Для выполнения: /sp:do docs/ai/<TASK_SLUG>/<TASK_SLUG>-plan.md

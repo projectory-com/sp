@@ -68,3 +68,13 @@ claude --plugin-dir .
 
 - `docs/plugins.md` — создание плагинов (структура, компоненты, тестирование)
 - `docs/plugin-marketplaces.md` — схема маркетплейса, sources, дистрибуция
+
+## Formatting
+
+```bash
+pnpm run format          # отформатировать все *.{md,json}
+pnpm run format:check    # проверить форматирование (CI-ready)
+```
+
+Конфигурация: `.prettierrc.json` (proseWrap: preserve, printWidth: 120).
+Pre-commit хук через Husky форматирует staged файлы автоматически.

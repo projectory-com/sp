@@ -1,6 +1,7 @@
 # Пример: simple-план
 
 Показывает:
+
 - inline mode для простой задачи
 - 3 tasks + validation
 - Design decisions из кода, не из головы
@@ -57,11 +58,13 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 ## Design decisions
 
 ### DD-1: Формат токена сброса
+
 **Решение:** `crypto.randomBytes(32).toString('hex')` — 64-символьная hex строка.
 **Обоснование:** Паттерн из `src/auth/register.ts:31` — проект уже использует этот подход.
 **Альтернатива:** UUID v4 — нет причин отходить от существующего паттерна.
 
 ### DD-2: Срок жизни токена
+
 **Решение:** 1 час. Константа `RESET_TOKEN_EXPIRY_MS = 3600000` в `src/config/index.ts`.
 **Обоснование:** Стандарт для чувствительных операций. В проекте нет конвенции для TTL.
 **Альтернатива:** 24 часа — менее безопасно для password reset.
@@ -69,6 +72,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 ## Tasks
 
 ### Task 1: forgot-password endpoint
+
 - **Files:** `src/auth/forgot-password.ts` (create), `src/routes/auth.ts:28` (edit — добавить маршрут)
 - **Depends on:** none
 - **Scope:** M
@@ -77,6 +81,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 - **Verify:** `npm test src/auth/__tests__/forgot-password.test.ts` — зелёный
 
 ### Task 2: reset-password endpoint
+
 - **Files:** `src/auth/reset-password.ts` (create), `src/routes/auth.ts` (edit — добавить маршрут)
 - **Depends on:** Task 1
 - **Scope:** M
@@ -85,6 +90,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 - **Verify:** `npm test src/auth/__tests__/reset-password.test.ts` — зелёный
 
 ### Task 3: Тесты обоих endpoints
+
 - **Files:** `src/auth/__tests__/forgot-password.test.ts` (create), `src/auth/__tests__/reset-password.test.ts` (create)
 - **Depends on:** Task 1, Task 2
 - **Scope:** M
@@ -93,6 +99,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 - **Verify:** `npm test src/auth/__tests__/` — все зелёные
 
 ### Task 4: Validation
+
 - **Files:** —
 - **Depends on:** all
 - **Scope:** S

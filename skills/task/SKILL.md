@@ -17,6 +17,7 @@ description: >-
 ## Вход
 
 `$ARGUMENTS` содержит одно или оба:
+
 - **URL тикета** — GitHub Issues, YouTrack, Jira и др.
 - **Текст задачи** — описание, примеры кода, ссылки
 
@@ -27,11 +28,13 @@ description: >-
 ### Фаза 1 — Parse
 
 **1. Получи содержимое тикета:**
+
 - GitHub Issues → `gh issue view <url>`
 - Остальные трекеры → содержимое берётся из текста пользователя, URL используется только для slug
 
 **2. Извлеки и сохрани все материалы из входа:**
 Пройдись по всему входу и выпиши отдельным списком:
+
 - ссылки (Figma, документация, API)
 - пути к файлам и скриншотам
 - вставленные куски кода
@@ -40,6 +43,7 @@ description: >-
 Этот список попадёт в секцию «Материалы» без изменений.
 
 **3. Сформируй task-slug** — идентификатор + описание на английском в kebab-case:
+
 - `86-black-jack-page` — из GitHub issue #86
 - `R2-50-user-id-to-db` — из YouTrack R2-50
 - `fix-navbar-overflow` — без URL, только текст
@@ -58,6 +62,7 @@ description: >-
 **Шаг 1 — Запусти task-explorer через Agent tool:**
 
 Задача агенту:
+
 ```
 Исследуй кодовую базу для задачи: [вставить суть задачи из тикета].
 
@@ -77,6 +82,7 @@ description: >-
 **Шаг 3 — Запусти task-architect через Agent tool**
 
 Задача агенту:
+
 ```
 На основе этих findings task-explorer: [вставить findings]
 
@@ -94,6 +100,7 @@ description: >-
 **Шаг 4 — Прочитай дополнительные файлы** если task-architect расширил список.
 
 **Критерии остановки — Investigate завершена когда:**
+
 - [ ] Найдены точки входа (entry points) для изменений с номерами строк
 - [ ] Найдены паттерны которые нужно повторить (с примерами файлов)
 - [ ] Найдены или подтверждено отсутствие тестов на затронутую область
@@ -111,6 +118,7 @@ description: >-
 **Определи тип задачи — frontend или general:**
 
 Задача **frontend** если findings содержат:
+
 - технологии: React, Vue, CSS, Tailwind, SCSS, styled-components, Framer Motion, Three.js
 - файлы: .tsx, .jsx, .css, .scss в essential file list или карте изменений
 - артефакты: component, page, layout, screen, UI, modal, animation
@@ -139,6 +147,7 @@ description: >-
 **1.** `mkdir -p docs/ai/<task-slug>`
 
 **2.** Прочитай пример для калибровки тона и уровня детализации:
+
 - trivial / simple → `examples/simple-task.md`
 - medium / complex → `examples/complex-task.md`
 
@@ -201,12 +210,14 @@ description: >-
 ```
 
 **4.** Dispatch subagent для copyedit task-файла:
+
 - Передай путь к записанному файлу
 - Передай `reference/elements-of-style-rules.md`
 - Subagent правит прозу: активный залог, конкретный язык, убирает лишние слова
 - Перезаписывает файл
 
 **5.** Сообщи пользователю:
+
 - Путь к файлу и task-slug
 - Следующий шаг: `/sp:plan docs/ai/<task-slug>/<task-slug>-task.md`
 

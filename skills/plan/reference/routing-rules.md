@@ -8,36 +8,38 @@
 
 Применяй сверху вниз — первое совпадение побеждает.
 
-| # | Complexity | Tasks | File intersections | Cross-layer | → Mode | → Parallel |
-|---|---|---|---|---|---|---|
-| 1 | trivial | 1-2 | — | — | `inline` | false |
-| 2 | simple | 1-2 | none | no | `inline` | false |
-| 3 | simple | 2-3 | none | no | `sub-agents` | true |
-| 4 | medium | 3+ | none between groups | no | `sub-agents` | true |
-| 5 | medium | 3+ | some | no | `sub-agents` | mixed* |
-| 6 | medium | 3+ | any | yes | `agent-team` | true |
-| 7 | complex | any | none between groups | no | `sub-agents` | true |
-| 8 | complex | any | any | yes | `agent-team` | true |
-| 9 | complex | any | heavy | any | `agent-team` | false |
+| #   | Complexity | Tasks | File intersections  | Cross-layer | → Mode       | → Parallel |
+| --- | ---------- | ----- | ------------------- | ----------- | ------------ | ---------- |
+| 1   | trivial    | 1-2   | —                   | —           | `inline`     | false      |
+| 2   | simple     | 1-2   | none                | no          | `inline`     | false      |
+| 3   | simple     | 2-3   | none                | no          | `sub-agents` | true       |
+| 4   | medium     | 3+    | none between groups | no          | `sub-agents` | true       |
+| 5   | medium     | 3+    | some                | no          | `sub-agents` | mixed\*    |
+| 6   | medium     | 3+    | any                 | yes         | `agent-team` | true       |
+| 7   | complex    | any   | none between groups | no          | `sub-agents` | true       |
+| 8   | complex    | any   | any                 | yes         | `agent-team` | true       |
+| 9   | complex    | any   | heavy               | any         | `agent-team` | false      |
 
-*mixed = параллельные группы где нет пересечений, sequential между группами с общими файлами.
+\*mixed = параллельные группы где нет пересечений, sequential между группами с общими файлами.
 
 ---
 
 ## Определения
 
 **File intersection** — два task'а изменяют один и тот же файл.
+
 - `none` = ни одна пара tasks не имеет общих файлов
 - `some` = есть пересечения, но можно выделить независимые группы
 - `heavy` = большинство tasks трогают общие файлы
 
 **Cross-layer** — план содержит tasks из разных слоёв:
+
 - frontend (React, Vue, CSS, компоненты)
 - backend (API, сервисы, БД)
 - infrastructure (конфиг, CI, деплой)
 - tests (отдельный test-task, не тесты внутри feature-task)
 
-Если tasks из 2+ слоёв и *каждый слой имеет 2+ tasks* → cross-layer = yes.
+Если tasks из 2+ слоёв и _каждый слой имеет 2+ tasks_ → cross-layer = yes.
 Если один backend-task + один test-task → cross-layer = no (тесты при feature — норма).
 
 ---
@@ -62,6 +64,7 @@
 **Риск:** merge conflicts при параллельных изменениях общих файлов.
 
 Для sub-agents:
+
 - `isolation: worktree` если parallel=true
 - `isolation: none` если parallel=false (sequential)
 
@@ -77,6 +80,7 @@
 **Риск:** высокий token cost, coordination overhead.
 
 Структура team:
+
 - **Lead** — координатор (текущая сессия)
 - **Teammates** — по одному на слой (frontend, backend, tests)
 - Shared task list для координации

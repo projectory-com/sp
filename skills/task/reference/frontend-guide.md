@@ -11,6 +11,7 @@
 
 Frontend-задачи проваливаются не потому что реализатор не умеет в React.
 Они проваливаются потому что task-файл не отвечает на вопросы:
+
 - Какой конкретно font-family использовать?
 - Какой easing у transition?
 - Что происходит на mobile breakpoint?
@@ -27,25 +28,31 @@ Frontend-задачи проваливаются не потому что реа
 Если task-explorer не нашёл — добавь в уточняющие вопросы.
 
 **Typography:**
+
 - Какие font-family используются в проекте? (из CSS variables, tailwind config, или globals)
 - Есть ли type scale? (из `typography.ts`, `tailwind.config.js`, или CSS)
 
 **Color system:**
+
 - Как определены цвета — CSS variables, Tailwind tokens, JS theme object?
 - Конкретные имена токенов для primary, surface, border, text (из файлов)
 
 **Spacing:**
+
 - Используется ли 4px или 8px grid? (из tailwind config или дизайн-системы)
 
 **Animation:**
+
 - Какая библиотека для анимаций? (Framer Motion, GSAP, CSS-only)
 - Есть ли стандартные easings/durations в проекте? (из `animations.ts` или CSS vars)
 
 **Breakpoints:**
+
 - Какие breakpoints используются? (из tailwind config или CSS media queries)
 - Mobile-first или desktop-first подход?
 
 **Component patterns:**
+
 - Как именно устроены похожие компоненты? (пути + структура из findings)
 
 ---
@@ -80,6 +87,7 @@ Frontend-задачи проваливаются не потому что реа
 Для каждого визуального элемента в задаче — пройдись по чеклисту:
 
 **Typography** (если задача касается текста):
+
 - [ ] font-family — конкретное значение или токен из проекта
 - [ ] font-size — значение или scale step (`text-sm`, `--font-size-body`)
 - [ ] font-weight — число или токен (`font-medium`, `500`)
@@ -87,16 +95,19 @@ Frontend-задачи проваливаются не потому что реа
 - [ ] letter-spacing — если нестандартный
 
 **Color** (если задача касается цвета):
+
 - [ ] Конкретные CSS variables или Tailwind tokens для каждого цвета
 - [ ] Цвет в разных состояниях: default, hover, active, disabled, focus
 - [ ] Dark mode — нужен ли, как переключается в проекте
 
 **Spacing & Layout**:
+
 - [ ] Конкретные padding/margin значения или tokens (`p-4`, `gap-6`, `--space-md`)
 - [ ] Breakpoints — как меняется layout на mobile/tablet/desktop
 - [ ] Alignment и distribution — flex/grid конфигурация
 
 **Animation & Motion**:
+
 - [ ] Trigger — когда запускается (mount, hover, scroll, click)
 - [ ] Property — что анимируется (opacity, transform, height)
 - [ ] Duration — миллисекунды
@@ -105,6 +116,7 @@ Frontend-задачи проваливаются не потому что реа
 - [ ] Библиотека — CSS transition, Framer Motion, GSAP
 
 **Interactive states**:
+
 - [ ] hover — визуальное изменение + transition
 - [ ] focus-visible — ring/outline для accessibility
 - [ ] active/pressed — тактильный отклик
@@ -118,6 +130,7 @@ Frontend-задачи проваливаются не потому что реа
 ### Что всегда добавлять в Constraints для frontend:
 
 **Шрифты — защити от замены:**
+
 ```
 - Не заменять font-family — использовать только то что уже в проекте
   (найдено: [конкретные значения из Investigate])
@@ -125,24 +138,28 @@ Frontend-задачи проваливаются не потому что реа
 ```
 
 **Токены — защити от хардкода:**
+
 ```
 - Все цвета только через CSS variables / Tailwind tokens — не хардкодить hex
 - Все размеры через токены — не хардкодить px значения вне дизайн-системы
 ```
 
 **Анимации — защити от избыточности:**
+
 ```
 - Не добавлять анимации которых нет в тикете
 - prefers-reduced-motion: все motion-эффекты должны отключаться через media query
 ```
 
 **Существующие компоненты — защити от дублирования:**
+
 ```
 - Использовать существующий [ComponentName] из [path] — не создавать дубль
 - Не изменять props interface существующих компонентов
 ```
 
 **Anti-convergence (из frontend-design скилла):**
+
 ```
 - Не использовать Inter/Roboto/Arial если они не в проекте
 - Не добавлять purple gradient — не соответствует дизайн-системе проекта
@@ -161,6 +178,7 @@ Frontend-задачи проваливаются не потому что реа
 **Уровни Verification для frontend:**
 
 **1. Автоматические (если есть тесты в проекте):**
+
 ```
 - `npm test src/components/Card.test.tsx` — все тесты зелёные
 - `npm run type-check` — нет TypeScript ошибок
@@ -168,6 +186,7 @@ Frontend-задачи проваливаются не потому что реа
 ```
 
 **2. Визуальные чеклисты (ручная проверка, но конкретная):**
+
 ```
 - Открыть компонент на desktop (1440px): карточки в 3 колонки с gap 24px
 - Открыть на mobile (375px): карточки в 1 колонку, padding 16px с боков
@@ -178,6 +197,7 @@ Frontend-задачи проваливаются не потому что реа
 ```
 
 **3. Accessibility:**
+
 ```
 - Изображения имеют alt текст
 - Интерактивные элементы доступны с клавиатуры

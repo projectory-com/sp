@@ -4,10 +4,10 @@
 
 ## Когда использовать плагины vs standalone
 
-| Подход                                     | Имена скиллов           | Для чего                                               |
-|--------------------------------------------|-------------------------|--------------------------------------------------------|
-| **Standalone** (`.claude/`)                | `/hello`                | Личные workflow, эксперименты                          |
-| **Plugins** (`.claude-plugin/plugin.json`) | `/plugin-name:hello`    | Шеринг, дистрибуция, версионирование                   |
+| Подход                                     | Имена скиллов        | Для чего                             |
+| ------------------------------------------ | -------------------- | ------------------------------------ |
+| **Standalone** (`.claude/`)                | `/hello`             | Личные workflow, эксперименты        |
+| **Plugins** (`.claude-plugin/plugin.json`) | `/plugin-name:hello` | Шеринг, дистрибуция, версионирование |
 
 ## Структура плагина
 
@@ -39,12 +39,12 @@ my-plugin/
 }
 ```
 
-| Поле          | Назначение                                                                    |
-|---------------|-------------------------------------------------------------------------------|
-| `name`        | Уникальный идентификатор и namespace скиллов (`/my-plugin:hello`)            |
-| `description` | Отображается в plugin manager                                                 |
-| `version`     | Семантическое версионирование                                                 |
-| `author`      | Опционально. Автор плагина                                                   |
+| Поле          | Назначение                                                        |
+| ------------- | ----------------------------------------------------------------- |
+| `name`        | Уникальный идентификатор и namespace скиллов (`/my-plugin:hello`) |
+| `description` | Отображается в plugin manager                                     |
+| `version`     | Семантическое версионирование                                     |
+| `author`      | Опционально. Автор плагина                                        |
 
 Дополнительные поля: `homepage`, `repository`, `license`, `keywords`.
 
@@ -65,7 +65,6 @@ skills/
 name: code-review
 description: Reviews code for best practices and potential issues
 ---
-
 Инструкции для скилла...
 ```
 
@@ -85,7 +84,6 @@ commands/
 name: hello
 description: Приветственное сообщение
 ---
-
 Инструкции для команды...
 ```
 
@@ -115,7 +113,6 @@ capabilities:
   - Specific task 1
   - Specific task 2
 ---
-
 Detailed agent instructions...
 ```
 
@@ -129,10 +126,12 @@ Detailed agent instructions...
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "hooks": [{
-          "type": "command",
-          "command": "jq -r '.tool_input.file_path' | xargs npm run lint:fix"
-        }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npm run lint:fix"
+          }
+        ]
       }
     ]
   }
@@ -192,6 +191,7 @@ claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 ```
 
 Проверки:
+
 - Скиллы: `/plugin-name:skill-name`
 - Агенты: `/agents`
 - Хуки: триггерить события
@@ -219,19 +219,19 @@ cp -r .claude/skills my-plugin/
 
 Хуки: скопировать объект `hooks` из `.claude/settings.json` в `my-plugin/hooks/hooks.json`.
 
-| Standalone (`.claude/`)       | Plugin                           |
-|-------------------------------|----------------------------------|
-| Только в одном проекте        | Шеринг через маркетплейсы       |
-| `.claude/commands/`           | `plugin-name/commands/`          |
-| Хуки в `settings.json`       | Хуки в `hooks/hooks.json`       |
-| Ручное копирование            | `/plugin install`                |
+| Standalone (`.claude/`) | Plugin                    |
+| ----------------------- | ------------------------- |
+| Только в одном проекте  | Шеринг через маркетплейсы |
+| `.claude/commands/`     | `plugin-name/commands/`   |
+| Хуки в `settings.json`  | Хуки в `hooks/hooks.json` |
+| Ручное копирование      | `/plugin install`         |
 
 ## Strict Mode
 
-| Значение          | Поведение                                                              |
-|-------------------|------------------------------------------------------------------------|
-| `true` (default)  | `plugin.json` — authority для компонентов. Marketplace дополняет.      |
-| `false`           | Marketplace entry — полное определение. `plugin.json` с компонентами вызовет ошибку. |
+| Значение         | Поведение                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| `true` (default) | `plugin.json` — authority для компонентов. Marketplace дополняет.                    |
+| `false`          | Marketplace entry — полное определение. `plugin.json` с компонентами вызовет ошибку. |
 
 ## Ссылки
 

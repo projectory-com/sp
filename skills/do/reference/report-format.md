@@ -15,42 +15,45 @@
 
 ## Tasks
 
-| # | Task | Status | Commit | Concerns |
-|---|---|---|---|---|
-| 1 | <название> | ✅ DONE | `abc1234` | — |
-| 2 | <название> | ⚠️ DONE_WITH_CONCERNS | `def5678` | см. ниже |
-| 3 | <название> | ❌ BLOCKED | — | см. ниже |
-| 4 | <название> | ⏭️ SKIPPED | — | depends on Task 3 |
-| 5 | Validation | ✅ DONE | `ghi9012` | — |
+| #   | Task       | Status                | Commit    | Concerns          |
+| --- | ---------- | --------------------- | --------- | ----------------- |
+| 1   | <название> | ✅ DONE               | `abc1234` | —                 |
+| 2   | <название> | ⚠️ DONE_WITH_CONCERNS | `def5678` | см. ниже          |
+| 3   | <название> | ❌ BLOCKED            | —         | см. ниже          |
+| 4   | <название> | ⏭️ SKIPPED            | —         | depends on Task 3 |
+| 5   | Validation | ✅ DONE               | `ghi9012` | —                 |
 
 ## Post-implementation
 
-| Step | Status | Commit |
-|---|---|---|
-| Simplify | ✅ done | `aaa1111` |
-| Cleanup | ✅ done | `bbb2222` |
-| Validate | ✅ pass | — |
+| Step          | Status  | Commit    |
+| ------------- | ------- | --------- |
+| Simplify      | ✅ done | `aaa1111` |
+| Cleanup       | ✅ done | `bbb2222` |
+| Validate      | ✅ pass | —         |
 | Documentation | ✅ done | `ccc3333` |
-| Format | ✅ done | `ddd4444` |
+| Format        | ✅ done | `ddd4444` |
 
 ## Concerns
 
 ### Task 2: <название>
+
 <текст concerns от sub-agent'а>
 
 ## Blocked
 
 ### Task 3: <название>
+
 **Reason:** <причина блокировки>
 **Impact:** Task 4 skipped (depends on Task 3)
 
 ## Validation
-
 ```
-npm run lint        ✅
-npm run type-check  ✅
-npm test            ✅ (47 passed, 0 failed)
-npm run build       ✅
+
+npm run lint ✅
+npm run type-check ✅
+npm test ✅ (47 passed, 0 failed)
+npm run build ✅
+
 ```
 
 ## Changes summary

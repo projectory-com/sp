@@ -50,6 +50,7 @@ pipeline, пишешь отчёт.
 **1.** Прочитай plan-файл целиком.
 
 **2.** Извлеки:
+
 - `SLUG` — из пути (`docs/ai/<slug>/`)
 - `COMPLEXITY` — из поля «Complexity»
 - `TASKS[]` — все tasks из секции «Tasks» с полным текстом (What, How, Files, Context, Verify)
@@ -89,6 +90,7 @@ pipeline, пишешь отчёт.
 ### Dispatch по Execution Order
 
 Читай Order из плана:
+
 - **Parallel group** → dispatch все tasks группы одновременно через Agent tool
 - **Sequential** → dispatch по одному
 - **Barrier** → дождаться завершения всех tasks группы
@@ -144,10 +146,12 @@ pipeline, пишешь отчёт.
 Запусти sub-agent через Agent tool. Промт — из `agents/code-polisher.md`.
 
 Передай:
+
 - Список всех файлов изменённых/созданных в Фазе 2
 - CONSTRAINTS из плана
 
 После завершения:
+
 - Коммит по конвенции из `reference/commit-convention.md`.
 - Отметь в TodoWrite: [x]
 
@@ -171,6 +175,7 @@ npm run build         # если есть
 Запиши результат каждой команды: ✅ / ❌ + вывод ошибки.
 
 Если какая-то команда fails:
+
 1. Одна попытка исправить — запусти sub-agent с контекстом ошибки
 2. Коммит по конвенции из `reference/commit-convention.md`.
 3. Перезапусти failed команды
@@ -187,11 +192,13 @@ npm run build         # если есть
 Запусти sub-agent через Agent tool. Промт — из `agents/doc-updater.md`.
 
 Передай:
+
 - Список изменённых файлов
 - SLUG и task title
 - Requirements из plan-файла
 
 Sub-agent решает что обновить:
+
 - README если изменился API или добавлена фича
 - CHANGELOG если есть
 - JSDoc/TSDoc для новых/изменённых экспортируемых функций
@@ -199,6 +206,7 @@ Sub-agent решает что обновить:
 **Не создавать документацию с нуля если её не было.**
 
 После завершения:
+
 - Коммит по конвенции из `reference/commit-convention.md`.
 - Отметь в TodoWrite: [x]
 
@@ -211,6 +219,7 @@ Sub-agent решает что обновить:
 ### 6a. Format
 
 Определи formatter проекта:
+
 - `.prettierrc` или `prettier` в package.json → `npx prettier --write`
 - `.eslintrc` или `eslint` в package.json → `npx eslint --fix`
 - `biome.json` → `npx biome format --write`
@@ -226,6 +235,7 @@ Sub-agent решает что обновить:
 Прочитай `reference/report-format.md`.
 
 Запиши `docs/ai/<SLUG>/<SLUG>-report.md`:
+
 - Статусы всех tasks (DONE / BLOCKED / SKIPPED)
 - Хэши и сообщения всех коммитов
 - Spec review результаты (✅/❌ + issues для каждого task)

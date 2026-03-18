@@ -5,11 +5,5 @@
   "author": { "name": "Heliotic" },
   "repository": "https://github.com/projectory-com/sp",
   "license": "MIT",
-  "keywords": [
-    "marketplace",
-    "skills",
-    "commands",
-    "workflow",
-    "productivity"
-  ]
+  "keywords": ["marketplace", "skills", "commands", "workflow", "productivity"]
 }

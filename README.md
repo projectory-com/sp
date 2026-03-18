@@ -110,11 +110,13 @@ claude --plugin-dir ./sp
 ## Разработка
 
 Скилл:
+
 ```
 skills/<имя>/SKILL.md
 ```
 
 Команда:
+
 ```
 commands/<имя>.md
 ```

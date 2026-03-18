@@ -15,75 +15,77 @@
 
 ### Обязательные поля
 
-| Поле      | Тип    | Описание                           | Пример         |
-|-----------|--------|------------------------------------| ---------------|
-| `name`    | string | Идентификатор (kebab-case)         | `"acme-tools"` |
-| `owner`   | object | Информация о владельце             |                |
-| `plugins` | array  | Список плагинов                    |                |
+| Поле      | Тип    | Описание                   | Пример         |
+| --------- | ------ | -------------------------- | -------------- |
+| `name`    | string | Идентификатор (kebab-case) | `"acme-tools"` |
+| `owner`   | object | Информация о владельце     |                |
+| `plugins` | array  | Список плагинов            |                |
 
 ### Owner
 
-| Поле    | Тип    | Обязательное | Описание          |
-|---------|--------|--------------|--------------------|
-| `name`  | string | Да           | Имя владельца      |
-| `email` | string | Нет          | Email              |
+| Поле    | Тип    | Обязательное | Описание      |
+| ------- | ------ | ------------ | ------------- |
+| `name`  | string | Да           | Имя владельца |
+| `email` | string | Нет          | Email         |
 
 ### Метаданные (опционально)
 
-| Поле                     | Тип    | Описание                           |
-|--------------------------|--------|-------------------------------------|
-| `metadata.description`   | string | Описание маркетплейса               |
-| `metadata.version`       | string | Версия маркетплейса                 |
-| `metadata.pluginRoot`    | string | Базовая директория для путей плагинов |
+| Поле                   | Тип    | Описание                              |
+| ---------------------- | ------ | ------------------------------------- |
+| `metadata.description` | string | Описание маркетплейса                 |
+| `metadata.version`     | string | Версия маркетплейса                   |
+| `metadata.pluginRoot`  | string | Базовая директория для путей плагинов |
 
 ## Plugin Entries
 
 ### Обязательные поля плагина
 
-| Поле     | Тип            | Описание                    |
-|----------|----------------|-----------------------------|
-| `name`   | string         | Идентификатор (kebab-case)  |
-| `source` | string\|object | Где взять плагин            |
+| Поле     | Тип            | Описание                   |
+| -------- | -------------- | -------------------------- |
+| `name`   | string         | Идентификатор (kebab-case) |
+| `source` | string\|object | Где взять плагин           |
 
 ### Опциональные поля плагина
 
-| Поле          | Тип     | Описание                          |
-|---------------|---------|-----------------------------------|
-| `description` | string  | Описание плагина                  |
-| `version`     | string  | Версия                            |
-| `author`      | object  | Автор (`name`, `email`)           |
-| `homepage`    | string  | URL документации                  |
-| `repository`  | string  | URL репозитория                   |
-| `license`     | string  | SPDX лицензия                     |
-| `keywords`    | array   | Теги для поиска                   |
-| `category`    | string  | Категория                         |
-| `tags`        | array   | Теги                              |
-| `strict`      | boolean | Контроль authority (default: true)|
-| `commands`    | string\|array  | Пути к командам            |
-| `agents`      | string\|array  | Пути к агентам             |
-| `hooks`       | string\|object | Конфигурация хуков         |
-| `mcpServers`  | string\|object | MCP серверы                |
-| `lspServers`  | string\|object | LSP серверы                |
+| Поле          | Тип            | Описание                           |
+| ------------- | -------------- | ---------------------------------- |
+| `description` | string         | Описание плагина                   |
+| `version`     | string         | Версия                             |
+| `author`      | object         | Автор (`name`, `email`)            |
+| `homepage`    | string         | URL документации                   |
+| `repository`  | string         | URL репозитория                    |
+| `license`     | string         | SPDX лицензия                      |
+| `keywords`    | array          | Теги для поиска                    |
+| `category`    | string         | Категория                          |
+| `tags`        | array          | Теги                               |
+| `strict`      | boolean        | Контроль authority (default: true) |
+| `commands`    | string\|array  | Пути к командам                    |
+| `agents`      | string\|array  | Пути к агентам                     |
+| `hooks`       | string\|object | Конфигурация хуков                 |
+| `mcpServers`  | string\|object | MCP серверы                        |
+| `lspServers`  | string\|object | LSP серверы                        |
 
 ## Plugin Sources
 
-| Source        | Тип                            | Поля                                  |
-|---------------|--------------------------------|---------------------------------------|
-| Relative path | `string` (`"./my-plugin"`)     | —                                     |
-| `github`      | object                         | `repo`, `ref?`, `sha?`               |
-| `url`         | object                         | `url` (.git), `ref?`, `sha?`         |
-| `git-subdir`  | object                         | `url`, `path`, `ref?`, `sha?`        |
-| `npm`         | object                         | `package`, `version?`, `registry?`   |
-| `pip`         | object                         | `package`, `version?`, `registry?`   |
+| Source        | Тип                        | Поля                               |
+| ------------- | -------------------------- | ---------------------------------- |
+| Relative path | `string` (`"./my-plugin"`) | —                                  |
+| `github`      | object                     | `repo`, `ref?`, `sha?`             |
+| `url`         | object                     | `url` (.git), `ref?`, `sha?`       |
+| `git-subdir`  | object                     | `url`, `path`, `ref?`, `sha?`      |
+| `npm`         | object                     | `package`, `version?`, `registry?` |
+| `pip`         | object                     | `package`, `version?`, `registry?` |
 
 ### Примеры
 
 **Относительный путь** (плагин в том же репо):
+
 ```json
 { "name": "my-plugin", "source": "./plugins/my-plugin" }
 ```
 
 **GitHub**:
+
 ```json
 {
   "name": "github-plugin",
@@ -92,6 +94,7 @@
 ```
 
 **Git URL**:
+
 ```json
 {
   "name": "git-plugin",
@@ -100,6 +103,7 @@
 ```
 
 **npm**:
+
 ```json
 {
   "name": "npm-plugin",
@@ -109,10 +113,10 @@
 
 ## Strict Mode
 
-| Значение          | Поведение                                                     |
-|-------------------|---------------------------------------------------------------|
-| `true` (default)  | `plugin.json` — authority. Marketplace дополняет.             |
-| `false`           | Marketplace entry — полное определение. Конфликт с plugin.json вызовет ошибку. |
+| Значение         | Поведение                                                                      |
+| ---------------- | ------------------------------------------------------------------------------ |
+| `true` (default) | `plugin.json` — authority. Marketplace дополняет.                              |
+| `false`          | Marketplace entry — полное определение. Конфликт с plugin.json вызовет ошибку. |
 
 ## Установка
 
