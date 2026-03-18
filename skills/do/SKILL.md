@@ -217,7 +217,7 @@ Sub-agent решает что обновить:
 - `biome.json` → `npx biome format --write`
 - Formatter отсутствует → пропустить
 
-Прогнать на изменённых файлах.
+Прогнать на изменённых файлах с `2>&1 | tail -20`.
 
 Коммит по конвенции из `reference/commit-convention.md`.
 Отметь в TodoWrite: [x]
@@ -267,4 +267,5 @@ Report: docs/ai/<SLUG>/<SLUG>-report.md
 - **Review после каждого task.** Spec compliance → code quality. Обязателен.
 - **TodoWrite обновляется.** Отмечай каждый шаг сразу по завершении.
 - **При BLOCKED — продолжать.** Останавливай только зависимую ветку.
+- **Ограничение вывода CLI.** Все команды с длинным выводом (formatter, lint, build, test) запускать с `2>&1 | tail -20`.
 - Язык контента — язык оригинального plan-файла.
