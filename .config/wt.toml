@@ -1,0 +1,47 @@
+# Worktrunk project hooks
+# Docs: https://worktrunk.dev/hook/
+
+[post-create]
+# Trust mise config in new worktree
+mise-trust = "mise trust {{ worktree_path }}/.mise.toml 2>/dev/null || true"
+
+# Copy gitignored files (.env, .claude/settings.local.json, docs/ai)
+# Patterns controlled by .worktreeinclude
+copy = "wt step copy-ignored"
+
+# Hardlink node_modules from primary worktree (instant, avoids reinstall).
+# Falls back to pnpm install if hardlinks fail (cross-filesystem or missing).
+node-modules = """
+cp -al {{ primary_worktree_path }}/node_modules {{ worktree_path }}/node_modules 2>/dev/null \
+  || (cd {{ worktree_path }} && pnpm install --frozen-lockfile --ignore-scripts)
+"""
+
+# Switch to or create tmux window for the worktree.
+# New windows get 4-pane dev layout: cc | nvim / co | console
+[post-switch]
+tmux = """
+if [ -n "$TMUX" ]; then
+    BRANCH={{ branch | sanitize }}
+    WINDOW_ID=$(tmux list-windows -F '#{window_name} #{window_id}' | awk -v name="$BRANCH" '$1 == name {print $2; exit}')
+    if [ -n "$WINDOW_ID" ]; then
+        tmux select-window -t "$WINDOW_ID"
+    else
+        P={{ worktree_path }}
+        tmux new-window -n "$BRANCH" -c "$P"
+        tmux split-window -h -p 60 -c "$P"
+        tmux select-pane -L
+        tmux split-window -v -p 40 -c "$P"
+        tmux select-pane -R
+        tmux split-window -v -p 20 -c "$P"
+        sleep 0.5
+        tmux send-keys -t 1 'cc' Enter
+        tmux send-keys -t 2 'y' Enter
+        tmux send-keys -t 3 'n' Enter
+        tmux select-pane -t 4
+    fi
+fi
+"""
+
+# Kill tmux window when worktree is removed
+[pre-remove]
+tmux = '[ -n "$TMUX" ] && tmux kill-window -t {{ branch | sanitize }} 2>/dev/null || true'
