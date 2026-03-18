@@ -120,7 +120,12 @@ pipeline и пиши отчёт.
       - ❌ Critical/Important → implementer фиксит → re-dispatch (макс 3)
       - Minor → записать, не блокировать
 
-5. Отметь в TodoWrite: [x]
+5. Гарантируй коммит:
+   - Проверь `git status` — есть ли незакоммиченные изменения
+   - Если есть — коммит по конвенции из `reference/commit-convention.md`
+   - Записать commit hash для report
+
+6. Отметь в TodoWrite: [x]
 ```
 
 **При BLOCKED:** пропустить только tasks, зависящие от заблокированного. Остальные продолжать.
