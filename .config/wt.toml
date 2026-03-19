@@ -16,8 +16,7 @@ cp -al {{ primary_worktree_path }}/node_modules {{ worktree_path }}/node_modules
   || (cd {{ worktree_path }} && pnpm install --frozen-lockfile --ignore-scripts)
 """
 
-# Switch to or create tmux window for the worktree.
-# New windows get 4-pane dev layout: cc | nvim / co | console
+# Switch to or create tmux window for the worktree
 [post-switch]
 tmux = """
 if [ -n "$TMUX" ]; then
@@ -26,18 +25,7 @@ if [ -n "$TMUX" ]; then
     if [ -n "$WINDOW_ID" ]; then
         tmux select-window -t "$WINDOW_ID"
     else
-        P={{ worktree_path }}
-        tmux new-window -n "$BRANCH" -c "$P"
-        tmux split-window -h -p 60 -c "$P"
-        tmux select-pane -L
-        tmux split-window -v -p 40 -c "$P"
-        tmux select-pane -R
-        tmux split-window -v -p 20 -c "$P"
-        sleep 0.5
-        tmux send-keys -t 1 'cc' Enter
-        tmux send-keys -t 2 'y' Enter
-        tmux send-keys -t 3 'n' Enter
-        tmux select-pane -t 4
+        tmux new-window -n "$BRANCH" -c {{ worktree_path }}
     fi
 fi
 """
