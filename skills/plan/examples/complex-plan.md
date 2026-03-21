@@ -3,7 +3,7 @@
 Показывает:
 
 - sub-agents mode с параллельными группами
-- Design decisions «2 подхода → выбор» (зафиксированный, не открытый)
+- Design decisions: два подхода → зафиксированный выбор
 - Cross-file intersection matrix
 - DAG с barrier между группами
 - Context isolation per task
@@ -23,7 +23,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 
 > plan-explorer нашёл: SSE проще для read-only потока, WS-сервер уже есть но
 > хардкодирован под player-station. File intersection: leaderboard.service.ts
-> трогается и серверным task'ом и тестами, но тесты зависят от реализации → sequential.
+> изменяется и серверным task'ом и тестами, но тесты зависят от реализации → sequential.
 >
 > plan-designer: выбрал SSE (подход B из task-файла), декомпозировал на 5 tasks,
 > нашёл 2 параллельные группы (сервер и клиент независимы до интеграции).
@@ -48,20 +48,20 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 ### DD-1: Транспорт — SSE вместо WebSocket
 
 **Решение:** Server-Sent Events через новый endpoint `GET /api/leaderboard/stream`.
-**Обоснование:** Leaderboard — read-only поток (сервер → клиент). SSE: нативный `EventSource`, нет handshake, работает через стандартный HTTP. Не трогает `ws.server.ts` и player-station протокол.
-**Альтернатива:** Расширить WS-сервер (подход A) — требует рефакторинга `ws.server.ts:23-45` (хардкод типов), ломает isolation player-station.
+**Обоснование:** Leaderboard — read-only поток (сервер → клиент). SSE: нативный `EventSource`, без handshake, через стандартный HTTP. `ws.server.ts` и player-station протокол остаются нетронутыми.
+**Альтернатива:** Расширить WS-сервер (подход A) — рефакторинг `ws.server.ts:23-45` (хардкод типов), ломает isolation player-station.
 
 ### DD-2: Push payload — полный state, не diff
 
 **Решение:** При событии отправлять полный leaderboard state (массив до 20 записей).
-**Обоснование:** Размер payload ~2KB. Diff-подход сложнее (мерж на клиенте), выигрыш минимален при таком объёме.
+**Обоснование:** Payload ~2KB. Diff-подход сложнее (мерж на клиенте), выигрыш при таком объёме минимален.
 **Альтернатива:** Только изменившиеся строки — экономия ~1.5KB, сложнее реализация.
 
 ### DD-3: Fallback — polling как degradation
 
 **Решение:** `useLeaderboard.ts` подключает EventSource, при ошибке/обрыве — fallback на polling 30 сек. Индикатор "live" / "offline" в UI.
 **Обоснование:** Leaderboard на выставке, сеть нестабильна. Polling уже работает — оставить как safety net.
-**Альтернатива:** Только SSE без fallback — пользователь видит стейл данные при обрыве.
+**Альтернатива:** SSE без fallback — при обрыве пользователь видит устаревшие данные.
 
 ## Tasks
 
@@ -70,7 +70,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Files:** `apps/game-api/src/routes/leaderboard-stream.ts` (create), `apps/game-api/src/routes/index.ts` (edit — зарегистрировать)
 - **Depends on:** none
 - **Scope:** M
-- **What:** Создать GET /api/leaderboard/stream — SSE endpoint. При подключении: отправить текущий state. Регистрировать connection в leaderboard.service. Удалять при req.on('close').
+- **What:** Создать GET /api/leaderboard/stream — SSE endpoint. При подключении отправить текущий state, зарегистрировать connection в leaderboard.service. Удалить при req.on('close').
 - **Context:** `apps/game-api/src/routes/leaderboard.ts:1-55` (паттерн route), `apps/game-api/src/services/leaderboard.service.ts:34-67` (processEvent)
 - **Verify:** `curl -N http://localhost:3000/api/leaderboard/stream` — получает `data:` с JSON
 
@@ -97,7 +97,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - **Files:** `apps/leaderboard-screen/src/components/Leaderboard.tsx` (edit — передать prop)
 - **Depends on:** Task 3
 - **Scope:** S
-- **What:** Сравнить предыдущий и новый leaderboard state. Для строк с изменённой позицией — передать `positionChanged={true}` в LeaderboardRow. Не изменять LeaderboardRow.tsx.
+- **What:** Сравнить предыдущий и новый leaderboard state. Для строк с изменённой позицией передать `positionChanged={true}` в LeaderboardRow. LeaderboardRow.tsx не изменять.
 - **Context:** `apps/leaderboard-screen/src/components/LeaderboardRow.tsx:67-89` (анимация, prop positionChanged), `apps/leaderboard-screen/src/hooks/useLeaderboard.ts` (Task 3 — как state обновляется)
 - **Verify:** При изменении позиции в рейтинге — CSS transition срабатывает
 
@@ -123,7 +123,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 
 - **Mode:** sub-agents
 - **Parallel:** true
-- **Reasoning:** 5 tasks + validation. Task 1, 2 (server) и Task 3 (client) не имеют общих файлов — параллелятся. Task 4 зависит от 3, Task 5 от 1-3. Все в одной кодовой базе, координация между server/client не нужна до интеграции.
+- **Reasoning:** 5 tasks + validation. Task 1, 2 (server) и Task 3 (client) общих файлов не имеют — параллелятся. Task 4 зависит от 3, Task 5 от 1-3. Одна кодовая база, координация server/client нужна только на этапе интеграции.
 - **Order:**
   ```
   Group 1 (parallel):
@@ -145,7 +145,7 @@ docs/ai/RSA-44-leaderboard-realtime/RSA-44-leaderboard-realtime-task.md
 - `npm test --workspace=apps/leaderboard-screen` — все тесты зелёные
 - player-station отправляет score_update → leaderboard обновляется без перезагрузки
 - Анимация смены позиции срабатывает
-- Обрыв SSE → fallback на polling, данные не теряются
+- Обрыв SSE → fallback на polling без потери данных
 - 3 leaderboard-screen одновременно → все получают обновления
 
 ## Materials

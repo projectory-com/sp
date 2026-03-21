@@ -1,6 +1,6 @@
 # Report Format
 
-Формат выходного файла `<slug>-report.md`. Записывается в Фазе 7.
+Формат выходного файла `<slug>-report.md`. Записывается в Фазе 6.
 
 ---
 
@@ -82,8 +82,8 @@ npm run build ✅
 
 - **Status** определяется по tasks:
   - Все DONE → `✅ complete`
-  - Есть BLOCKED или SKIPPED но большинство DONE → `⚠️ partial`
+  - Есть BLOCKED или SKIPPED, но большинство DONE → `⚠️ partial`
   - Большинство BLOCKED → `❌ failed`
-- Секции **Concerns** и **Blocked** включаются только если есть соответствующие tasks.
-- **Changes summary** — собирается из FILES_CHANGED всех sub-agent'ов.
-- **Commits** — в хронологическом порядке, включая post-implementation.
+- Секции **Concerns** и **Blocked** — только при наличии соответствующих tasks.
+- **Changes summary** — собирай из FILES_CHANGED всех sub-agent'ов.
+- **Commits** — хронологический порядок, включая post-implementation.

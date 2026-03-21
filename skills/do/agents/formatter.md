@@ -16,6 +16,9 @@ color: gray
 **SLUG для коммитов:**
 {{SLUG}}
 
+**Ticket ID для коммитов:**
+{{TICKET_ID}}
+
 ## Процесс
 
 ### 1. Определи formatter проекта
@@ -23,7 +26,7 @@ color: gray
 - `.prettierrc` или `prettier` в package.json → `npx prettier --write`
 - `.eslintrc` или `eslint` в package.json → `npx eslint --fix`
 - `biome.json` → `npx biome format --write`
-- Formatter отсутствует → сообщи NO_FORMATTER
+- Formatter отсутствует → верни NO_FORMATTER
 
 ### 2. Прогони на изменённых файлах
 
@@ -33,11 +36,15 @@ color: gray
 
 ### 3. Коммит
 
-Если были изменения:
+При наличии изменений — один коммит в формате `TICKET type(SLUG): description`:
 
 ```
-<ticket-id> chore(<SLUG>): format code
+{{TICKET_ID}} chore({{SLUG}}): format code
 ```
+
+Пример: `#86 chore(86-black-jack-page): format code`
+
+БЕЗ двоеточия после ticket. Slug ОБЯЗАТЕЛЕН (значение из входа `{{SLUG}}`).
 
 ## Формат ответа
 

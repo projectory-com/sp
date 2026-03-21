@@ -8,7 +8,7 @@ description: >-
 
 # Подготовка отчёта для code review
 
-Ты — оркестратор. НЕ выполняй git-команды и анализ напрямую. Делегируй через Agent tool:
+Ты — оркестратор. Git-команды и анализ выполняй только через Agent tool:
 
 - Анализ и запись отчёта → `agents/review-analyzer.md`
 
@@ -18,7 +18,7 @@ description: >-
 
 `$ARGUMENTS` — task-slug или путь к task-файлу.
 
-Если отсутствует — определи slug из текущей ветки или последнего `docs/ai/*/` каталога.
+Если отсутствует — определи slug из текущей ветки или последнего каталога `docs/ai/*/`.
 
 ---
 
@@ -30,18 +30,20 @@ description: >-
 
 - Из `$ARGUMENTS` напрямую (если это slug)
 - Из пути к task-файлу: `docs/ai/<slug>/<slug>-task.md`
-- Из текущей ветки или последнего `docs/ai/*/` каталога
+- Из текущей ветки или последнего каталога `docs/ai/*/`
 
 **2.** Определи путь к task-файлу: `docs/ai/<SLUG>/<SLUG>-task.md`
-Если файл не существует — передать `—` в sub-agent.
+Если файл не существует — передай `—` в sub-agent.
 
-**Переход:** SLUG определён → Фаза 2.
+**3.** Извлеки `TICKET_ID` из SLUG (по `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`).
+
+**Переход:** SLUG и TICKET_ID определены → Фаза 2.
 
 ---
 
 ### Фаза 2 — Analyze
 
-Запусти sub-agent через Agent tool. Промт — из `agents/review-analyzer.md`.
+Запусти sub-agent через Agent tool с промтом из `agents/review-analyzer.md`.
 
 Передай:
 
@@ -49,7 +51,7 @@ description: >-
 - Путь к task-файлу (или `—`)
 
 Sub-agent собирает git-данные, анализирует изменения по 7 измерениям
-и записывает `docs/ai/<SLUG>/<SLUG>-review.md`.
+и записывает отчёт в `docs/ai/<SLUG>/<SLUG>-review.md`.
 
 **Переход:** sub-agent вернул результат → Фаза 3.
 
@@ -57,18 +59,22 @@ Sub-agent собирает git-данные, анализирует измене
 
 ### Фаза 3 — Commit Artifact
 
-Автоматический коммит артефакта ревью.
+Закоммить артефакт ревью автоматически.
 
-**1.** Проверь: `docs/ai/` под `.gitignore`? Если да -- не коммитить, сообщить пользователю.
+**1.** Проверь: `docs/ai/` под `.gitignore`? Если да -- сообщи пользователю, не коммить.
 
-**2.** Если не под gitignore -- закоммитить артефакт по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`:
+**2.** Если не под gitignore -- закоммить артефакт по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`:
+
+Формат коммита: `TICKET docs(SLUG): add review report` (БЕЗ двоеточия после ticket).
 
 ```bash
 git add docs/ai/<SLUG>/<SLUG>-review.md
-git commit -m "<ticket> docs(<SLUG>): add review report"
+git commit -m "TICKET docs(SLUG): add review report"
 ```
 
-Коммитить только артефакт ревью, не смешивая с другими файлами.
+Пример: `R2-220 docs(R2-220-fix-doubled-stats): add review report`
+
+Коммить только артефакт ревью, не смешивай с другими файлами.
 
 ---
 
@@ -80,5 +86,6 @@ git commit -m "<ticket> docs(<SLUG>): add review report"
 
 ## Правила
 
-- Анализ выполняется sub-agent'ом, не оркестратором.
-- Язык отчёта — язык коммитов и task-файла.
+- Анализ выполняет sub-agent, не оркестратор.
+- Язык отчёта — язык task-файла.
+- Язык коммита — английский (по commit-convention).

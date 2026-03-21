@@ -4,7 +4,7 @@
 
 - inline mode для простой задачи
 - 3 tasks + validation
-- Design decisions из кода, не из головы
+- Design decisions на основе кода, не предположений
 - Minimal context per task
 
 ---
@@ -25,8 +25,8 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 - `src/models/User.ts:34-35` — поля resetToken/resetTokenExpiry уже в схеме
 - `src/services/email.ts:12` — метод send(to, subject, html)
 - `src/routes/auth.ts:28` — точка регистрации маршрутов
-- Пересечение: `src/routes/auth.ts` трогается в Task 1 и Task 2 (добавление маршрутов)
-  но это append-only (разные строки), конфликт маловероятен
+- Пересечение: `src/routes/auth.ts` изменяется в Task 1 и Task 2 (добавление маршрутов),
+  но append-only (разные строки) — конфликт маловероятен
 
 ---
 
@@ -66,7 +66,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 ### DD-2: Срок жизни токена
 
 **Решение:** 1 час. Константа `RESET_TOKEN_EXPIRY_MS = 3600000` в `src/config/index.ts`.
-**Обоснование:** Стандарт для чувствительных операций. В проекте нет конвенции для TTL.
+**Обоснование:** Стандарт для security-sensitive операций. Конвенции для TTL в проекте нет.
 **Альтернатива:** 24 часа — менее безопасно для password reset.
 
 ## Tasks
@@ -76,7 +76,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 - **Files:** `src/auth/forgot-password.ts` (create), `src/routes/auth.ts:28` (edit — добавить маршрут)
 - **Depends on:** none
 - **Scope:** M
-- **What:** Создать handler POST /auth/forgot-password. Принимает {email}, ищет user, генерирует token, записывает в User, отправляет email. Если email не найден — 200 (не раскрывать).
+- **What:** Создать handler POST /auth/forgot-password. Принимает {email}, ищет user, генерирует token, записывает в User, отправляет email. Email не найден — 200 (не раскрывать наличие аккаунта).
 - **Context:** `src/auth/login.ts:8-19` (паттерн handler+zod), `src/models/User.ts:34-35` (поля), `src/services/email.ts:12` (send), `src/config/index.ts` (APP_URL, EMAIL_FROM)
 - **Verify:** `npm test src/auth/__tests__/forgot-password.test.ts` — зелёный
 
@@ -94,7 +94,7 @@ docs/ai/112-password-reset-email/112-password-reset-email-task.md
 - **Files:** `src/auth/__tests__/forgot-password.test.ts` (create), `src/auth/__tests__/reset-password.test.ts` (create)
 - **Depends on:** Task 1, Task 2
 - **Scope:** M
-- **What:** Написать тесты по образцу `src/auth/__tests__/login.test.ts`. Покрыть: существующий email → 200 + token в БД, несуществующий → 200, валидный token → 200 + пароль обновлён, истёкший → 400, повторный → 400.
+- **What:** Написать тесты по образцу `src/auth/__tests__/login.test.ts`. Кейсы: существующий email → 200 + token в БД, несуществующий → 200, валидный token → 200 + пароль обновлён, истёкший → 400, повторный → 400.
 - **Context:** `src/auth/__tests__/login.test.ts` (образец), `src/auth/forgot-password.ts`, `src/auth/reset-password.ts`
 - **Verify:** `npm test src/auth/__tests__/` — все зелёные
 

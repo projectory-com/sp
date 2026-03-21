@@ -39,12 +39,12 @@ git log origin/main..HEAD --oneline
 
 - Статусы всех tasks (DONE / BLOCKED / SKIPPED)
 - Хэши и сообщения всех коммитов
-- Spec review результаты
-- Quality review результаты
-- Concerns (если были DONE_WITH_CONCERNS)
+- Результаты spec review
+- Результаты quality review
+- Concerns (при DONE_WITH_CONCERNS)
 - Blocked tasks (причины + impact)
-- Post-implementation статусы (polish, validate, document, format)
-- Validation result (каждая команда)
+- Статусы post-implementation (polish, validate, document, format)
+- Результаты validation (каждая команда)
 - Changes summary (файл, action, описание)
 
 ## Формат ответа

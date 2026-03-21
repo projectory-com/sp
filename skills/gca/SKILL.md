@@ -9,15 +9,15 @@ description: >-
   to commit artifacts.
 ---
 
-# Git Commit with Smart Staging
+# Git Commit с умной группировкой
 
-Orchestrator for git commits: detect context, classify files, group into atomic commits, format messages by convention.
+Оркестратор коммитов: определяет контекст, классифицирует файлы, группирует в атомарные коммиты, формирует сообщения.
 
 ---
 
-## Step 1 -- Collect Context
+## Шаг 1 — Сбор контекста
 
-Run in parallel:
+Выполни параллельно:
 
 ```bash
 git status --porcelain
@@ -35,100 +35,100 @@ git branch --show-current
 git ls-files --others --exclude-standard
 ```
 
-If no changes (no staged, unstaged, or untracked) -- inform user and stop.
+Если изменений нет — сообщи пользователю и останови.
 
 ---
 
-## Step 2 -- Detect Context
+## Шаг 2 — Определение контекста
 
-Determine whether running inside SP flow or standalone.
+Определи режим: SP flow или standalone.
 
-### SP flow detection
+### Обнаружение SP flow
 
-Check if `$ARGUMENTS` contains a path to `docs/ai/` or a slug. Check if `docs/ai/*/` directories exist with recent artifacts. If found:
+`$ARGUMENTS` содержит путь к `docs/ai/` или slug? В `docs/ai/*/` есть недавние артефакты? Если да:
 
 - `MODE = sp-flow`
-- `SLUG` = from path or directory name
-- `TICKET_ID` = extracted from slug per `reference/commit-convention.md`
+- `SLUG` = из пути или имени директории
+- `TICKET_ID` = извлечь из slug по `reference/commit-convention.md`
 
-### Standalone detection
+### Standalone режим
 
-If no SP flow context:
+Если SP flow не обнаружен:
 
 - `MODE = standalone`
-- `SLUG` = current branch name stripped of prefix (`feature/`, `fix/`, `hotfix/`, `bugfix/`, `release/`). If branch is `main`/`master`/`develop` -- omit slug.
+- `SLUG` = имя текущей ветки без префикса (`feature/`, `fix/`, `hotfix/`, `bugfix/`, `release/`). Если ветка `main`/`master`/`develop` — slug опустить.
 
 ---
 
-## Step 3 -- Determine Ticket ID
+## Шаг 3 — Определение Ticket ID
 
-Follow the cascade from `reference/commit-convention.md`:
+Примени каскад из `reference/commit-convention.md`:
 
-1. **From `$ARGUMENTS`** -- if user passed ticket ID or URL, extract it
-2. **From slug** (SP flow) -- extract from slug pattern
-3. **From branch name** (standalone) -- extract by regex patterns
-4. **Ask user** -- via AskUserQuestion with options: "No ticket" / "Enter number"
+1. **Из `$ARGUMENTS`** — пользователь передал ticket ID или URL
+2. **Из slug** (SP flow) — извлечь из паттерна slug
+3. **Из имени ветки** (standalone) — извлечь по regex-паттернам
+4. **Спросить пользователя** — через AskUserQuestion: «Без тикета» / «Ввести номер»
 
 ---
 
-## Step 4 -- Classify and Stage
+## Шаг 4 — Классификация и стейджинг
 
-### SP flow mode
+### Режим SP flow
 
-If called after a specific skill (task/plan/do/review), commit only the artifact of that stage. One commit per artifact:
+После скила task/plan/do/review коммить только артефакт этого этапа:
 
 ```
-[ticket] docs(<slug>): add task definition
-[ticket] docs(<slug>): add implementation plan
-[ticket] docs(<slug>): add execution report
-[ticket] docs(<slug>): add review report
+#86 docs(86-black-jack-page): add task definition
+#86 docs(86-black-jack-page): add implementation plan
+#86 docs(86-black-jack-page): add execution report
+#86 docs(86-black-jack-page): add review report
 ```
 
-### Standalone mode
+### Standalone режим
 
-Read `reference/staging-strategy.md` and apply:
+Прочитай `reference/staging-strategy.md` и примени:
 
-1. Collect all changed/new files
-2. Classify into groups (feature, test, docs, style, chore, sp-artifacts)
-3. Determine atomic commits per group
-4. Apply protections (skip .env, credentials, large binaries -- warn user)
-5. Show commit plan to user for confirmation via AskUserQuestion
-
----
-
-## Step 5 -- Format Commit Messages
-
-Read `reference/commit-convention.md`. For each planned commit:
-
-- Format: `[ticket] <type>(<slug>): <description>`
-- Language: ALWAYS English
-- Ticket ID first (if present)
-- Description: one sentence, imperative mood
+1. Собери все изменённые/новые файлы
+2. Классифицируй по группам (feature, test, docs, style, chore, sp-artifacts)
+3. Определи атомарные коммиты по группам
+4. Исключи .env, credentials, большие бинарники — предупреди пользователя об исключённых файлах
+5. Покажи план коммитов пользователю через AskUserQuestion
 
 ---
 
-## Step 6 -- Execute Commits
+## Шаг 5 — Формирование сообщений
 
-For each planned commit:
+Прочитай `reference/commit-convention.md`. Для каждого запланированного коммита:
 
-1. `git add` specific files by name (never `git add -A`)
-2. `git commit -m "<message>"` -- no Co-Authored-By, no trailers
-3. Show result: hash, message, file list
+- Формат: `TICKET type(SLUG): description` (БЕЗ двоеточия после ticket)
+- Язык: ВСЕГДА английский
+- Ticket ID первым (если есть)
+- Описание: одно предложение, imperative mood
 
 ---
 
-## Rules
+## Шаг 6 — Выполнение коммитов
 
-- All commits in English. No exceptions.
-- One commit per logical change.
-- Ticket ID always first in message (if present).
-- Stage files by name, not `git add -A`.
-- Do NOT commit secrets, credentials, large binaries.
-- Do NOT use `wip`, `temp`, `misc`.
-- Do NOT add Co-Authored-By, Signed-off-by, or any trailer lines.
-- Confirmation required before executing multiple commits in standalone mode.
+Для каждого запланированного коммита:
 
-## Reference Files
+1. `git add` конкретные файлы по именам (не `git add -A`)
+2. `git commit -m "<message>"` — без Co-Authored-By, без trailers
+3. Покажи результат: хэш, сообщение, список файлов
 
-- **`reference/commit-convention.md`** -- commit message format, ticket ID extraction, type table, slug logic
-- **`reference/staging-strategy.md`** -- file classification, grouping algorithm, commit ordering (standalone mode only)
+---
+
+## Правила
+
+- Коммиты на английском. Без исключений.
+- Один коммит — одно логическое изменение.
+- Ticket ID первым в сообщении (если есть).
+- Стейджи файлы по именам, не `git add -A`.
+- Исключи секреты, credentials, большие бинарники.
+- Избегай `wip`, `temp`, `misc`.
+- Исключи Co-Authored-By, Signed-off-by и любые trailer lines.
+- В standalone режиме запроси подтверждение перед выполнением нескольких коммитов.
+
+## Справочные файлы
+
+- **`reference/commit-convention.md`** — формат сообщений, извлечение ticket ID, таблица типов, логика slug
+- **`reference/staging-strategy.md`** — классификация файлов, алгоритм группировки, порядок коммитов (только standalone режим)

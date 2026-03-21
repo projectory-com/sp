@@ -1,99 +1,113 @@
 # Commit Convention
 
-Unified commit format for all SP skills and standalone use.
+Формат коммитов для скиллов SP и standalone-вызовов.
 
 ---
 
-## Format
+## Формат
 
 ```
-[ticket] <type>(<slug>): <description>
+TICKET type(SLUG): description
 ```
 
-- **Language**: ALWAYS English. No exceptions. Even if the user writes in another language, even if code contains comments in another language.
-- **ticket**: placed first. Determined by cascade (see Ticket ID section). Omit if absent.
-- **type**: determined by the nature of changes (see Type table).
-- **slug**: determined by context (see Slug section).
-- **description**: one sentence, imperative mood, English. Describes what was done, not how.
+Пример: `#86 feat(86-black-jack-page): add game page`
+
+- **Язык**: ВСЕГДА английский. Без исключений.
+- **TICKET**: первым в сообщении, через пробел (БЕЗ двоеточия после ticket). Определяется каскадом (см. секцию Ticket ID). Без тикета — опустить вместе с пробелом.
+- **type**: определяется характером изменений (см. таблицу типов).
+- **SLUG**: в скобках после type. Определяется контекстом (см. секцию Slug). Без slug — опустить скобки: `type: description`.
+- **description**: одно предложение, imperative mood. Описывает что сделано, а не как.
+
+### Антипаттерны
+
+```
+# НЕПРАВИЛЬНО:
+R2-220: fix: restrict analytics          # двоеточие после ticket, нет slug
+R2-220: fix(slug): restrict analytics    # двоеточие после ticket
+fix: restrict analytics [R2-220]         # ticket в конце
+
+# ПРАВИЛЬНО:
+R2-220 fix(R2-220-fix-doubled-stats): restrict analytics
+```
 
 ---
 
 ## Ticket ID
 
-Cascade of priorities:
+Каскад приоритетов:
 
-### From arguments
+### Из аргументов
 
-User may pass ticket ID or URL directly.
+Пользователь передаёт ticket ID или URL.
 
-| Input                                     | Ticket ID  |
-| ----------------------------------------- | ---------- |
-| `86` or `#86`                             | `#86`      |
-| `R2-50`                                   | `R2-50`    |
-| `PROJ-123`                                | `PROJ-123` |
-| `https://github.com/.../issues/86`        | `#86`      |
-| URL YouTrack containing `/issue/PROJ-123` | `PROJ-123` |
+| Вход                               | Ticket ID  |
+| ---------------------------------- | ---------- |
+| `86` или `#86`                     | `#86`      |
+| `R2-50`                            | `R2-50`    |
+| `PROJ-123`                         | `PROJ-123` |
+| `https://github.com/.../issues/86` | `#86`      |
+| URL YouTrack с `/issue/PROJ-123`   | `PROJ-123` |
 
-### From branch name
+### Из имени ветки
 
-| Branch name             | Regex          | Ticket ID  |
+| Имя ветки               | Regex          | Ticket ID  |
 | ----------------------- | -------------- | ---------- |
 | `86-feature-name`       | `^(\d+)-`      | `#86`      |
 | `feature/86-name`       | `\/(\d+)-`     | `#86`      |
 | `R2-50-feature`         | `(R\d+-\d+)`   | `R2-50`    |
 | `fix/R2-50-name`        | `(R\d+-\d+)`   | `R2-50`    |
 | `PROJ-123-feature`      | `([A-Z]+-\d+)` | `PROJ-123` |
-| `main`, `develop`, etc. | --             | not found  |
+| `main`, `develop`, etc. | --             | не найден  |
 
-### From SP flow
+### Из SP flow
 
-If executing within SP flow (`/task` -> `/plan` -> `/do` -> `/review`), extract ticket ID from slug:
+Внутри SP flow (`/task` -> `/plan` -> `/do` -> `/review`) ticket ID извлекается из slug:
 
-| Slug pattern                               | Ticket ID | Example |
-| ------------------------------------------ | --------- | ------- |
-| Starts with number: `86-black-jack-page`   | `#86`     | `#86`   |
-| Starts with `R\d+-\d+`: `R2-50-user-id-db` | `R2-50`   | `R2-50` |
-| No ID: `fix-navbar-overflow`               | none      | omit    |
+| Паттерн slug                                | Ticket ID | Пример   |
+| ------------------------------------------- | --------- | -------- |
+| Начинается с числа: `86-black-jack-page`    | `#86`     | `#86`    |
+| Начинается с `R\d+-\d+`: `R2-50-user-id-db` | `R2-50`   | `R2-50`  |
+| Без ID: `fix-navbar-overflow`               | нет       | опустить |
 
-### Ask user
+### Спросить пользователя
 
-If ticket not found by any method, ask via AskUserQuestion:
+Если каскад не определил ticket — спроси через AskUserQuestion:
 
-- **No ticket** -- commit without ticket
-- **Enter number** -- user provides ticket ID
+- **Без тикета** — коммит без привязки
+- **Ввести номер** — пользователь указывает ticket ID
 
 ---
 
-## Type
+## Типы
 
-| Type       | When                                     |
-| ---------- | ---------------------------------------- |
-| `feat`     | New functionality                        |
-| `fix`      | Bug fix                                  |
-| `refactor` | Refactoring without behavior change      |
-| `docs`     | Documentation only                       |
-| `test`     | Tests only                               |
-| `chore`    | Build, CI, dependencies, configs         |
-| `style`    | Formatting only (prettier/eslint result) |
-| `perf`     | Performance optimization                 |
+| Тип        | Когда                                             |
+| ---------- | ------------------------------------------------- |
+| `feat`     | Новая функциональность                            |
+| `fix`      | Исправление бага                                  |
+| `refactor` | Рефакторинг без изменения поведения               |
+| `docs`     | Только документация                               |
+| `test`     | Только тесты                                      |
+| `chore`    | Сборка, CI, зависимости, конфиги                  |
+| `style`    | Только форматирование (результат prettier/eslint) |
+| `perf`     | Оптимизация производительности                    |
 
 ---
 
 ## Slug
 
-Determined by context:
+Определяется контекстом:
 
-### Inside SP flow
+### Внутри SP flow
 
-Slug = value formed during `/task` creation (e.g. `86-black-jack-page` from `docs/ai/86-black-jack-page/`). Detect by presence of active task/plan file in `docs/ai/` or by passed path.
+Slug = имя директории задачи (например `86-black-jack-page` из `docs/ai/86-black-jack-page/`). Источник: активный task/plan файл в `docs/ai/` или переданный путь.
 
-### Outside SP flow (standalone /gca)
+### Вне SP flow (standalone /gca)
 
-Slug = current branch name stripped of prefix (`feature/`, `fix/`, `hotfix/`, `bugfix/`, `release/`). If branch is `main`, `master`, or `develop` -- omit slug.
+Slug = имя текущей ветки без префикса (`feature/`, `fix/`, `hotfix/`, `bugfix/`, `release/`). Если ветка `main`, `master` или `develop` — slug опусти.
 
 ---
 
-## Examples
+## Примеры
 
 ```
 #86 feat(86-black-jack-page): add game page with basic layout
@@ -106,40 +120,40 @@ style: apply prettier formatting
 
 ---
 
-## SP Artifact Types
+## Типы для артефактов SP
 
-Special commit types for SP flow artifacts:
+Коммиты артефактов SP flow (формат `TICKET docs(SLUG): description`):
 
 ```
-docs(<slug>): add task definition           # after /task
-docs(<slug>): add implementation plan       # after /plan
-docs(<slug>): add execution report          # after /do
-docs(<slug>): add review report             # after /review
+#86 docs(86-black-jack-page): add task definition           # после /task
+#86 docs(86-black-jack-page): add implementation plan       # после /plan
+#86 docs(86-black-jack-page): add execution report          # после /do
+#86 docs(86-black-jack-page): add review report             # после /review
 ```
 
 ---
 
-## Pipeline Stage Types (for /do)
+## Типы по этапам pipeline (/do)
 
-| Stage          | Type       | Example                                                 |
-| -------------- | ---------- | ------------------------------------------------------- |
-| Task: feature  | `feat`     | `#86 feat(86-black-jack-page): add SSE endpoint`        |
-| Task: tests    | `test`     | `R2-50 test(R2-50-user-id-db): add unit tests`          |
-| Task: validate | `chore`    | `#86 chore(86-black-jack-page): add validation`         |
-| Polish         | `refactor` | `#86 refactor(86-black-jack-page): simplify components` |
-| Validate fix   | `fix`      | `#86 fix(86-black-jack-page): fix lint errors`          |
-| Documentation  | `docs`     | `#86 docs(86-black-jack-page): update docs`             |
-| Format         | `chore`    | `#86 chore(86-black-jack-page): format code`            |
+| Этап                      | Тип        | Пример                                                  |
+| ------------------------- | ---------- | ------------------------------------------------------- |
+| Task: реализация фичи     | `feat`     | `#86 feat(86-black-jack-page): add SSE endpoint`        |
+| Task: тесты               | `test`     | `R2-50 test(R2-50-user-id-db): add unit tests`          |
+| Task: validation из плана | `chore`    | `#86 chore(86-black-jack-page): add validation`         |
+| Polish                    | `refactor` | `#86 refactor(86-black-jack-page): simplify components` |
+| Validate fix              | `fix`      | `#86 fix(86-black-jack-page): fix lint errors`          |
+| Documentation             | `docs`     | `#86 docs(86-black-jack-page): update docs`             |
+| Format                    | `chore`    | `#86 chore(86-black-jack-page): format code`            |
 
 ---
 
-## Rules
+## Правила
 
-- One commit per logical change. Do not combine unrelated changes.
-- Ticket ID always first in message (if present).
-- Do NOT use `wip`, `temp`, `misc`.
-- Do NOT commit secrets and credentials.
-- Do NOT add `Co-Authored-By`, `Signed-off-by`, or any trailer lines.
-- Commit message: concise, specific, imperative mood, English.
-- If task contains both implementation and tests -- use `feat` (tests go with feature).
-- If task is tests only -- use `test`.
+- Один коммит — одно логическое изменение.
+- Ticket ID первым в сообщении (если есть).
+- Избегай `wip`, `temp`, `misc`.
+- Исключи секреты и credentials.
+- Исключи `Co-Authored-By`, `Signed-off-by` и любые trailer lines.
+- Сообщение коммита: краткое, конкретное, imperative mood, на английском.
+- Task с реализацией и тестами — тип `feat` (тесты идут вместе с фичей).
+- Task только с тестами — тип `test`.
