@@ -132,8 +132,19 @@ PR: <PR_TITLE> (<PR_URL>)
 PR не найден.
 ```
 
-> Примечание: `/sp:pr` — отдельный скилл (issue #30). До его реализации
-> завершай без AskUserQuestion о создании PR.
+AskUserQuestion — что дальше:
+
+Если `PR_EXISTS = true`:
+
+- **Обновить PR через /sp:pr (Recommended)** — `<PR_TITLE>` (`<PR_URL>`)
+- **Завершить** → выйди
+
+Если `PR_EXISTS = false`:
+
+- **Создать PR через /sp:pr (Recommended)**
+- **Завершить** → выйди
+
+Обработка: `/sp:pr` → вызвать Skill tool с `/sp:pr`. Завершить → выйди.
 
 ---
 
