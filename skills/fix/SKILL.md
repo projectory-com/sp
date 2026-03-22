@@ -160,7 +160,7 @@ COMPLEXITY: trivial | simple | escalate
 
 Opus на code-фазах снижает ошибки на входе, validator ловит regression — review loop избыточен.
 
-Гарантируй коммит: проверь `git status`. Незакоммиченные изменения → закоммить по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
+Task-executor коммитит по COMMIT_MESSAGE из промта. Если его статус DONE — коммит гарантирован.
 
 Переход → Фаза 5.
 

@@ -68,9 +68,16 @@ mkdir -p "docs/ai/{{SLUG}}"
 
 ### 5. Коммит
 
+Если TICKET_ID = `none` → коммит без ticket prefix.
+
 ```bash
 git add "docs/ai/{{SLUG}}/{{SLUG}}-fixes.md"
+
+# С ticket:
 git commit -m "{{TICKET_ID}} docs({{SLUG}}): add fix-{{FIX_NUMBER}}"
+
+# Без ticket (TICKET_ID = none):
+git commit -m "docs({{SLUG}}): add fix-{{FIX_NUMBER}}"
 ```
 
 ## Формат ответа

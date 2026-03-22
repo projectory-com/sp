@@ -16,9 +16,29 @@ color: cyan
 
 Все команды read-only. Выполняй по порядку.
 
-### Шаг 1 — Mode и slug
+### Шаг 1 — Ветка
 
-Проверь наличие свежих артефактов sp flow:
+```bash
+BRANCH=$(git branch --show-current)
+if [ -z "$BRANCH" ]; then
+  BRANCH="DETACHED"
+fi
+```
+
+Определи default branch каскадом (аналогично `gp/agents/git-pre-checker.md`):
+
+```bash
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+if [ -z "$DEFAULT_BRANCH" ]; then
+  git rev-parse --verify origin/main >/dev/null 2>&1 && DEFAULT_BRANCH="main" || DEFAULT_BRANCH="master"
+fi
+```
+
+Сравни BRANCH с DEFAULT_BRANCH → `IS_DEFAULT_BRANCH: true | false`.
+
+### Шаг 2 — Mode и slug
+
+Проверь наличие артефактов sp flow:
 
 ```bash
 # Последний каталог в docs/ai/
@@ -29,7 +49,6 @@ if [ -n "$LATEST_DIR" ]; then
   SLUG_SOURCE="docs_ai"
 else
   # Из имени ветки
-  BRANCH=$(git branch --show-current)
   SLUG=$(echo "$BRANCH" | sed -E 's@^(feature|fix|hotfix|bugfix|release)/@@')
   MODE="standalone"
   SLUG_SOURCE="branch"
@@ -41,7 +60,7 @@ fi
 - `SLUG: UNKNOWN`
 - `SLUG_SOURCE: none`
 
-### Шаг 2 — Ticket ID
+### Шаг 3 — Ticket ID
 
 Извлеки из slug по каскаду:
 
@@ -50,7 +69,7 @@ fi
 - `PROJ-123-feature` → `PROJ-123` (regex: `([A-Z]+-\d+)`)
 - Иначе → `none`
 
-### Шаг 3 — Fix number и fix-log
+### Шаг 4 — Fix number и fix-log
 
 ```bash
 FIX_LOG="docs/ai/$SLUG/$SLUG-fixes.md"
@@ -67,7 +86,7 @@ else
 fi
 ```
 
-### Шаг 4 — Пути артефактов
+### Шаг 5 — Пути артефактов
 
 ```bash
 TASK_FILE="docs/ai/$SLUG/$SLUG-task.md"
@@ -87,6 +106,9 @@ REPORT_FILE="docs/ai/$SLUG/$SLUG-report.md"
 Верни данные строго в этом формате:
 
 ```
+BRANCH: <имя ветки | DETACHED>
+IS_DEFAULT_BRANCH: <true | false>
+
 MODE: <post-flow | standalone>
 SLUG: <значение | UNKNOWN>
 SLUG_SOURCE: <docs_ai | branch | none>
