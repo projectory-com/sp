@@ -63,11 +63,12 @@ claude --plugin-dir .
 - `/gp` — git push с проверками и отчётом
 - `/pr` — создание и обновление GitHub Pull Request
 - `/gst` — статус разработки: ветка, изменения, diff, горячие файлы
+- `/fix` — быстрый фикс или доработка (1-3 файла, opus на code-фазах)
 - `/hi` — приветствие и объяснение доступных скиллов
 
 ## Planned skills
 
-`/polish` `/qa` `/fix` `/memorize` `/merge`
+`/polish` `/qa` `/memorize` `/merge`
 
 ## Reference docs
 
