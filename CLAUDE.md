@@ -15,6 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 skills/                # скиллы — auto-discovered по SKILL.md в поддиректориях
 commands/              # slash-команды — auto-discovered по .md файлам
 docs/                  # справочная документация по plugin system
+packages/annotator/    # TypeScript-пакет annotator (CLI + библиотека)
 _skills/               # черновики — НЕ часть плагина, не трогать
 ```
 
@@ -65,6 +66,7 @@ claude --plugin-dir .
 - `/gst` — статус разработки: ветка, изменения, diff, горячие файлы
 - `/fix` — быстрый фикс или доработка (1-3 файла, opus на code-фазах)
 - `/hi` — приветствие и объяснение доступных скиллов
+- `/review-artifact` — интерактивное ревью task/plan артефактов с аннотациями
 
 ## Planned skills
 

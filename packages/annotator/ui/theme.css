@@ -1,0 +1,117 @@
+/* Plannotator Theme System — imports all themes, provides Tailwind bridge + base styles */
+
+/* Theme files — each defines .theme-{name} (dark) and .theme-{name}.light */
+@import "./themes/plannotator.css";
+@import "./themes/claude-plus.css";
+@import "./themes/soft-pop.css";
+@import "./themes/adwaita.css";
+@import "./themes/caffeine.css";
+@import "./themes/synthwave-84.css";
+@import "./themes/catppuccin.css";
+@import "./themes/rose-pine.css";
+@import "./themes/monokai-pro.css";
+@import "./themes/doom-64.css";
+@import "./themes/dracula.css";
+@import "./themes/gruvbox.css";
+@import "./themes/paulmillr.css";
+@import "./themes/quantum-rose.css";
+@import "./themes/solar-dusk.css";
+@import "./themes/terminal.css";
+@import "./themes/tokyo-night.css";
+@import "./themes/tinacious.css";
+
+/* Tailwind bridge — maps CSS vars to utility classes */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Base styles — apply regardless of theme */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "ss01", "ss02", "cv01";
+}
+
+/* Subtle grid background */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, oklch(0.32 0.02 260 / 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.32 0.02 260 / 0.5) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.light .bg-grid {
+  background-image:
+    linear-gradient(to right, oklch(0.90 0.01 260 / 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.90 0.01 260 / 0.6) 1px, transparent 1px);
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 20px oklch(from var(--primary) l c h / 0.15), 0 0 40px oklch(from var(--primary) l c h / 0.05);
+}
+
+.glow-sm {
+  box-shadow: 0 0 10px oklch(from var(--primary) l c h / 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+
+/* Selection */
+::selection {
+  background: oklch(from var(--primary) l c h / 0.3);
+}
+
+/* Smooth transitions for theme switching and hover states.
+   Only color properties — transform/opacity are handled per-component
+   to avoid interfering with scroll compositing. */
+* {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Focus states */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

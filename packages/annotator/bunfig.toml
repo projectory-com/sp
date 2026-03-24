@@ -1,0 +1,5 @@
+[install]
+peer = false
+
+[install.scopes]
+"@plannotator" = { url = "https://registry.npmjs.org/" }

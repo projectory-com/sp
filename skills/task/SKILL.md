@@ -267,13 +267,13 @@ git commit -m "TICKET docs(SLUG): add task definition"
 Через AskUserQuestion предложи 3 варианта:
 
 1. **Запустить /sp:plan (Recommended)** — автоматический переход к планированию
-2. **Ревью через plannotator** — интерактивная проверка task-файла
+2. **Ревью через review-artifact** — интерактивная проверка task-файла
 3. **Завершить** — выход
 
 **Обработка выбора:**
 
 - **Запустить /sp:plan:** вызови Skill tool с `/sp:plan` и аргументом `docs/ai/<task-slug>/<task-slug>-task.md`. Выход.
-- **Ревью через plannotator:** вызови Skill tool с `/plannotator-annotate` и путём к task-файлу. Примени полученные аннотации, перезапиши файл. Вернись к началу цикла.
+- **Ревью через review-artifact:** вызови Skill tool с `/sp:review-artifact` и путём к task-файлу. Примени полученные аннотации, перезапиши файл. Вернись к началу цикла.
 - **Завершить:** сообщи путь к файлу. Выход.
 
 ---

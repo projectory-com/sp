@@ -1,0 +1,494 @@
+@import "tailwindcss";
+
+/* Tell Tailwind where to scan for classes */
+@source "../ui/components/**/*.tsx";
+@source "../ui/hooks/**/*.ts";
+@source "./*.tsx";
+@source "./components/**/*.tsx";
+
+@import "../ui/theme.css";
+
+/* =====================================================
+   Code Review Specific Styles
+   ===================================================== */
+
+/* Shared panel header height — keeps file header, sidebar headers, and
+   search bar vertically aligned across all three columns. */
+:root {
+  --panel-header-h: 37px;
+}
+
+/* @pierre/diffs theme integration — pass plannotator theme colors into shadow DOM */
+diffs-container {
+  --diffs-dark-bg: var(--background);
+  --diffs-light-bg: var(--background);
+  --diffs-dark: var(--foreground);
+  --diffs-light: var(--foreground);
+}
+
+/* Diff line backgrounds - synchronized with plannotator colors */
+.diff-line-addition {
+  background: oklch(from var(--success) l c h / 0.12);
+}
+
+.diff-line-deletion {
+  background: oklch(from var(--destructive) l c h / 0.12);
+}
+
+.light .diff-line-addition {
+  background: oklch(from var(--success) l c h / 0.15);
+}
+
+.light .diff-line-deletion {
+  background: oklch(from var(--destructive) l c h / 0.15);
+}
+
+/* Review comment thread styling */
+.review-comment {
+  position: relative;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  padding-left: 1rem;
+  font-size: 0.8125rem;
+  margin: 0.75rem 0;
+  margin-left: -0.5rem;
+  box-shadow:
+    0 4px 12px -2px rgba(0, 0, 0, 0.15),
+    0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.review-comment:hover {
+  transform: translateX(2px);
+  box-shadow:
+    0 6px 16px -2px rgba(0, 0, 0, 0.2),
+    0 3px 6px -1px rgba(0, 0, 0, 0.12);
+}
+
+/* Color-coded left border by type */
+.review-comment.comment {
+  border-left-color: var(--primary);
+}
+
+.review-comment.suggestion {
+  border-left-color: var(--success);
+}
+
+.review-comment.concern {
+  border-left-color: var(--warning);
+}
+
+.review-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+}
+
+.review-comment-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.125rem;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+
+.review-comment:hover .review-comment-actions {
+  opacity: 1;
+}
+
+.review-comment-action {
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  color: var(--muted-foreground);
+  transition: color 150ms, background 150ms;
+}
+
+.review-comment-action:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.review-comment-action.destructive:hover {
+  color: var(--destructive);
+  background: oklch(from var(--destructive) l c h / 0.1);
+}
+
+.review-comment-body {
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+/* Inline markdown in review comments */
+.review-comment-body .inline-code,
+.review-comment-markdown .inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--muted);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}
+
+.review-comment-body .inline-code-block,
+.review-comment-markdown .inline-code-block {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  margin: 0.375rem 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.review-comment-body .inline-code-block code,
+.review-comment-markdown .inline-code-block code {
+  font-family: var(--font-mono);
+}
+
+.light .review-comment-body .inline-code-block,
+.light .review-comment-markdown .inline-code-block {
+  background: var(--code-bg);
+}
+
+/* Line selection highlight */
+.line-selected {
+  background: oklch(from var(--primary) l c h / 0.3) !important;
+}
+
+/* Hover utility button (GitHub-style +) */
+.hover-add-comment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+
+.hover-add-comment:hover {
+  opacity: 1;
+  background: oklch(0.70 0.20 280);
+}
+
+/* File tree styling */
+.file-tree-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+
+.file-tree-item:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.file-tree-item.active {
+  background: oklch(from var(--primary) l c h / 0.3);
+  color: var(--primary);
+}
+
+.file-tree-item.has-annotations {
+  background: var(--primary) / 0.08;
+}
+
+.file-tree-item.has-annotations:hover {
+  background: var(--muted);
+}
+
+.file-tree-item.active.has-annotations {
+  background: oklch(from var(--primary) l c h / 0.3);
+}
+
+.file-tree-item .additions {
+  color: var(--success);
+}
+
+.file-tree-item .deletions {
+  color: var(--destructive);
+}
+
+.file-tree-item.active .additions {
+  color: var(--success);
+}
+
+.file-tree-item.active .deletions {
+  color: var(--destructive);
+}
+
+.file-tree-item.staged {
+  background: oklch(from var(--success) l c h / 0.1);
+}
+
+.file-tree-item.staged:hover {
+  background: var(--muted);
+}
+
+.file-tree-item.staged.active {
+  background: oklch(from var(--primary) l c h / 0.3);
+}
+
+/* Annotation toolbar for code review */
+.review-toolbar {
+  position: absolute;
+  z-index: 100;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+}
+
+.review-toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground);
+  background: transparent;
+  cursor: pointer;
+}
+
+.review-toolbar-btn:hover {
+  background: var(--muted);
+}
+
+.review-toolbar-btn.primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.review-toolbar-btn.primary:hover {
+  background: oklch(0.70 0.20 280);
+}
+
+/* Export modal code blocks */
+.export-code-block {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: var(--muted);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Suggested code input - code editor style */
+.suggested-code-input {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.625rem 0.75rem;
+  resize: vertical;
+  tab-size: 2;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+}
+
+.suggested-code-input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 0.5;
+}
+
+.suggested-code-input:focus {
+  outline: none;
+  border-color: var(--success);
+  box-shadow: 0 0 0 1px oklch(from var(--success) l c h / 0.3);
+}
+
+.light .suggested-code-input {
+  background: var(--code-bg);
+}
+
+/* GitHub-style suggestion block */
+.suggestion-block {
+  border: 1px solid oklch(from var(--success) l c h / 0.3);
+  border-left: 3px solid var(--success);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.suggestion-block-header {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--success);
+  background: oklch(from var(--success) l c h / 0.08);
+  border-bottom: 1px solid oklch(from var(--success) l c h / 0.15);
+}
+
+.suggestion-block-code {
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  background: var(--code-bg);
+  padding: 0.5rem 0.75rem;
+  overflow-x: auto;
+}
+
+.suggestion-block-code code {
+  font-family: var(--font-mono);
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.suggestion-block.compact .suggestion-block-code {
+  max-height: 3rem;
+  overflow: hidden;
+}
+
+.light .suggestion-block-code {
+  background: var(--code-bg);
+}
+
+.light .suggestion-block {
+  border-color: oklch(from var(--success) l c h / 0.3);
+  border-left-color: var(--success);
+}
+
+.light .suggestion-block-header {
+  background: oklch(from var(--success) l c h / 0.06);
+  border-bottom-color: oklch(from var(--success) l c h / 0.12);
+}
+
+/* Suggestion modal original code pane */
+.suggestion-modal-original {
+  font-family: var(--font-mono);
+  background: var(--code-bg);
+}
+
+.suggestion-modal-original code {
+  font-family: var(--font-mono);
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.light .suggestion-modal-original {
+  background: var(--code-bg);
+}
+
+/* Suggestion diff (original vs suggested) */
+.suggestion-diff {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+.suggestion-diff-inner {
+  width: fit-content;
+  min-width: 100%;
+}
+
+.suggestion-diff-line {
+  display: flex;
+  padding: 0 0.625rem;
+  min-height: 1.25rem;
+}
+
+.suggestion-diff-line.removed {
+  background: oklch(from var(--destructive) l c h / 0.15);
+}
+
+.suggestion-diff-line.added {
+  background: oklch(from var(--success) l c h / 0.15);
+}
+
+.suggestion-diff-indicator {
+  flex-shrink: 0;
+  width: 1rem;
+  text-align: center;
+  user-select: none;
+}
+
+.suggestion-diff-line.removed .suggestion-diff-indicator {
+  color: var(--destructive);
+}
+
+.suggestion-diff-line.added .suggestion-diff-indicator {
+  color: var(--success);
+}
+
+.suggestion-diff-content {
+  white-space: pre;
+}
+
+.light .suggestion-diff-line.removed {
+  background: oklch(from var(--destructive) l c h / 0.1);
+}
+
+.light .suggestion-diff-line.added {
+  background: oklch(from var(--success) l c h / 0.1);
+}
+
+/* Search result highlight in sidebar */
+.search-match-highlight {
+  background: oklch(from var(--warning) l c h / 0.25);
+  color: var(--foreground);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.light .search-match-highlight {
+  background: oklch(from var(--warning) l c h / 0.3);
+}
+
+/* Toast animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-from-bottom-2 {
+  from { transform: translateY(0.5rem) translateX(-50%); }
+  to { transform: translateY(0) translateX(-50%); }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.slide-in-from-bottom-2 {
+  animation-name: slide-in-from-bottom-2;
+}

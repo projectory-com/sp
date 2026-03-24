@@ -1,0 +1,39 @@
+{
+  "name": "@sp/annotator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive plan annotation and review UI for sp plugin",
+  "license": "MIT OR Apache-2.0",
+  "scripts": {
+    "build:review": "cd apps/review-app && vite build",
+    "build:plan": "cd apps/plan-editor && vite build && cp ../review-app/dist/index.html dist/review.html",
+    "build:cli": "bun build --compile src/cli.ts --outfile bin/sp-annotator",
+    "build": "bun run build:review && bun run build:plan && bun run build:cli",
+    "dev:plan": "cd apps/plan-editor && vite",
+    "dev:review": "cd apps/review-app && vite"
+  },
+  "dependencies": {
+    "@pierre/diffs": "^1.1.0-beta.19",
+    "@plannotator/web-highlighter": "^0.8.1",
+    "@viz-js/viz": "^3.25.0",
+    "diff": "^8.0.3",
+    "dompurify": "^3.3.3",
+    "highlight.js": "^11.11.1",
+    "mermaid": "^11.13.0",
+    "perfect-freehand": "^1.2.3",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "unique-username-generator": "^1.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0",
+    "vite-plugin-singlefile": "^2.0.3",
+    "tailwindcss": "^4.1.18",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^22.14.0",
+    "@types/dompurify": "^3.2.0"
+  }
+}

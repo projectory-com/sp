@@ -1,2 +1,8 @@
 docs/ai
 node_modules/
+
+# packages/annotator build artifacts
+packages/annotator/node_modules/
+packages/annotator/bin/
+packages/annotator/dist/
+packages/annotator/apps/*/dist/
