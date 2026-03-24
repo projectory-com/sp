@@ -25,9 +25,12 @@ done
 # --- Project directory ---
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 
+# --- jq is required (hooks/notify.sh also requires it) ---
+command -v jq >/dev/null 2>&1 || exit 0
+
 # --- Auto-detect project_name ---
 PROJECT_NAME=""
-if command -v jq >/dev/null 2>&1 && [ -f "$PROJECT_DIR/package.json" ]; then
+if [ -f "$PROJECT_DIR/package.json" ]; then
   PROJECT_NAME=$(jq -r '.name // empty' "$PROJECT_DIR/package.json" 2>/dev/null) || true
 fi
 if [ -z "$PROJECT_NAME" ]; then
@@ -46,35 +49,19 @@ TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null) || true
 # --- Ensure output directory ---
 mkdir -p "$PROJECT_DIR/.sp" || exit 0
 
-# --- Build JSON ---
-# Use jq if available, otherwise construct manually
-if command -v jq >/dev/null 2>&1; then
-  JSON=$(jq -n \
-    --arg type "$TYPE" \
-    --arg skill "$SKILL" \
-    --arg phase "$PHASE" \
-    --arg slug "$SLUG" \
-    --arg title "$TITLE" \
-    --arg body "$BODY" \
-    --arg project_name "$PROJECT_NAME" \
-    --arg tmux_session "$TMUX_SESSION" \
-    --arg timestamp "$TIMESTAMP" \
-    '{type:$type,skill:$skill,phase:$phase,slug:$slug,title:$title,body:$body,project_name:$project_name,tmux_session:$tmux_session,timestamp:$timestamp}' \
-  ) || exit 0
-else
-  # Manual JSON construction — escape backslashes, quotes, newlines, tabs
-  _esc() {
-    printf '%s' "$1" | sed \
-      -e 's/\\/\\\\/g' \
-      -e 's/"/\\"/g' \
-      -e 's/	/\\t/g' \
-      -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g'
-  }
-  JSON=$(printf '{"type":"%s","skill":"%s","phase":"%s","slug":"%s","title":"%s","body":"%s","project_name":"%s","tmux_session":"%s","timestamp":"%s"}' \
-    "$(_esc "$TYPE")" "$(_esc "$SKILL")" "$(_esc "$PHASE")" "$(_esc "$SLUG")" \
-    "$(_esc "$TITLE")" "$(_esc "$BODY")" "$(_esc "$PROJECT_NAME")" \
-    "$(_esc "$TMUX_SESSION")" "$(_esc "$TIMESTAMP")") || exit 0
-fi
+# --- Build JSON via jq ---
+JSON=$(jq -n \
+  --arg type "$TYPE" \
+  --arg skill "$SKILL" \
+  --arg phase "$PHASE" \
+  --arg slug "$SLUG" \
+  --arg title "$TITLE" \
+  --arg body "$BODY" \
+  --arg project_name "$PROJECT_NAME" \
+  --arg tmux_session "$TMUX_SESSION" \
+  --arg timestamp "$TIMESTAMP" \
+  '{type:$type,skill:$skill,phase:$phase,slug:$slug,title:$title,body:$body,project_name:$project_name,tmux_session:$tmux_session,timestamp:$timestamp}' \
+) || exit 0
 
 # --- Atomic write via tmp + mv ---
 TMP=$(mktemp "$PROJECT_DIR/.sp/notify-pending.XXXXXX") || exit 0
