@@ -150,6 +150,9 @@ description: >-
 **Интерактивные уточнения:**
 
 Сформируй 3-7 уточняющих вопросов по правилам synthesize-guide.md.
+Перед первым вызовом AskUserQuestion — отправь нотификацию:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type ACTION_REQUIRED --skill task --phase Synthesize --slug "$TASK_SLUG" --title "Уточняющие вопросы" --body "<краткий список тем вопросов>"`
+
 Задай пользователю через AskUserQuestion порциями по 1-4 вопроса.
 
 Для каждого вопроса:
@@ -261,6 +264,9 @@ git commit -m "TICKET docs(SLUG): add task definition"
 ### Фаза 6 — Complete
 
 Сообщи путь к файлу и task-slug, запусти цикл завершения.
+
+Отправь нотификацию:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill task --phase Complete --slug "$TASK_SLUG" --title "Task готов" --body "docs/ai/$TASK_SLUG/$TASK_SLUG-task.md"`
 
 **Цикл:**
 

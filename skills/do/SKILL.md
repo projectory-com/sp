@@ -141,6 +141,9 @@ description: >-
 
 **При BLOCKED:** пропускай только tasks, зависящие от заблокированного. Остальные выполняй.
 
+При BLOCKED — отправь нотификацию:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type ALERT --skill do --phase Execute --slug "$SLUG" --title "Task заблокирован" --body "<причина блокировки и количество skipped>"`
+
 Сохрани список изменённых/созданных файлов — потребуется в Фазах 3-5.
 
 **Переход:** tasks выполнены (или BLOCKED) → Фаза 3
@@ -265,6 +268,9 @@ git commit -m "TICKET docs(SLUG): add execution report"
 
 Выведи краткий итог: `<SLUG> done (N/M tasks)` или `<SLUG> done with issues (N/M tasks, K blocked)`.
 Путь к report-файлу.
+
+Отправь нотификацию:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill do --phase Complete --slug "$SLUG" --title "<SLUG> done (N/M tasks)" --body "docs/ai/$SLUG/$SLUG-report.md"`
 
 **Переход →** Фаза 7.
 

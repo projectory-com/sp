@@ -14,6 +14,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   marketplace.json     # реестр маркетплейса (name, owner, plugins[])
 skills/                # скиллы — auto-discovered по SKILL.md в поддиректориях
 commands/              # slash-команды — auto-discovered по .md файлам
+hooks/                 # хуки — auto-discovered по hooks.json (Telegram notifications)
+lib/                   # shared-скрипты для вызова из скиллов (notify.sh)
 docs/                  # справочная документация по plugin system
 _skills/               # черновики — НЕ часть плагина, не трогать
 ```
@@ -74,6 +76,7 @@ claude --plugin-dir .
 
 - `docs/plugins.md` — создание плагинов (структура, компоненты, тестирование)
 - `docs/plugin-marketplaces.md` — схема маркетплейса, sources, дистрибуция
+- `docs/notify.md` — Telegram-нотификации: настройка, типы, карта точек
 
 ## Formatting
 
