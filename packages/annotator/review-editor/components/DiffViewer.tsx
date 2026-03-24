@@ -8,7 +8,9 @@ import { detectLanguage } from '../utils/detectLanguage';
 import { useAnnotationToolbar } from '../hooks/useAnnotationToolbar';
 import { FileHeader } from './FileHeader';
 import { InlineAnnotation } from './InlineAnnotation';
+import { InlineAIMarker } from './InlineAIMarker';
 import { AnnotationToolbar } from './AnnotationToolbar';
+import type { AIChatEntry } from '../hooks/useAIChat';
 import { SuggestionModal } from './SuggestionModal';
 import { type ReviewSearchMatch } from '../utils/reviewSearch';
 import {
@@ -42,6 +44,15 @@ interface DiffViewerProps {
   searchMatches?: ReviewSearchMatch[];
   activeSearchMatchId?: string | null;
   activeSearchMatch?: ReviewSearchMatch | null;
+  // AI props
+  aiAvailable?: boolean;
+  onAskAI?: (question: string) => void;
+  isAILoading?: boolean;
+  onViewAIResponse?: (questionId?: string) => void;
+  aiMessages?: AIChatEntry[];
+  onClickAIMarker?: (questionId: string) => void;
+  /** AI messages overlapping the current pending selection */
+  aiHistoryMessages?: AIChatEntry[];
 }
 
 export const DiffViewer: React.FC<DiffViewerProps> = ({
@@ -69,6 +80,13 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
   searchMatches = [],
   activeSearchMatchId = null,
   activeSearchMatch = null,
+  aiAvailable = false,
+  onAskAI,
+  isAILoading = false,
+  onViewAIResponse,
+  aiMessages = [],
+  onClickAIMarker,
+  aiHistoryMessages = [],
 }) => {
   const { theme, colorTheme, resolvedMode } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -170,15 +188,52 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
       }));
   }, [annotations]);
 
+  // Derive AI markers for the current file's lines
+  const aiLineAnnotations = useMemo(() => {
+    if (!aiMessages.length) return [];
+    return aiMessages
+      .filter(m => m.question.lineStart != null && m.question.lineEnd != null)
+      .map(({ question, response }) => ({
+        side: question.side === 'new' ? 'additions' as const : 'deletions' as const,
+        lineNumber: question.lineEnd!,
+        metadata: {
+          annotationId: question.id,
+          type: 'comment' as CodeAnnotationType,
+          kind: 'ai-marker' as const,
+          questionId: question.id,
+          promptPreview: question.prompt.slice(0, 40) + (question.prompt.length > 40 ? '...' : ''),
+          hasResponse: !!response.text && !response.error,
+          isStreaming: response.isStreaming,
+        } as DiffAnnotationMetadata,
+      }));
+  }, [aiMessages]);
+
+  const mergedAnnotations = useMemo(
+    () => [...lineAnnotations, ...aiLineAnnotations],
+    [lineAnnotations, aiLineAnnotations],
+  );
+
   // Handle edit: find annotation and start editing in toolbar
   const handleEdit = useCallback((id: string) => {
     const ann = annotations.find(a => a.id === id);
     if (ann) toolbar.startEdit(ann);
   }, [annotations, toolbar.startEdit]);
 
-  // Render annotation in diff
+  // Render annotation or AI marker in diff
   const renderAnnotation = useCallback((annotation: { side: string; lineNumber: number; metadata?: DiffAnnotationMetadata }) => {
     if (!annotation.metadata) return null;
+
+    if (annotation.metadata.kind === 'ai-marker') {
+      return (
+        <InlineAIMarker
+          questionId={annotation.metadata.questionId!}
+          promptPreview={annotation.metadata.promptPreview!}
+          hasResponse={annotation.metadata.hasResponse!}
+          isStreaming={annotation.metadata.isStreaming!}
+          onClick={onClickAIMarker ?? (() => {})}
+        />
+      );
+    }
 
     return (
       <InlineAnnotation
@@ -189,7 +244,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
         onDelete={onDeleteAnnotation}
       />
     );
-  }, [filePath, onSelectAnnotation, handleEdit, onDeleteAnnotation]);
+  }, [filePath, onSelectAnnotation, handleEdit, onDeleteAnnotation, onClickAIMarker]);
 
   // Render hover utility (+ button)
   const renderHoverUtility = useCallback((getHoveredLine: () => { lineNumber: number; side: 'deletions' | 'additions' } | undefined) => {
@@ -275,7 +330,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
             enableHoverUtility: true,
             onLineSelectionEnd: toolbar.handleLineSelectionEnd,
           }}
-          lineAnnotations={lineAnnotations}
+          lineAnnotations={mergedAnnotations}
           selectedLines={pendingSelection || undefined}
           renderAnnotation={renderAnnotation}
           renderHoverUtility={renderHoverUtility}
@@ -297,6 +352,11 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
           onSubmit={toolbar.handleSubmitAnnotation}
           onDismiss={toolbar.handleDismiss}
           onCancel={toolbar.handleCancel}
+          aiAvailable={aiAvailable}
+          onAskAI={onAskAI}
+          isAILoading={isAILoading}
+          onViewAIResponse={onViewAIResponse}
+          aiHistoryMessages={aiHistoryMessages}
         />
       )}
 
