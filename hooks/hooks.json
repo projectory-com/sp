@@ -1,0 +1,16 @@
+{
+  "description": "Telegram notification hook — sends a notification when the agent stops",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/notify.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
