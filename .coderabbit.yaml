@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: ru-RU
+
+tone_instructions: >-
+  Be concise and actionable. This is a Claude Code plugin — a marketplace of
+  AI skills written as Markdown prompts with YAML frontmatter. There is no
+  application code. Focus on structural correctness, not prose style.
+
+reviews:
+  profile: chill
+
+  high_level_summary: true
+  high_level_summary_in_walkthrough: false
+  collapse_walkthrough: true
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+
+  path_filters:
+    # Exclude generated artifacts, drafts, and tooling
+    - "!_skills/**"
+    - "!docs/ai/**"
+    - "!node_modules/**"
+    - "!.worktrees/**"
+    - "!pnpm-lock.yaml"
+    - "!.husky/**"
+    - "!.git/**"
+
+  path_instructions:
+    - path: "skills/*/SKILL.md"
+      instructions: >-
+        This is a Claude Code skill definition. YAML frontmatter must have
+        `name` and `description` fields. The body is an AI system prompt —
+        imperative form is intentional, not a style issue. Do NOT flag:
+        template variables like $ARGUMENTS or {{VAR}}, TodoWrite/TaskCreate
+        references, agent dispatch instructions, AskUserQuestion calls, or
+        phase-based workflow structure. DO flag: missing frontmatter fields,
+        broken internal file references, inconsistent phase numbering.
+
+    - path: "skills/*/agents/*.md"
+      instructions: >-
+        This is a Claude Code agent definition. YAML frontmatter must have
+        `name`, `description`, `model`, and `color` fields. Optional: `tools`
+        (array). The body is an AI system prompt addressed to the agent.
+        Do NOT flag: second-person writing style ("you are..."), structured
+        output format blocks, template variables like {{VAR}}. DO flag:
+        missing required frontmatter fields, invalid model values (valid:
+        sonnet, opus, haiku, inherit), invalid color values (valid: blue,
+        cyan, green, yellow, magenta, red).
+
+    - path: "skills/*/reference/*.md"
+      instructions: >-
+        This is a reference document loaded by agents at runtime. It may
+        contain markdown templates with {{placeholders}}. These are not
+        broken links — they are template variables. Do NOT flag placeholder
+        syntax or unconventional markdown structure. DO flag: YAML frontmatter
+        parse errors if frontmatter delimiters (---) are present.
+
+    - path: "skills/*/examples/*.md"
+      instructions: >-
+        Example files for AI skills. These contain sample output formats.
+        Placeholders like {{VAR}} and <slug> are intentional templates.
+        Review only for internal consistency.
+
+    - path: ".claude-plugin/*.json"
+      instructions: >-
+        Plugin manifest files. plugin.json must have: name, description,
+        version (semver). marketplace.json must have: name, owner (object
+        with name), plugins (array). Validate JSON structure and required
+        fields.
+
+    - path: "docs/*.md"
+      instructions: >-
+        Skill design documents — internal reference for the plugin author.
+        Light review only: check for broken links and structural issues.
+        Do not nitpick prose or formatting.
+
+    - path: "skills/hi/SKILL.md"
+      instructions: >-
+        The welcome/help skill. Must list all implemented skills with correct
+        descriptions. Check that the skill list matches other SKILL.md files
+        in the repository.
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  learnings:
+    scope: local
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CLAUDE.md"
