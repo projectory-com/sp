@@ -149,6 +149,9 @@ Constraints из task-файла:
 
 **Интерактивные уточнения:**
 
+Если plan-designer сгенерировал вопросы — отправь нотификацию перед AskUserQuestion:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type ACTION_REQUIRED --skill plan --phase Design --slug "$TASK_SLUG" --title "Вопросы по реализации" --body "<краткий список тем>"`
+
 Если plan-designer сгенерировал IMPLEMENTATION QUESTIONS — задай их
 пользователю через AskUserQuestion, по 1-4 вопроса за раз.
 
@@ -277,6 +280,9 @@ git commit -m "TICKET docs(SLUG): add implementation plan"
 ### Фаза 8 — Complete
 
 Сообщи путь к plan-файлу и запусти цикл завершения.
+
+Отправь нотификацию:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill plan --phase Complete --slug "$TASK_SLUG" --title "План готов" --body "docs/ai/$TASK_SLUG/$TASK_SLUG-plan.md"`
 
 **Цикл:**
 
