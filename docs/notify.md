@@ -10,7 +10,7 @@
 ### 1. Создать бота
 
 - Открой [@BotFather](https://t.me/BotFather) в Telegram
-- Отправь `/newbot`, следуй инструкциям
+- Отправь `/newbot` и следуй инструкциям
 - Сохрани полученный token (формат `123456789:ABC...`)
 
 ### 2. Получить chat_id
@@ -110,12 +110,13 @@ cat .sp/notify-pending.json
 
 ## Troubleshooting
 
-| Проблема                              | Проверка                                                                 |
-| ------------------------------------- | ------------------------------------------------------------------------ |
-| Нотификации не приходят               | Проверь наличие `.sp/notify.json` и правильность `bot_token` / `chat_id` |
-| curl not found                        | Установи curl: `sudo apt install curl` / `brew install curl`             |
-| jq not found                          | Установи jq: `sudo apt install jq` / `brew install jq`                   |
-| Ошибка 401 от Telegram                | Неверный bot token — пересоздай через @BotFather                         |
-| Ошибка 400 (chat not found)           | Неверный chat_id — отправь сообщение боту и повтори getUpdates           |
-| Очередь не очищается                  | Проверь, что `hooks/notify.sh` указан в `hooks/hooks.json` как stop-hook |
-| Нотификация не записывается в очередь | Проверь, что `levels` в конфиге включает нужный тип                      |
+| Проблема                              | Проверка                                                                                                                                                              |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Нотификации не приходят               | Проверь наличие `.sp/notify.json` и правильность `bot_token` / `chat_id`                                                                                              |
+| curl not found                        | Установи curl: `sudo apt install curl` / `brew install curl`                                                                                                          |
+| jq not found                          | Установи jq: `sudo apt install jq` / `brew install jq`                                                                                                                |
+| Ошибка 401 от Telegram                | Неверный bot token — пересоздай через @BotFather                                                                                                                      |
+| Ошибка 400 (chat not found)           | Неверный chat_id — отправь сообщение боту и повтори getUpdates                                                                                                        |
+| Очередь не очищается                  | Проверь, что `hooks/notify.sh` указан в `hooks/hooks.json` как stop-hook                                                                                              |
+| Нотификация не записывается в очередь | Проверь, что `levels` в конфиге включает нужный тип                                                                                                                   |
+| Telegram недоступен / timeout         | curl ждёт до 8 секунд (hook timeout 10s). При сбое `notify-pending.json` удаляется, повторная отправка не производится. Удалить вручную: `rm .sp/notify-pending.json` |
