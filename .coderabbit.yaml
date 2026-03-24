@@ -1,0 +1,10 @@
+language: ru
+reviews:
+  profile: chill
+  high_level_summary: false
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!docs/ai/**"
+    - "!_skills/**"
