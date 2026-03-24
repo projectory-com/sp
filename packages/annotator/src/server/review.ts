@@ -45,6 +45,14 @@ import {
   getMRLabel,
   getMRNumberLabel,
 } from "./pr";
+import {
+  ProviderRegistry,
+  SessionManager,
+  createProvider,
+  type AIEndpoints,
+} from "../ai";
+import { createAIEndpoints } from "../ai/endpoints";
+import "../ai/providers/claude-agent-sdk";
 
 // Re-export utilities
 export { isRemoteSession, getServerPort } from "./remote";
@@ -131,6 +139,39 @@ export async function startReviewServer(
   let currentGitRef = options.gitRef;
   let currentDiffType: DiffType = options.diffType || "uncommitted";
   let currentError = options.error;
+
+  // AI provider setup (graceful — AI features degrade if SDK unavailable)
+  const aiRegistry = new ProviderRegistry();
+  const aiSessionManager = new SessionManager();
+  let aiEndpoints: AIEndpoints | null = null;
+
+  // Try Claude Agent SDK
+  try {
+    const claudePath = Bun.which("claude");
+    const provider = await createProvider({
+      type: "claude-agent-sdk",
+      cwd: gitContext?.cwd ?? process.cwd(),
+      ...(claudePath && { claudeExecutablePath: claudePath }),
+    });
+    aiRegistry.register(provider);
+  } catch {
+    // Claude SDK not available — AI features will be disabled
+  }
+
+  // Create endpoints if any provider registered
+  if (aiRegistry.size > 0) {
+    aiEndpoints = createAIEndpoints({
+      registry: aiRegistry,
+      sessionManager: aiSessionManager,
+      getCwd: () => {
+        if (currentDiffType.startsWith("worktree:")) {
+          const parsed = parseWorktreeDiffType(currentDiffType);
+          if (parsed) return parsed.path;
+        }
+        return gitContext?.cwd ?? process.cwd();
+      },
+    });
+  }
 
   const isRemote = isRemoteSession();
   const configuredPort = getServerPort();
@@ -402,6 +443,13 @@ export async function startReviewServer(
             }
           }
 
+          // AI endpoints
+          if (aiEndpoints && url.pathname.startsWith("/api/ai/")) {
+            const handler = aiEndpoints[url.pathname as keyof AIEndpoints];
+            if (handler) return handler(req);
+            return Response.json({ error: "Not found" }, { status: 404 });
+          }
+
           // Favicon
           if (url.pathname === "/favicon.svg") return handleFavicon();
 
@@ -451,6 +499,10 @@ export async function startReviewServer(
     url: serverUrl,
     isRemote,
     waitForDecision: () => decisionPromise,
-    stop: () => server.stop(),
+    stop: () => {
+      aiSessionManager.disposeAll();
+      aiRegistry.disposeAll();
+      server.stop();
+    },
   };
 }
