@@ -84,7 +84,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
         <div className="p-4 space-y-4">
           <div>
             <label className="block text-xs font-medium text-muted-foreground mb-2">
-              Plannotator Share Link
+              sp-annotator Share Link
             </label>
             <input
               type="text"

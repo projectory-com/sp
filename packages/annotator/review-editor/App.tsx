@@ -755,8 +755,8 @@ const ReviewApp: React.FC = () => {
       }
     }
     const body = bodyParts.length > 0
-      ? `${generalComment ? generalComment + '\n\n' : ''}Review from Plannotator\n\n${bodyParts.join('\n\n')}`
-      : generalComment || 'Review from Plannotator';
+      ? `${generalComment ? generalComment + '\n\n' : ''}Review from sp-annotator\n\n${bodyParts.join('\n\n')}`
+      : generalComment || 'Review from sp-annotator';
 
     // Inline file comments
     const fileComments = fileAnnotations.map(ann => {
@@ -957,17 +957,13 @@ const ReviewApp: React.FC = () => {
         <header className="h-12 flex items-center justify-between px-2 md:px-4 border-b border-border/50 bg-card/50 backdrop-blur-xl z-50">
           <div className="flex items-center gap-2 md:gap-3">
             <a
-              href="https://github.com/backnotprop/plannotator"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
               className="flex items-center gap-1.5 md:gap-2 hover:opacity-80 transition-opacity"
             >
-              <span className="text-sm font-semibold tracking-tight">Plannotator</span>
+              <span className="text-sm font-semibold tracking-tight">sp-annotator</span>
             </a>
             <a
-              href="https://github.com/backnotprop/plannotator/releases"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
               className="text-xs text-muted-foreground font-mono opacity-60 hidden md:inline hover:opacity-100 transition-opacity"
             >
               v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'}

@@ -158,7 +158,7 @@ export const AnnotationToolstrip: React.FC<AnnotationToolstripProps> = ({
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  How Plannotator Works
+                  How sp-annotator Works
                 </button>
               </div>
               <button
@@ -179,7 +179,7 @@ export const AnnotationToolstrip: React.FC<AnnotationToolstripProps> = ({
                   ? 'https://www.youtube.com/embed/ZNt9jtfx9TY?autoplay=1'
                   : 'https://www.youtube.com/embed/a_AT7cEN_9I?autoplay=1'
                 }
-                title={helpTab === 'selection' ? 'How Selection Modes Work' : 'How Plannotator Works'}
+                title={helpTab === 'selection' ? 'How Selection Modes Work' : 'How sp-annotator Works'}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

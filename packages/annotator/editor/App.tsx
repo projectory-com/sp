@@ -98,7 +98,7 @@ const App: React.FC = () => {
   const [repoInfo, setRepoInfo] = useState<{ display: string; branch?: string } | null>(null);
 
   useEffect(() => {
-    document.title = repoInfo ? `${repoInfo.display} · Plannotator` : "Plannotator";
+    document.title = repoInfo ? `${repoInfo.display} · sp-annotator` : "sp-annotator";
   }, [repoInfo]);
 
   const [showExportDropdown, setShowExportDropdown] = useState(false);
@@ -924,17 +924,13 @@ const App: React.FC = () => {
         <header className="h-12 flex items-center justify-between px-2 md:px-4 border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-[50]">
           <div className="flex items-center gap-2 md:gap-3">
             <a
-              href="https://plannotator.ai"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
               className="flex items-center gap-1.5 md:gap-2 hover:opacity-80 transition-opacity"
             >
-              <span className="text-sm font-semibold tracking-tight">Plannotator</span>
+              <span className="text-sm font-semibold tracking-tight">sp-annotator</span>
             </a>
             <a
-              href="https://github.com/backnotprop/plannotator/releases"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
               className="text-xs text-muted-foreground font-mono opacity-60 hidden md:inline hover:opacity-100 transition-opacity"
             >
               v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'}

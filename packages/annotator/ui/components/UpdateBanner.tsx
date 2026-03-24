@@ -6,8 +6,8 @@ const PI_INSTALL_COMMAND = 'pi install npm:@plannotator/pi-extension';
 function getInstallCommand(): string {
   const isWindows = typeof navigator !== 'undefined' && /^Win/.test(navigator.platform);
   return isWindows
-    ? 'powershell -c "irm https://plannotator.ai/install.ps1 | iex"'
-    : 'curl -fsSL https://plannotator.ai/install.sh | bash';
+    ? 'powershell -c "echo sp-annotator: no remote installer"'
+    : 'echo "sp-annotator: no remote installer"';
 }
 
 interface UpdateBannerProps {
