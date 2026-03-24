@@ -24,6 +24,8 @@
     "perfect-freehand": "^1.2.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.81",
+    "marked": "^17.0.5",
     "unique-username-generator": "^1.5.1"
   },
   "devDependencies": {
