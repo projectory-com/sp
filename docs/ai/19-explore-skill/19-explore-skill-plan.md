@@ -102,7 +102,7 @@
 - **What:** Добавить /explore в таблицу скиллов /hi и в Implemented skills в CLAUDE.md.
 - **How:** В `skills/hi/SKILL.md`: найти строку `## Планируемые скиллы` и вставить перед ней новую секцию:
 
-  ```
+  ```markdown
   ### /explore — исследование кодовой базы
 
   Read-only Q&A loop для исследования кодовой базы и обсуждения подходов. Классифицирует вопросы (codebase / web / hybrid), ищет в коде и интернете, накапливает контекст через summary chain, записывает exploration log.
@@ -134,7 +134,7 @@
 - **Parallel:** true
 - **Reasoning:** 6 tasks, параллельные группы не пересекаются по файлам, одна кодовая база
 - **Order:**
-  ```
+  ```text
   Group 1 (parallel): Task 1, Task 2
   ─── barrier ───
   Group 2 (sequential): Task 3

@@ -27,7 +27,7 @@
 ## Validation
 
 ```
-head -1 skills/explore/*.md agents/*.md reference/*.md → все начинаются с ---  ✅
+head -1 skills/explore/*.md skills/explore/agents/*.md skills/explore/reference/*.md → все начинаются с ---  ✅
 python3 JSON manifests check → OK  ✅
 prettier --check → All matched files use Prettier code style  ✅
 SKILL.md содержит 4 фазы: Init, Loop, Finalize, Complete  ✅
