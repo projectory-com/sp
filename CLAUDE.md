@@ -75,8 +75,6 @@ claude --plugin-dir .
 
 ## Reference docs
 
-- `docs/plugins.md` — создание плагинов (структура, компоненты, тестирование)
-- `docs/plugin-marketplaces.md` — схема маркетплейса, sources, дистрибуция
 - `docs/notify.md` — Telegram-нотификации: настройка, типы, карта точек
 
 ## Formatting
