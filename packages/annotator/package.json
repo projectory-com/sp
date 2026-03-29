@@ -1,6 +1,6 @@
 {
   "name": "@sp/annotator",
-  "version": "0.1.0",
+  "version": "0.15.5",
   "private": true,
   "type": "module",
   "description": "Interactive plan annotation and review UI for sp plugin",

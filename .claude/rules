@@ -1,0 +1,65 @@
+# Rules: packages/annotator (sp-annotator)
+
+## Directory Mapping (Upstream -> SP Fork)
+
+При синхронизации с upstream Plannotator:
+
+| Upstream | SP Fork |
+|----------|---------|
+| `packages/server/` | `src/server/` |
+| `packages/shared/` | `src/shared/` |
+| `packages/ui/` | `ui/` |
+| `packages/ui/config/` | `ui/config/` |
+| `packages/editor/` | `editor/` |
+| `packages/review-editor/` | `review-editor/` |
+
+Upstream `apps/` (hook, opencode-plugin, marketing, vscode-extension) НЕ портировать.
+
+## SP-Specific Code (не перезаписывать)
+
+- `src/ai/` — весь AI layer (Claude Agent SDK, SessionManager, endpoints)
+- `review-editor/components/AITab.tsx`, `AskAIInput.tsx`, `AIConfigBar.tsx`, `PermissionCard.tsx`
+- `review-editor/hooks/useAIChat.ts`
+- `ui/components/AnnotationToolbar.tsx` — кнопка "Ask AI"
+- `ui/utils/aiProvider.ts`, `ui/utils/aiSetup.ts`
+- `ui/hooks/useAgents.ts`
+
+## Import Conventions
+
+- Relative imports, НЕ workspace aliases
+- `@plannotator/shared/...` -> `../shared/...` или `../../src/shared/...`
+- `@plannotator/ui/...` -> `../../ui/...`
+
+## Branding
+
+- User-facing строки: "sp-annotator" (не "Plannotator")
+- package name: `@sp/annotator`
+- Storage keys: `plannotator-identity` (для совместимости с upstream)
+- Config path: `~/.plannotator/` (для совместимости)
+
+## Build
+
+```bash
+cd packages/annotator
+bun install
+bun run build          # build:review -> build:plan -> build:cli
+bun run dev:plan       # dev server port 3000
+bun run dev:review     # dev server port 3001
+bun test               # run tests
+```
+
+## Testing Checklist
+
+- `bun run build` — без ошибок
+- `bun test` — все тесты зелёные
+- `./bin/sp-annotator annotate <file.md>` — annotation UI открывается
+- `./bin/sp-annotator review <file.md>` — approve/feedback кнопки видны
+- `./bin/sp-annotator diff` — git diff в review UI
+- `grep -r "Plannotator" ui/ editor/ review-editor/ --include="*.ts" --include="*.tsx"` — только в LICENSE/attribution
+
+## Documentation
+
+- `docs/annotator/architecture.md` — структура, data flow
+- `docs/annotator/build.md` — сборка и запуск
+- `docs/annotator/api.md` — HTTP endpoints
+- `docs/annotator/sync-guide.md` — порядок синхронизации с upstream

@@ -77,6 +77,42 @@ claude --plugin-dir .
 - `docs/plugins.md` — создание плагинов (структура, компоненты, тестирование)
 - `docs/plugin-marketplaces.md` — схема маркетплейса, sources, дистрибуция
 
+## Packages
+
+### packages/annotator/
+
+Форк [plannotator](https://github.com/backnotprop/plannotator) (MIT OR Apache-2.0) — интерактивный UI для аннотирования планов и code review.
+
+**Архитектура:**
+
+- `apps/plan-editor/` — Vite-приложение для annotate-режима (single-file HTML)
+- `apps/review-app/` — Vite-приложение для review/diff-режима (single-file HTML)
+- `editor/` — React-компоненты plan editor (App.tsx ~65KB)
+- `review-editor/` — React-компоненты review editor (App.tsx ~71KB)
+- `src/` — CLI entry point и серверная логика
+- `bin/sp-annotator` — скомпилированный Bun binary
+
+**Key files:**
+
+- `packages/annotator/package.json` — зависимости и build scripts
+- `packages/annotator/src/cli.ts` — CLI entry point (annotate/review/diff режимы)
+- `packages/annotator/editor/App.tsx` — основной компонент plan editor
+- `packages/annotator/review-editor/App.tsx` — основной компонент review editor
+
+**Build commands:**
+
+```bash
+cd packages/annotator
+bun run build:review   # собрать review-app
+bun run build:plan     # собрать plan-editor + скопировать review.html
+bun run build:cli      # скомпилировать CLI binary
+bun run build          # всё вместе
+bun run dev:plan       # dev-сервер plan editor
+bun run dev:review     # dev-сервер review app
+```
+
+**Sync с upstream:** см. `docs/annotator/sync-guide.md`. SP-specific код (CLI, интеграции) не перезаписывается при sync.
+
 ## Formatting
 
 ```bash
