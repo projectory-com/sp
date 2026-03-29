@@ -11,18 +11,16 @@ PROJECT_DIR="$PWD"
 
 # --- Paths ---
 PENDING="$PROJECT_DIR/.sp/notify-pending.json"
-CONFIG="$PROJECT_DIR/.sp/notify.json"
 
 # --- Graceful checks: no file / no tool → silent exit ---
 [[ -f "$PENDING" ]] || exit 0
-[[ -f "$CONFIG" ]]   || exit 0
 command -v curl &>/dev/null || exit 0
 command -v jq &>/dev/null   || exit 0
 
-# --- Read config ---
-BOT_TOKEN=$(jq -r '.bot_token // ""' "$CONFIG") || exit 0
-CHAT_ID=$(jq -r '.chat_id // ""' "$CONFIG")     || exit 0
-LEVELS=$(jq -r '.levels // "" | if type == "array" then join(",") else . end' "$CONFIG") || exit 0
+# --- Read credentials from env ---
+BOT_TOKEN="${CC_TELEGRAM_BOT_TOKEN:-}"
+CHAT_ID="${CC_TELEGRAM_CHAT_ID:-}"
+LEVELS="ACTION_REQUIRED,STAGE_COMPLETE,ALERT"
 
 # Empty credentials → nothing to do
 [[ -n "$BOT_TOKEN" ]] || exit 0

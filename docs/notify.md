@@ -1,7 +1,7 @@
 # Telegram-нотификации
 
 Двухслойная система оповещений: скиллы записывают JSON в очередь, stop-hook отправляет накопленные сообщения в Telegram.
-Нотификации работают по принципу opt-in — без конфига система молча пропускает отправку.
+Нотификации работают по принципу opt-in — без env-переменных система молча пропускает отправку.
 
 ---
 
@@ -22,28 +22,18 @@
   ```
 - Сохрани полученный `chat_id`
 
-### 3. Создать конфиг
+### 3. Задать переменные окружения
+
+Добавь в `~/.zshrc` (или `~/.bashrc`):
 
 ```bash
-mkdir -p .sp
-cat > .sp/notify.json << 'EOF'
-{
-  "bot_token": "YOUR_BOT_TOKEN",
-  "chat_id": "YOUR_CHAT_ID",
-  "levels": ["ACTION_REQUIRED", "STAGE_COMPLETE", "ALERT"]
-}
-EOF
+export CC_TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN"
+export CC_TELEGRAM_CHAT_ID="YOUR_CHAT_ID"
 ```
 
-Поле `levels` управляет фильтрацией — в Telegram отправляются только нотификации с указанными типами.
+Затем перезагрузи shell: `source ~/.zshrc`
 
-### 4. Добавить в .gitignore
-
-```bash
-echo '.sp/' >> .gitignore
-```
-
-Конфиг содержит bot token — он не должен попадать в репозиторий.
+Переменные пробрасываются в hook через `allowedEnvVars` в `hooks/hooks.json`.
 
 ---
 
@@ -54,6 +44,8 @@ echo '.sp/' >> .gitignore
 | ACTION_REQUIRED | ⏸      | Перед вопросами, требующими ответа            |
 | STAGE_COMPLETE  | ✅     | Задача, план, PR или другой артефакт готов    |
 | ALERT           | ⚠️     | Блокировка, scope guard, критическая ситуация |
+
+Все три типа всегда включены.
 
 ---
 
@@ -110,13 +102,12 @@ cat .sp/notify-pending.json
 
 ## Troubleshooting
 
-| Проблема                              | Проверка                                                                                                                                                              |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Нотификации не приходят               | Проверь наличие `.sp/notify.json` и правильность `bot_token` / `chat_id`                                                                                              |
-| curl not found                        | Установи curl: `sudo apt install curl` / `brew install curl`                                                                                                          |
-| jq not found                          | Установи jq: `sudo apt install jq` / `brew install jq`                                                                                                                |
-| Ошибка 401 от Telegram                | Неверный bot token — пересоздай через @BotFather                                                                                                                      |
-| Ошибка 400 (chat not found)           | Неверный chat_id — отправь сообщение боту и повтори getUpdates                                                                                                        |
-| Очередь не очищается                  | Проверь, что `hooks/notify.sh` указан в `hooks/hooks.json` как stop-hook                                                                                              |
-| Нотификация не записывается в очередь | Проверь, что `levels` в конфиге включает нужный тип                                                                                                                   |
-| Telegram недоступен / timeout         | curl ждёт до 8 секунд (hook timeout 10s). При сбое `notify-pending.json` удаляется, повторная отправка не производится. Удалить вручную: `rm .sp/notify-pending.json` |
+| Проблема                      | Проверка                                                                                                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Нотификации не приходят       | Проверь что `CC_TELEGRAM_BOT_TOKEN` и `CC_TELEGRAM_CHAT_ID` заданы: `echo $CC_TELEGRAM_BOT_TOKEN`                                                                     |
+| curl not found                | Установи curl: `sudo apt install curl` / `brew install curl`                                                                                                          |
+| jq not found                  | Установи jq: `sudo apt install jq` / `brew install jq`                                                                                                                |
+| Ошибка 401 от Telegram        | Неверный bot token — пересоздай через @BotFather                                                                                                                      |
+| Ошибка 400 (chat not found)   | Неверный chat_id — отправь сообщение боту и повтори getUpdates                                                                                                        |
+| Очередь не очищается          | Проверь, что `hooks/notify.sh` указан в `hooks/hooks.json` как stop-hook                                                                                              |
+| Telegram недоступен / timeout | curl ждёт до 8 секунд (hook timeout 10s). При сбое `notify-pending.json` удаляется, повторная отправка не производится. Удалить вручную: `rm .sp/notify-pending.json` |
