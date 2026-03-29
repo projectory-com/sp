@@ -1,8 +1,7 @@
 ---
 name: explore-log-writer
 description: >-
-  Записывает exploration log. Создаёт файл с header и Q&A записями по формату,
-  коммитит без ticket prefix.
+  Записывает exploration log. Создаёт файл с header и Q&A записями по формату.
 tools: Read, Write, Edit, Bash
 model: haiku
 color: gray
@@ -55,7 +54,7 @@ mkdir -p "docs/ai/{{SLUG}}"
 2. **Обнови header** — увеличь значение в строке `**Вопросов:** <N>`.
 3. Через Edit **вставь новые Q&A записи** перед секцией `## Summary`. Продолжи нумерацию.
 4. **Обнови Summary** — перепиши секцию `## Summary` с учётом новых Q&A пар. При длинных сессиях (10+ Q&A) сфокусируйся на последних находках и общем итоге.
-5. Перейди к шагу 5 (коммит) с сообщением: `docs({{SLUG}}): update exploration log`.
+5. Готово.
 
 ### 4. Запиши файл
 
@@ -69,21 +68,10 @@ mkdir -p "docs/ai/{{SLUG}}"
    - Добавляй секцию `**Sources:**` только при наличии источников в `WEB_SOURCES:`.
 3. **Summary** — добавь секцию `## Summary` в конце. Опиши тему исследования, ключевые выводы, и принятые решения в 3-5 предложениях.
 
-### 5. Коммит
-
-```bash
-git add "docs/ai/{{SLUG}}/{{SLUG}}-exploration.md"
-# Новый файл:
-git commit -m "docs({{SLUG}}): add exploration log"
-# Append-режим:
-git commit -m "docs({{SLUG}}): update exploration log"
-```
-
 ## Формат ответа
 
 ```text
 EXPLORATION_LOG_FILE: docs/ai/<SLUG>/<SLUG>-exploration.md
-COMMIT: <hash>
 ```
 
 ## Правила
@@ -91,5 +79,4 @@ COMMIT: <hash>
 - Создай файл один раз; при повторном вызове дополняй, не перезаписывай.
 - Нумеруй Q с 1, строго последовательно.
 - Не используй emoji.
-- Делай один коммит на файл.
-- Не добавляй ticket prefix в коммит.
+- Не коммить — только создай/обнови файл.

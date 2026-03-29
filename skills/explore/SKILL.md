@@ -29,13 +29,12 @@ description: >-
 
 ## Фазы
 
-4 фазы. Отмечай каждую через TodoWrite.
+3 фазы.
 
 ```
-1. Init      → slug, директория, инициализация переменных
+1. Init      → инициализация переменных
 2. Loop      → user-driven Q&A с dispatch explore-agent (sonnet)
-3. Finalize  → dispatch explore-log-writer (haiku)
-4. Complete  → AskUserQuestion: ещё вопрос / task / выход
+3. Finalize  → slug, dispatch explore-log-writer (haiku)
 ```
 
 ---
@@ -46,15 +45,13 @@ description: >-
 
 Первым вопросом считай `$ARGUMENTS` или ответ пользователя.
 
-Через AskUserQuestion предложи 2-3 slug-варианта по первому вопросу (prefix `explore-`, kebab-case, английский, и до 40 символов). Добавь вариант "Other" для ввода вручную.
+Прочитай `agents/explore-agent.md` — использовать во всех итерациях Loop без повторного чтения.
 
 Инициализируй переменные:
 
 - `EXPLORATION_SUMMARY` = "" (накопительная цепочка ключевых выводов)
 - `QA_LOG` = [] (полный лог всех Q&A раундов)
 - `ITERATION` = 0
-
-TodoWrite: "Init завершён".
 
 Переход → Фаза 2.
 
@@ -71,13 +68,10 @@ TodoWrite: "Init завершён".
 - Тема исследования = первый вопрос пользователя
 - Текущий вопрос = вопрос из текущей итерации
 - Предыдущие находки = EXPLORATION_SUMMARY
-- KEY_FILES из предыдущих раундов включай в `{{PREVIOUS_FINDINGS}}`, если связаны с текущим вопросом
 
 ### 2b. Dispatch explore-agent
 
-Прочитай `agents/explore-agent.md` и передай промт агенту.
-
-Dispatch через Agent tool (model: sonnet).
+Dispatch через Agent tool (model: sonnet). Файл агента уже прочитан в Init.
 
 Агент вернёт structured output: RESPONSE_TYPE, ANSWER, DETAILS, SUMMARY, KEY_FILES, WEB_SOURCES. При открытом вопросе — также OPTIONS.
 
@@ -103,8 +97,6 @@ OPTIONS: <если brainstorm>
 
 `ITERATION++`.
 
-TodoWrite: "Q<N> исследован".
-
 ### 2e. Следующий шаг
 
 AskUserQuestion — что дальше:
@@ -123,6 +115,8 @@ AskUserQuestion — что дальше:
 
 ## Фаза 3 — Finalize
 
+Через AskUserQuestion предложи 2-3 slug-варианта по теме исследования (prefix `explore-`, kebab-case, английский, до 40 символов). Добавь вариант "Other" для ввода вручную.
+
 Dispatch `explore-log-writer` через Agent tool (model: haiku).
 
 Прочитай `agents/explore-log-writer.md` и передай агенту:
@@ -132,7 +126,7 @@ Dispatch `explore-log-writer` через Agent tool (model: haiku).
 - QA_PAIRS — полный QA_LOG в markdown формате
 - DATE — текущая дата
 
-Агент создаст файл `docs/ai/<SLUG>/<SLUG>-exploration.md` и закоммитит.
+Агент создаст файл `docs/ai/<SLUG>/<SLUG>-exploration.md`.
 
 Выведи результат:
 
@@ -143,25 +137,13 @@ Exploration log: docs/ai/<SLUG>/<SLUG>-exploration.md
 
 TodoWrite: "Exploration log записан".
 
-Переход → Фаза 4.
-
----
-
-## Фаза 4 — Complete
-
-AskUserQuestion — что дальше:
-
-- **Задать ещё вопрос** → вернуться к Фазе 2 (slug, QA_LOG и EXPLORATION_SUMMARY сохраняются)
-- **Создать задачу через /sp:task (рекомендуется)** → предложи пользователю запустить `/sp:task` с темой исследования и путём к exploration log
-- **Завершить** → выйди
-
 ---
 
 ## Правила
 
 - Делегируй файловые операции агентам — сам не выполняй.
-- Работай без подтверждений между фазами; AskUserQuestion в Init, Loop и Complete.
+- Работай без подтверждений между фазами; AskUserQuestion в Init и Loop.
 - Жди вопросов от пользователя.
 - Накапливай выводы в EXPLORATION_SUMMARY и передавай агенту как контекст.
-- Отмечай каждый шаг через TodoWrite сразу по завершении.
+- Отмечай фазы через TodoWrite (Init, Finalize), не каждый вопрос.
 - Язык контента — русский.
