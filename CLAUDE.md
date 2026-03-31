@@ -9,6 +9,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Architecture
 
 ```
+.claude/
+  skills/              # локальные скиллы для разработки плагина (sp-create, sp-release)
 .claude-plugin/
   plugin.json          # манифест плагина (name, version, author)
   marketplace.json     # реестр маркетплейса (name, owner, plugins[])
@@ -68,6 +70,11 @@ claude --plugin-dir .
 - `/fix` — быстрый фикс или доработка (1-3 файла, opus на code-фазах)
 - `/hi` — приветствие и объяснение доступных скиллов
 - `/explore` — исследование кодовой базы: read-only Q&A loop с summary chain
+
+## Local skills (development)
+
+- `/sp-create` — фабрика скиллов: анализ, проектирование, реализация, валидация, интеграция
+- `/sp-release` — публикация плагина: проверки качества, bump версии, tag, push, GitHub release
 
 ## Planned skills
 
