@@ -3,12 +3,13 @@ name: review
 description: >-
   Code review с поиском проблем, автоматическим исправлением и расширенным отчётом.
   Используется когда пользователь пишет "review", "ревью", "code review",
-  "найди проблемы", или после /do для анализа изменений.
+  "найди проблемы", "найди баги", "проверь код", "анализ кода", "check code",
+  "подготовь отчёт", "что не так с кодом", или после /do для анализа изменений.
 ---
 
 # Code review с автоматическим исправлением
 
-Ты — оркестратор. Координируешь sub-agent'ов и общаешься с пользователем.
+Ты — оркестратор. Общаешься с пользователем и координируешь sub-agent'ов.
 
 Агенты:
 
@@ -18,7 +19,7 @@ description: >-
 - Валидация → `${CLAUDE_PLUGIN_ROOT}/skills/do/agents/validator.md`
 - Форматирование → `${CLAUDE_PLUGIN_ROOT}/skills/do/agents/formatter.md`
 
-Без остановок. Две паузы: выбор scope фиксов и финальное действие.
+Работай непрерывно. Две паузы: выбор scope фиксов и финальное действие.
 
 ---
 
@@ -26,7 +27,7 @@ description: >-
 
 `$ARGUMENTS` — task-slug или путь к task-файлу.
 
-Если не указан — определи slug из текущей ветки или последнего каталога `docs/ai/*/`.
+Если пользователь не передал — определи slug из текущей ветки или последнего каталога `docs/ai/*/`.
 
 ---
 
@@ -54,15 +55,15 @@ description: >-
 - Из текущей ветки или последнего каталога `docs/ai/*/`
 
 **2.** Путь к task-файлу: `docs/ai/<SLUG>/<SLUG>-task.md`.
-Если не существует — передай `—` в sub-agent.
+Если файл отсутствует — передай `—` в sub-agent.
 
 **3.** Извлеки `TICKET_ID` из SLUG (по `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`).
 
 **4.** Post-flow awareness — проверь артефакты:
 
-- `docs/ai/<SLUG>/<SLUG>-report.md` — прочитай секции Concerns и quality review results → собери KNOWN_ISSUES
-- `docs/ai/<SLUG>/<SLUG>-fixes.md` — прочитай список исправлений → добавь к KNOWN_ISSUES
-- Артефактов нет — KNOWN_ISSUES = `—`
+- `docs/ai/<SLUG>/<SLUG>-report.md` — собери KNOWN_ISSUES из секций Concerns и quality review results
+- `docs/ai/<SLUG>/<SLUG>-fixes.md` — добавь к KNOWN_ISSUES список исправлений
+- Артефакты отсутствуют — KNOWN_ISSUES = `—`
 
 **Переход:** SLUG, TICKET_ID, KNOWN_ISSUES определены → Фаза 2.
 
@@ -105,7 +106,7 @@ bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type ACTION_REQUIRED --skill review -
 
 ### Фаза 4 — Fix
 
-Если ISSUES_TO_FIX не пусто:
+Если ISSUES_TO_FIX содержит issues:
 
 **a)** Dispatch issue-fixer через Agent tool. Прочитай `agents/issue-fixer.md`, подставь {{ISSUES_TO_FIX}}, {{SLUG}}, {{TICKET_ID}}, {{CONSTRAINTS}}.
 Issue-fixer сам dispatch'ит параллельные single-fix-agent'ы.
@@ -120,7 +121,7 @@ Issue-fixer сам dispatch'ит параллельные single-fix-agent'ы.
 **e)** Dispatch formatter из /do:
 Прочитай `${CLAUDE_PLUGIN_ROOT}/skills/do/agents/formatter.md`, подставь {{FILES_CHANGED}}, {{SLUG}}, {{TICKET_ID}}.
 
-Если "Skip fixes" выбран → все issues в SKIPPED_ISSUES с причиной "Skipped by user choice".
+Если пользователь выбрал "Skip fixes" → помести все issues в SKIPPED_ISSUES с причиной "Skipped by user choice".
 
 **Переход:** фиксы завершены → Фаза 5.
 
@@ -134,17 +135,17 @@ Issue-fixer сам dispatch'ит параллельные single-fix-agent'ы.
 
 Проверь PR: `gh pr view --json number 2>/dev/null`
 
-Если PR существует и есть SKIPPED_ISSUES — опубликуй каждый как комментарий:
+Если PR существует и SKIPPED_ISSUES содержит записи — опубликуй каждый issue как PR-комментарий:
 
 ```bash
-gh api repos/{owner}/{repo}/pulls/{number}/comments -f body="[severity] category: file:line — description"
+gh api --method POST repos/{owner}/{repo}/pulls/{number}/comments -f body="[severity] category: file:line — description"
 ```
 
-Если PR нет — пропусти.
+Без PR — пропусти.
 
 **c)** Commit report artifact:
 
-Проверь `docs/ai/` под `.gitignore`. Если нет:
+Проверь что `docs/ai/` отсутствует в `.gitignore`. Если gitignore пропускает:
 
 ```bash
 git add docs/ai/<SLUG>/<SLUG>-review.md
@@ -177,8 +178,8 @@ bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill review --
 
 ## Правила
 
-- **Без остановок.** Паузы: scope selection (Фаза 3) и финальное действие (Фаза 6).
-- **Тонкий оркестратор.** Файловые операции и bash — sub-agent'ам.
+- **Непрерывная работа.** Паузы: scope selection (Фаза 3) и финальное действие (Фаза 6).
+- **Делегирование.** Файловые операции и bash передавай sub-agent'ам.
 - **Коммиты по конвенции.** Формат и ticket ID из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
 - **Context isolation.** Sub-agent получает только свои данные, не весь pipeline.
 - **Обратная совместимость.** $ARGUMENTS = SLUG. Вызов из /do и /fix без изменений.

@@ -1,6 +1,6 @@
 ---
 name: review-report-writer
-description: Записывает расширенный review-отчёт с таблицами найденных, исправленных и пропущенных проблем.
+description: Записывает review-отчёт с таблицами найденных, исправленных и пропущенных проблем.
 tools: Read, Write, Bash, Glob, Grep
 model: sonnet
 color: gray
@@ -60,8 +60,8 @@ git diff origin/main...HEAD --stat
 
 ### 5. Пустые данные
 
-- {{ALL_ISSUES}} пуст → **Проблем не найдено.**
-- {{FIXED_ISSUES}} пуст → **Фиксов не потребовалось.**
+- {{ALL_ISSUES}} пуст → **Код чист.**
+- {{FIXED_ISSUES}} пуст → **Все проблемы уже исправлены.**
 - {{SKIPPED_ISSUES}} пуст → **Все найденные проблемы исправлены.**
 
 ### 6. Запиши отчёт
