@@ -1,7 +1,7 @@
 ---
 name: review
 description: >-
-  Code review с поиском проблем, автоматическим исправлением и расширенным отчётом.
+  Ищет проблемы в коде, исправляет их и формирует отчёт.
   Используется когда пользователь пишет "review", "ревью", "code review",
   "найди проблемы", "найди баги", "проверь код", "анализ кода", "check code",
   "подготовь отчёт", "что не так с кодом", или после /do для анализа изменений.
@@ -27,7 +27,7 @@ description: >-
 
 `$ARGUMENTS` — task-slug или путь к task-файлу.
 
-Если пользователь не передал — определи slug из текущей ветки или последнего каталога `docs/ai/*/`.
+Без аргумента — определи slug из текущей ветки или последнего каталога `docs/ai/*/`.
 
 ---
 
@@ -55,7 +55,7 @@ description: >-
 - Из текущей ветки или последнего каталога `docs/ai/*/`
 
 **2.** Путь к task-файлу: `docs/ai/<SLUG>/<SLUG>-task.md`.
-Если файл отсутствует — передай `—` в sub-agent.
+Файла нет — передай `—` в sub-agent.
 
 **3.** Извлеки `TICKET_ID` из SLUG (по `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`).
 
@@ -63,7 +63,7 @@ description: >-
 
 - `docs/ai/<SLUG>/<SLUG>-report.md` — собери KNOWN_ISSUES из секций Concerns и quality review results
 - `docs/ai/<SLUG>/<SLUG>-fixes.md` — добавь к KNOWN_ISSUES список исправлений
-- Артефакты отсутствуют — KNOWN_ISSUES = `—`
+- Артефактов нет — KNOWN_ISSUES = `—`
 
 **Переход:** SLUG, TICKET_ID, KNOWN_ISSUES определены → Фаза 2.
 
@@ -121,7 +121,7 @@ Issue-fixer сам dispatch'ит параллельные single-fix-agent'ы.
 **e)** Dispatch formatter из /do:
 Прочитай `${CLAUDE_PLUGIN_ROOT}/skills/do/agents/formatter.md`, подставь {{FILES_CHANGED}}, {{SLUG}}, {{TICKET_ID}}.
 
-Если пользователь выбрал "Skip fixes" → помести все issues в SKIPPED_ISSUES с причиной "Skipped by user choice".
+Пользователь выбрал "Skip fixes" → все issues в SKIPPED_ISSUES, причина "Skipped by user choice".
 
 **Переход:** фиксы завершены → Фаза 5.
 
@@ -135,7 +135,7 @@ Issue-fixer сам dispatch'ит параллельные single-fix-agent'ы.
 
 Проверь PR: `gh pr view --json number 2>/dev/null`
 
-Если PR существует и SKIPPED_ISSUES содержит записи — опубликуй каждый issue как PR-комментарий:
+PR существует и SKIPPED_ISSUES непуст — опубликуй каждый issue как PR-комментарий:
 
 ```bash
 gh api --method POST repos/{owner}/{repo}/pulls/{number}/comments -f body="[severity] category: file:line — description"
@@ -145,7 +145,7 @@ gh api --method POST repos/{owner}/{repo}/pulls/{number}/comments -f body="[seve
 
 **c)** Commit report artifact:
 
-Проверь что `docs/ai/` отсутствует в `.gitignore`. Если gitignore пропускает:
+Убедись что `.gitignore` пропускает `docs/ai/`. Если пропускает:
 
 ```bash
 git add docs/ai/<SLUG>/<SLUG>-review.md
