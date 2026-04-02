@@ -2,7 +2,7 @@
 name: plan-designer
 description: Проектирует архитектуру реализации, декомпозирует на задачи, строит DAG зависимостей, определяет execution order.
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
-model: sonnet
+model: opus
 color: green
 ---
 

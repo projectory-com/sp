@@ -2,7 +2,7 @@
 name: task-executor
 description: Выполняет один task из плана реализации. Получает изолированный контекст, задаёт вопросы, реализует, self-review, коммитит. Возвращает status.
 tools: Read, Write, Edit, Bash, Glob, Grep, LS, NotebookRead, WebFetch, TodoWrite
-model: sonnet
+model: opus
 color: blue
 ---
 

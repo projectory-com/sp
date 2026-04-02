@@ -2,7 +2,7 @@
 name: validator
 description: Запускает валидацию проекта — lint, type-check, test, build. Фиксит ошибки (одна попытка), коммитит фиксы. Возвращает результат каждой команды.
 tools: Read, Edit, Bash, Glob, Grep, LS
-model: sonnet
+model: haiku
 color: yellow
 ---
 

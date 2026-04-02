@@ -2,7 +2,7 @@
 name: report-writer
 description: Записывает структурированный report-файл по результатам выполнения плана.
 tools: Read, Write, Bash, Glob, LS
-model: sonnet
+model: haiku
 color: gray
 ---
 

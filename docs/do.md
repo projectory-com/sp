@@ -63,12 +63,16 @@ Sub-agents возвращают статус после выполнения tas
 
 ## Субагенты
 
-| Агент             | Модель | Роль                                                         |
-| ----------------- | ------ | ------------------------------------------------------------ |
-| `task-executor`   | sonnet | Выполняет один task: реализация, верификация, коммит         |
-| `code-simplifier` | sonnet | Упрощает код: over-engineering, дублирование, лишние обёртки |
-| `cleanup`         | haiku  | Удаляет мусор: логи, комментарии, неиспользуемые импорты     |
-| `doc-updater`     | sonnet | Обновляет README, CHANGELOG, JSDoc/TSDoc                     |
+| Агент              | Модель | Роль                                                         |
+| ------------------ | ------ | ------------------------------------------------------------ |
+| `task-executor`    | opus   | Выполняет один task: реализация, верификация, коммит         |
+| `spec-reviewer`    | sonnet | Проверяет соответствие реализации спецификации               |
+| `quality-reviewer` | sonnet | Оценивает качество кода: паттерны, читаемость, edge cases    |
+| `code-polisher`    | opus   | Упрощает код: over-engineering, дублирование, лишние обёртки |
+| `validator`        | haiku  | Lint, type-check, tests, build + авто-фикс                   |
+| `doc-updater`      | sonnet | Обновляет README, CHANGELOG, JSDoc/TSDoc                     |
+| `formatter`        | haiku  | Определяет formatter и прогоняет на изменённых файлах        |
+| `report-writer`    | haiku  | Записывает структурированный report-файл                     |
 
 ## Пример
 

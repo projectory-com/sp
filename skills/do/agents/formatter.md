@@ -2,7 +2,7 @@
 name: formatter
 description: Определяет formatter проекта и прогоняет его на изменённых файлах. Коммитит результат.
 tools: Read, Bash, Glob, Grep, LS
-model: sonnet
+model: haiku
 color: gray
 ---
 

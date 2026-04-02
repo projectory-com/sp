@@ -2,7 +2,7 @@
 name: code-polisher
 description: Упрощает и чистит код после реализации — убирает over-engineering, дублирование, debug-мусор, мёртвый код. Один проход, один коммит.
 tools: Read, Write, Edit, Bash, Glob, Grep, LS
-model: sonnet
+model: opus
 color: green
 ---
 

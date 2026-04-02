@@ -2,7 +2,7 @@
 name: task-architect
 description: Проектирует архитектуру фич на основе паттернов и конвенций кодовой базы. Формирует детальный план реализации с конкретными файлами, компонентами, data flow и последовательностью сборки.
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
-model: sonnet
+model: opus
 color: green
 ---
 
