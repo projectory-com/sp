@@ -26,14 +26,14 @@
 
 Exploration log: `docs/ai/<slug>/<slug>-exploration.md`.
 
-Содержит: тему исследования, все Q&A пары, ключевые файлы, web-источники, итоговую summary.
+Каждая Q&A запись содержит structured секции: контекст вопроса, ответ, детали (file:line, фрагменты кода), варианты (brainstorm), ключевые файлы, источники. В конце — итоговая summary.
 
 ## Субагенты
 
-| Агент                | Модель | Роль                                                                    |
-| -------------------- | ------ | ----------------------------------------------------------------------- |
-| `explore-agent`      | sonnet | Исследование: поиск по коду, анализ, ответ с structured output          |
-| `explore-log-writer` | haiku  | Запись exploration log в `docs/ai/<slug>/<slug>-exploration.md`, коммит |
+| Агент                | Модель | Роль                                                                       |
+| -------------------- | ------ | -------------------------------------------------------------------------- |
+| `explore-agent`      | sonnet | Исследование: поиск по коду, анализ, ответ с structured output             |
+| `explore-log-writer` | haiku  | Запись structured exploration log в `docs/ai/<slug>/<slug>-exploration.md` |
 
 ## Пример
 
