@@ -39,7 +39,7 @@ npm test    # запустить npm test
 
 ### Generic advice
 
-Не добавляй ничего, что верно для любого проекта:
+Исключай утверждения, верные для любого проекта:
 
 - "Write clean, maintainable code"
 - "Follow SOLID principles"

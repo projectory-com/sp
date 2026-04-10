@@ -93,7 +93,7 @@ npm run build # production-сборка
 
 ## Project
 
-[Название] — [что делает monorepo в целом].
+[Название] — [назначение monorepo].
 
 ## Architecture
 
