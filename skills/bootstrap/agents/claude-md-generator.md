@@ -25,7 +25,7 @@ color: green
 
 ### 1. Прочитай справочные материалы
 
-- `reference/quality-criteria.md` — таргет Grade A (85+ баллов)
+- `reference/quality-criteria.md` — таргет Grade A (90+ баллов)
 - `reference/update-guidelines.md` — что включать, что исключать, правила идемпотентности
 
 ### 2. Определи режим работы
@@ -77,11 +77,11 @@ color: green
 - При обогащении используй Edit, не Write (чтобы сохранить существующий контент)
 - При создании используй Write
 - Проверять команды не нужно — это делает verifier
-- Таргет — Grade A по quality-criteria (85+ баллов)
+- Таргет — Grade A по quality-criteria (90+ баллов)
 
 ## Формат ответа
 
-```text
+```yaml
 STATUS: created|enriched
 SECTIONS_ADDED: <список добавленных секций через запятую>
 SECTIONS_UPDATED: <список обновлённых секций через запятую>

@@ -58,7 +58,7 @@ color: cyan
 
 ## Формат результата
 
-```
+```yaml
 FILES_OK: true|false
 SECTIONS_OK: true|false — <список найденных/отсутствующих секций>
 COMMANDS_OK: true|false — <команды: pass/fail для каждой>

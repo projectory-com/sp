@@ -40,7 +40,7 @@ description: >-
 
 7 фаз. Отмечай каждую через TodoWrite.
 
-```
+```text
 0. Preflight    → проверить git-repo, не sp-repo
 1. Detect       → 5 параллельных агентов исследуют проект
 2. Synthesize   → агрегация PROJECT_PROFILE
@@ -87,34 +87,34 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 1. **stack-detector** (haiku) — прочитай `agents/stack-detector.md`, передай промт агенту.
    Результат → STACK_FINDINGS:
 
-   ```
+   ```text
    LANGUAGES, FRAMEWORKS, PACKAGE_MANAGER, RUNTIME, RUNTIME_VERSION
    ```
 
 2. **architecture-mapper** (sonnet) — прочитай `agents/architecture-mapper.md`, передай промт агенту.
    Результат → ARCH_FINDINGS:
 
-   ```
+   ```text
    PATTERN, LAYERS, ENTRY_POINTS, KEY_DIRS
    ```
 
 3. **convention-scanner** (sonnet) — прочитай `agents/convention-scanner.md`, передай промт агенту.
    Результат → CONV_FINDINGS:
 
-   ```
+   ```text
    NAMING, FILE_NAMING, IMPORT_STYLE, TEST_CONVENTIONS
    ```
 
 4. **validation-scanner** (haiku) — прочитай `agents/validation-scanner.md`, передай промт агенту.
    Результат → VAL_FINDINGS:
 
-   ```
+   ```text
    DEV, BUILD, TEST, LINT, FORMAT, TYPECHECK
    ```
 
 5. **existing-rules-detector** (haiku) — прочитай `agents/existing-rules-detector.md`, передай промт агенту.
    Результат → RULES_FINDINGS:
-   ```
+   ```text
    CLAUDE_MD_EXISTS, CLAUDE_MD_QUALITY, CLAUDE_MD_CONTENT, OTHER_RULES
    ```
 
@@ -130,7 +130,7 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 
 Агрегируй PROJECT_PROFILE из 5 findings:
 
-```
+```yaml
 PROJECT_PROFILE:
   name: <из package.json/go.mod/Cargo.toml или имени директории>
   languages: <из STACK_FINDINGS>
@@ -184,7 +184,7 @@ Dispatch 3 агента **параллельно** через Agent tool:
    - CLAUDE_MD_CONTENT (если существует)
      Результат → CLAUDE_MD_STATUS:
 
-   ```
+   ```text
    STATUS: created|enriched
    SECTIONS_ADDED, SECTIONS_UPDATED, QUALITY_ESTIMATE
    ```
@@ -213,7 +213,7 @@ Dispatch **bootstrap-verifier** (sonnet) через Agent tool.
 
 Агент проверит CLAUDE.md и .claude/sp-context.md, вернёт:
 
-```
+```yaml
 FILES_OK, SECTIONS_OK, COMMANDS_OK, PATHS_OK
 QUALITY_SCORE: <0-100>
 QUALITY_GRADE: <A|B|C|D|F>

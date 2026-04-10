@@ -72,7 +72,7 @@ ls -la CLAUDE.md .claude/CLAUDE.md .github/CLAUDE.md README.md CONTRIBUTING.md \
 
 Верни данные строго в этом формате:
 
-```
+```yaml
 CLAUDE_MD_EXISTS: <true | false>
 CLAUDE_MD_PATH: <путь | NOT_FOUND>
 CLAUDE_MD_SECTIONS:
@@ -82,6 +82,7 @@ CLAUDE_MD_SECTIONS:
   validation: <present | partial | missing | N/A>
   workflows: <present | partial | missing | N/A>
 CLAUDE_MD_QUALITY: <good | partial | poor | N/A>
+CLAUDE_MD_CONTENT: <содержимое CLAUDE.md, если exists — первые 100 строк>
 OTHER_RULES:
   - <filename> — <краткое описание полезного контента>
   - ...

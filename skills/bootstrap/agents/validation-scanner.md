@@ -74,7 +74,7 @@ grep -E '^[a-zA-Z_-]+:' justfile 2>/dev/null || grep -E '^[a-zA-Z_-]+:' Justfile
 
 Верни данные строго в этом формате:
 
-```
+```yaml
 DEV: <команда запуска dev-сервера | NOT_FOUND>
 BUILD: <команда сборки | NOT_FOUND>
 TEST: <команда запуска тестов | NOT_FOUND>

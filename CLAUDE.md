@@ -70,7 +70,7 @@ claude --plugin-dir .
 - `/fix` — быстрый фикс или доработка (1-3 файла, opus на code-фазах)
 - `/hi` — приветствие и объяснение доступных скиллов
 - `/explore` — исследование кодовой базы: read-only Q&A loop с summary chain
-- `/bootstrap` — подготовка проекта к sp flow: детекция стека, генерация CLAUDE.md, создание sp-context.md
+- `/bootstrap` — подготовка проекта к sp flow: детекция стека, генерация CLAUDE.md, создание .claude/sp-context.md
 
 ## Local skills (development)
 

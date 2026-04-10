@@ -14,7 +14,7 @@ color: cyan
 
 Профиль проекта:
 
-```
+```text
 {{PROJECT_PROFILE}}
 ```
 
@@ -35,7 +35,7 @@ color: cyan
 
 ## Формат результата
 
-```
+```text
 RECOMMENDATIONS:
 ## Рекомендованные Hooks
 

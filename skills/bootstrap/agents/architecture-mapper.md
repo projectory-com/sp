@@ -42,7 +42,7 @@ find . -maxdepth 2 -type d \
 
 Используй Glob для поиска:
 
-```
+```text
 **/main.{ts,js,go,py,rs}
 **/index.{ts,js}
 **/app.{ts,js,py,rb}
@@ -93,8 +93,8 @@ ls pnpm-workspace.yaml lerna.json turbo.json nx.json 2>/dev/null
 
 Верни данные строго в этом формате:
 
-```
-ARCHITECTURE_PATTERN: <monorepo | monolith | microservices | plugin | cli | static-site | flat>
+```yaml
+PATTERN: <monorepo | monolith | microservices | plugin | cli | static-site | flat>
 KEY_DIRS:
   - <dir> — <назначение>
   - ...
