@@ -93,22 +93,15 @@
 
 ### Пример вывода
 
-```text
-## Оценка CLAUDE.md
-
-| Критерий      | Баллы | Комментарий                          |
-| ------------- | ----- | ------------------------------------ |
-| Commands      | 15/20 | Нет deploy-команды                   |
-| Architecture  | 20/20 | Полное дерево с ролями               |
-| Non-obvious   | 10/15 | 2 gotchas, но без "почему"           |
-| Conciseness   | 15/15 | Всё project-specific                 |
-| Currency      | 10/15 | Устаревший путь к конфигу            |
-| Actionability | 15/15 | Claude может работать автономно      |
-
-**Итого: 85/100 — Grade B**
-
-### Рекомендации
-1. Добавить deploy-команду
-2. Объяснить причину workaround в секции Non-obvious
-3. Обновить путь к конфигу (src/config.ts → src/config/index.ts)
+```yaml
+FILES_OK: true
+SECTIONS_OK: true — Project: present, Architecture: present, Commands: present, Conventions: present
+COMMANDS_OK: false — build: pass, test: pass, lint: pass, deploy: fail (not found)
+PATHS_OK: false — src/: exist, config/: exist, src/config.ts: missing (moved to src/config/index.ts)
+QUALITY_SCORE: 85
+QUALITY_GRADE: B
+ISSUES:
+  - Commands: deploy-команда отсутствует в package.json (-5 Commands)
+  - Non-obvious: 2 gotchas без объяснения причин (-5 Non-obvious)
+  - Currency: устаревший путь src/config.ts → src/config/index.ts (-5 Currency)
 ```
