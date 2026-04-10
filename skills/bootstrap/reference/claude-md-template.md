@@ -16,9 +16,9 @@
 ## Commands
 
 \`\`\`bash
-[package-manager] install    # установить зависимости
-[package-manager] test       # запустить тесты
-[package-manager] build      # собрать проект
+[package-manager] install # установить зависимости
+[package-manager] test # запустить тесты
+[package-manager] build # собрать проект
 \`\`\`
 
 ## Conventions
@@ -43,12 +43,12 @@
 
 \`\`\`
 src/
-  api/           # [роль]
-  services/      # [роль]
-  models/        # [роль]
-  utils/         # [роль]
-tests/           # [структура тестов]
-config/          # [что конфигурируется]
+api/ # [роль]
+services/ # [роль]
+models/ # [роль]
+utils/ # [роль]
+tests/ # [структура тестов]
+config/ # [что конфигурируется]
 \`\`\`
 
 [1-2 предложения о data flow: откуда входят данные, как проходят, куда выходят]
@@ -56,12 +56,12 @@ config/          # [что конфигурируется]
 ## Commands
 
 \`\`\`bash
-npm install          # установить зависимости
-npm run dev          # запустить dev-сервер (port XXXX)
-npm test             # запустить тесты
-npm run test:watch   # тесты в watch-режиме
-npm run lint         # линтер
-npm run build        # production-сборка
+npm install # установить зависимости
+npm run dev # запустить dev-сервер (port XXXX)
+npm test # запустить тесты
+npm run test:watch # тесты в watch-режиме
+npm run lint # линтер
+npm run build # production-сборка
 \`\`\`
 
 ## Key Files
@@ -99,14 +99,14 @@ npm run build        # production-сборка
 
 \`\`\`
 apps/
-  web/             # [фреймворк] — [роль]
-  api/             # [фреймворк] — [роль]
-  admin/           # [фреймворк] — [роль]
+web/ # [фреймворк] — [роль]
+api/ # [фреймворк] — [роль]
+admin/ # [фреймворк] — [роль]
 packages/
-  ui/              # shared UI-компоненты
-  config/          # shared конфигурации (tsconfig, eslint)
-  db/              # Prisma-схема и клиент
-  utils/           # shared утилиты
+ui/ # shared UI-компоненты
+config/ # shared конфигурации (tsconfig, eslint)
+db/ # Prisma-схема и клиент
+utils/ # shared утилиты
 \`\`\`
 
 Зависимости между пакетами: `web` → `ui`, `db`, `utils`; `api` → `db`, `utils`.
@@ -114,27 +114,30 @@ packages/
 ## Commands
 
 \`\`\`bash
-pnpm install                    # установить все зависимости
-pnpm dev                        # запустить все apps в dev-режиме
-pnpm build                      # собрать все пакеты
-pnpm test                       # тесты во всех пакетах
-pnpm --filter web dev           # запустить только web
-pnpm --filter @scope/ui build   # собрать только ui-пакет
+pnpm install # установить все зависимости
+pnpm dev # запустить все apps в dev-режиме
+pnpm build # собрать все пакеты
+pnpm test # тесты во всех пакетах
+pnpm --filter web dev # запустить только web
+pnpm --filter @scope/ui build # собрать только ui-пакет
 \`\`\`
 
 ## Per-package notes
 
 ### apps/web
+
 - Framework: [Next.js / Remix / etc]
 - Port: [XXXX]
 - [Специфичные команды или gotchas]
 
 ### apps/api
+
 - Framework: [Express / Fastify / etc]
 - Port: [XXXX]
 - [Миграции БД: команда]
 
 ### packages/db
+
 - ORM: [Prisma / Drizzle / etc]
 - `pnpm --filter db generate` — сгенерировать клиент после изменения схемы
 - `pnpm --filter db migrate` — применить миграции

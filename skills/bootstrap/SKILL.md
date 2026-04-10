@@ -86,24 +86,28 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 
 1. **stack-detector** (haiku) — прочитай `agents/stack-detector.md`, передай промт агенту.
    Результат → STACK_FINDINGS:
+
    ```
    LANGUAGES, FRAMEWORKS, PACKAGE_MANAGER, RUNTIME, RUNTIME_VERSION
    ```
 
 2. **architecture-mapper** (sonnet) — прочитай `agents/architecture-mapper.md`, передай промт агенту.
    Результат → ARCH_FINDINGS:
+
    ```
    PATTERN, LAYERS, ENTRY_POINTS, KEY_DIRS
    ```
 
 3. **convention-scanner** (sonnet) — прочитай `agents/convention-scanner.md`, передай промт агенту.
    Результат → CONV_FINDINGS:
+
    ```
    NAMING, FILE_NAMING, IMPORT_STYLE, TEST_CONVENTIONS
    ```
 
 4. **validation-scanner** (haiku) — прочитай `agents/validation-scanner.md`, передай промт агенту.
    Результат → VAL_FINDINGS:
+
    ```
    DEV, BUILD, TEST, LINT, FORMAT, TYPECHECK
    ```
@@ -178,7 +182,8 @@ Dispatch 3 агента **параллельно** через Agent tool:
    - PROJECT_PROFILE целиком
    - CLAUDE_MD_EXISTS из RULES_FINDINGS
    - CLAUDE_MD_CONTENT (если существует)
-   Результат → CLAUDE_MD_STATUS:
+     Результат → CLAUDE_MD_STATUS:
+
    ```
    STATUS: created|enriched
    SECTIONS_ADDED, SECTIONS_UPDATED, QUALITY_ESTIMATE
@@ -186,11 +191,11 @@ Dispatch 3 агента **параллельно** через Agent tool:
 
 2. **sp-context-generator** (haiku) — прочитай `agents/sp-context-generator.md`, передай агенту:
    - PROJECT_PROFILE целиком
-   Результат → SP_CONTEXT_FILE (путь к .claude/sp-context.md)
+     Результат → SP_CONTEXT_FILE (путь к .claude/sp-context.md)
 
 3. **automation-recommender** (haiku) — прочитай `agents/automation-recommender.md`, передай агенту:
    - PROJECT_PROFILE (стек, фреймворки, commands)
-   Результат → RECOMMENDATIONS (список рекомендаций по автоматизации)
+     Результат → RECOMMENDATIONS (список рекомендаций по автоматизации)
 
 Дождись всех 3.
 
@@ -275,6 +280,7 @@ grep -q "^\.claude/" .gitignore 2>/dev/null && echo "IGNORED" || echo "OK"
 ```
 
 Если IGNORED → предупреди пользователя:
+
 > `.claude/` в .gitignore. sp-context.md не попадёт в коммит.
 
 AskUserQuestion:

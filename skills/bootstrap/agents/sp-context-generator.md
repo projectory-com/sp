@@ -31,12 +31,14 @@ mkdir -p .claude
 # SP Context: <project-name>
 
 ## Stack
+
 - Languages: <из PROJECT_PROFILE>
 - Frameworks: <из PROJECT_PROFILE>
 - Package manager: <из PROJECT_PROFILE>
 - Runtime: <из PROJECT_PROFILE>
 
 ## Commands
+
 - Dev: <команда | NOT_FOUND>
 - Build: <команда | NOT_FOUND>
 - Test: <команда | NOT_FOUND>
@@ -45,12 +47,14 @@ mkdir -p .claude
 - Typecheck: <команда | NOT_FOUND>
 
 ## Architecture
+
 - Pattern: <из PROJECT_PROFILE>
 - Key dirs: <список>
 - Entry points: <список>
 - Layers: <список>
 
 ## Conventions
+
 - Naming: <camelCase|snake_case|...>
 - File naming: <kebab|snake|...>
 - Import style: <из PROJECT_PROFILE>
