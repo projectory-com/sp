@@ -3,14 +3,14 @@ name: architecture-mapper
 description: >-
   Картирует структуру директорий, слои, entry points и архитектурные
   паттерны проекта.
-tools: Glob, Grep, LS, Read, Bash
+tools: Glob, Grep, Read, Bash
 model: sonnet
 color: yellow
 ---
 
 # architecture-mapper
 
-Картируй архитектуру проекта и верни structured report.
+Картируй архитектуру проекта.
 
 ## Процесс
 
@@ -62,7 +62,7 @@ find . -maxdepth 2 -type d \
 
 ### Шаг 4 — Архитектурный паттерн
 
-Определи общий паттерн:
+Определи архитектурный паттерн:
 
 - **monorepo** — `packages/`, `apps/`, `workspaces` в package.json, `pnpm-workspace.yaml`, `lerna.json`
 - **monolith** — один `src/` с чёткими слоями

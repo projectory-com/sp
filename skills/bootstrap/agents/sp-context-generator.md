@@ -15,6 +15,12 @@ color: gray
 **PROJECT_PROFILE:**
 {{PROJECT_PROFILE}}
 
+**DOC_CONTENT (документация проекта):**
+{{DOC_CONTENT}}
+
+**DOMAIN_FINDINGS (доменный контекст):**
+{{DOMAIN_FINDINGS}}
+
 ## Процесс
 
 ### 1. Создай директорию
@@ -25,7 +31,9 @@ mkdir -p .claude
 
 ### 2. Сформируй sp-context.md
 
-Извлеки данные из PROJECT_PROFILE и запиши файл `.claude/sp-context.md` в следующем формате:
+Извлеки данные из PROJECT_PROFILE и запиши `.claude/sp-context.md`. Обогащай описание и архитектуру из DOC_CONTENT: назначение проекта, ключевые решения, ограничения.
+
+Формат файла:
 
 ```markdown
 # SP Context: <project-name>
@@ -58,6 +66,22 @@ mkdir -p .claude
 - Naming: <camelCase|snake_case|...>
 - File naming: <kebab|snake|...>
 - Import style: <из PROJECT_PROFILE>
+
+## Domain Models
+
+- <model> — <назначение> (source: <path>)
+
+## API Endpoints
+
+- <METHOD> <path> → <handler> (source: <path>)
+
+## Key Abstractions
+
+- <abstraction> — <методы> (source: <path>)
+
+## Environment Variables
+
+- `<VAR>` — <назначение>
 ```
 
 ### 3. Запиши файл
@@ -66,10 +90,10 @@ mkdir -p .claude
 
 ## Правила
 
-- Всегда Write (overwrite) — не используй Edit, не проверяй существование файла
+- Перезаписывай файл (Write, не Edit) — source of truth это кодовая база
 - Если данные отсутствуют в PROJECT_PROFILE — ставь `NOT_FOUND`
 - Формат строго фиксированный — sp-скиллы парсят этот файл
-- Пиши только секции из шаблона — без комментариев, пояснений, дополнений
+- Базовые секции (Stack, Commands, Architecture, Conventions) — обязательные. Domain Models, API Endpoints, Key Abstractions, Environment Variables — условные: пиши только при наличии данных в DOMAIN_FINDINGS
 
 ## Формат ответа
 

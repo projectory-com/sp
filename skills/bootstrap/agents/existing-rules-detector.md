@@ -63,8 +63,12 @@ ls -la CLAUDE.md .claude/CLAUDE.md .github/CLAUDE.md README.md CONTRIBUTING.md \
 
 Если найдены README.md, CONTRIBUTING.md или другие rule-файлы:
 
-- Прочитай их (первые 100 строк достаточно)
+- Прочитай README.md (первые 200 строк)
+- Прочитай CONTRIBUTING.md (первые 100 строк), если существует
+- Найди файлы документации в `docs/` (glob `docs/*.md`, первые 50 строк каждого, максимум 5 файлов)
 - Отметь полезную информацию: стек, команды, конвенции, workflows
+
+Собери содержимое прочитанных файлов в DOC_CONTENT — для каждого файла укажи имя и извлечённый текст.
 
 ---
 
@@ -85,6 +89,14 @@ CLAUDE_MD_QUALITY: <good | partial | poor | N/A>
 CLAUDE_MD_CONTENT: <содержимое CLAUDE.md, если exists — первые 100 строк>
 OTHER_RULES:
   - <filename> — <краткое описание полезного контента>
+  - ...
+DOC_CONTENT:
+  - file: <имя файла, например README.md>
+    content: |
+      <извлечённое содержимое файла>
+  - file: <имя файла>
+    content: |
+      <извлечённое содержимое файла>
   - ...
 ```
 

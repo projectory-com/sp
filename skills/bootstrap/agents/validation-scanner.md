@@ -10,7 +10,7 @@ color: cyan
 
 # validation-scanner
 
-Собери команды валидации проекта и верни structured report.
+Собери команды валидации проекта.
 
 ## Процесс
 

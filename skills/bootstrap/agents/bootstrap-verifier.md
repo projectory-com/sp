@@ -3,7 +3,7 @@ name: bootstrap-verifier
 description: Проверяет сгенерированные CLAUDE.md и sp-context.md — существование, секции, команды, качество.
 tools: Read, Bash, Glob
 model: sonnet
-color: cyan
+color: orange
 ---
 
 # bootstrap-verifier
@@ -30,9 +30,29 @@ color: cyan
 
 Каждая секция — заголовок (## или #) с контентом.
 
+Проверь Environment в CLAUDE.md (опционально): список переменных или инструкции. Отсутствие не штрафуй.
+
+#### Проверка sp-context.md
+
+Прочитай `.claude/sp-context.md` и проверь наличие обязательных секций:
+
+- **Stack** — описание технологического стека
+- **Commands** — команды проекта
+- **Architecture** — архитектура и структура
+- **Conventions** — соглашения и правила
+
+Условные секции — проверяй формат только если секция присутствует (отсутствие не штрафуется):
+
+- **Domain Models** — если есть, должна содержать список (маркированный `-` или нумерованный) с описанием моделей
+- **API Endpoints** — если есть, должна содержать список эндпоинтов с методами и путями
+- **Key Abstractions** — если есть, должна содержать список ключевых абстракций проекта
+- **Environment Variables** — если есть, должна содержать список переменных окружения
+
+При наличии условной секции без корректного формата списка — отметь как проблему в ISSUES.
+
 ### Шаг 3. Commands validation
 
-Извлеки все команды из секции Commands в CLAUDE.md. Для каждой команды проверь её существование одним из способов:
+Извлеки команды из Commands и проверь каждую одним из способов:
 
 - Запусти `<cmd> --help 2>&1 | head -5` и проверь что не "command not found"
 - Проверь наличие в `package.json` scripts (для npm/pnpm/yarn команд)
@@ -60,7 +80,8 @@ color: cyan
 
 ```yaml
 FILES_OK: true|false
-SECTIONS_OK: true|false — <список найденных/отсутствующих секций>
+SECTIONS_OK: true|false — <список найденных/отсутствующих секций в CLAUDE.md>
+SP_CONTEXT_SECTIONS_OK: true|false — <обязательные секции sp-context.md; условные: формат ок/проблемы>
 COMMANDS_OK: true|false — <команды: pass/fail для каждой>
 PATHS_OK: true|false — <пути: exist/missing для каждого>
 QUALITY_SCORE: <число 0-100>

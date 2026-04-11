@@ -1,14 +1,15 @@
 ---
 name: bootstrap
 description: >-
-  Подготовка проекта к работе с sp flow. Активируется когда пользователь пишет
-  "bootstrap", "настрой sp", "подготовь проект", "инициализация sp",
-  "setup sp", "первый запуск".
+  Подготовка проекта к sp flow — детекция стека, генерация CLAUDE.md и
+  sp-context.md. Используется когда пользователь пишет "bootstrap", "настрой sp",
+  "подготовь проект", "инициализация sp", "setup sp", "первый запуск",
+  "подключить sp", "создай CLAUDE.md".
 ---
 
 # Подготовка проекта к sp flow
 
-Ты — оркестратор. Координируешь агентов, принимаешь решения через AskUserQuestion. Все файловые операции делегируй агентам.
+Ты — оркестратор. Координируешь агентов, принимаешь решения через AskUserQuestion. Агенты выполняют все файловые операции.
 
 Делегируй каждую фазу агенту через Agent tool:
 
@@ -17,12 +18,13 @@ description: >-
 - Конвенции → `agents/convention-scanner.md`
 - Валидация → `agents/validation-scanner.md`
 - Правила → `agents/existing-rules-detector.md`
+- Домен → `agents/domain-analyzer.md`
 - CLAUDE.md → `agents/claude-md-generator.md`
 - sp-context → `agents/sp-context-generator.md`
 - Автоматизация → `agents/automation-recommender.md`
 - Верификация → `agents/bootstrap-verifier.md`
 
-Работай от начала до конца без остановок.
+Работай от начала до конца.
 
 **Принцип:** одноразовый онбординг проекта. Запускается один раз при подключении sp к проекту.
 
@@ -32,17 +34,17 @@ description: >-
 
 `$ARGUMENTS` — опциональное описание проекта.
 
-Если пуст — скилл определит всё автоматически.
+Если пуст — скилл автоматически определит стек, архитектуру и конвенции.
 
 ---
 
 ## Pipeline
 
-7 фаз. Отмечай каждую через TodoWrite.
+7 фаз. Отмечай завершение через TodoWrite.
 
 ```text
 0. Preflight    → проверить git-repo, не sp-repo
-1. Detect       → 5 параллельных агентов исследуют проект
+1. Detect       → 6 параллельных агентов исследуют проект
 2. Synthesize   → агрегация PROJECT_PROFILE
 3. Generate     → CLAUDE.md + sp-context + рекомендации
 4. Verify       → проверить файлы и качество
@@ -62,7 +64,7 @@ description: >-
 git rev-parse --is-inside-work-tree 2>/dev/null
 ```
 
-Результат false или ошибка → сообщи пользователю: "Не git-репозиторий. /bootstrap работает только внутри git-проекта." Выйди.
+Результат false или ошибка → сообщи пользователю: "/bootstrap работает только внутри git-проекта." Выйди.
 
 ### 0b. Не sp-репозиторий
 
@@ -70,7 +72,7 @@ git rev-parse --is-inside-work-tree 2>/dev/null
 test -f .claude-plugin/plugin.json && echo "SP_REPO" || echo "OK"
 ```
 
-SP_REPO → сообщи: "Это репозиторий sp-плагина. /bootstrap предназначен для целевых проектов." Выйди.
+SP_REPO → сообщи: "/bootstrap предназначен для целевых проектов, не для sp-плагинов." Выйди.
 
 Оба условия пройдены → переход к Фазе 1.
 
@@ -80,9 +82,7 @@ SP_REPO → сообщи: "Это репозиторий sp-плагина. /boo
 
 ## Фаза 1 — Detect
 
-Прочитай все 5 detect-агентов перед dispatch.
-
-Dispatch 5 агентов **параллельно** через Agent tool (5 вызовов одновременно):
+Dispatch 6 агентов **параллельно** через Agent tool (6 вызовов одновременно):
 
 1. **stack-detector** (haiku) — прочитай `agents/stack-detector.md`, передай промт агенту.
    Результат → STACK_FINDINGS:
@@ -114,11 +114,22 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 
 5. **existing-rules-detector** (haiku) — прочитай `agents/existing-rules-detector.md`, передай промт агенту.
    Результат → RULES_FINDINGS:
+
    ```text
-   CLAUDE_MD_EXISTS, CLAUDE_MD_QUALITY, CLAUDE_MD_CONTENT, OTHER_RULES
+   CLAUDE_MD_EXISTS, CLAUDE_MD_QUALITY, CLAUDE_MD_CONTENT, OTHER_RULES, DOC_CONTENT
    ```
 
-Дождись завершения всех 5.
+6. **domain-analyzer** (sonnet) — прочитай `agents/domain-analyzer.md`, передай промт агенту.
+   domain-analyzer исследует доменную модель, API, абстракции и переменные окружения.
+   Результат → DOMAIN_FINDINGS:
+
+   ```text
+   DOMAIN_MODELS, API_ENDPOINTS, KEY_ABSTRACTIONS, ENV_VARS, CODE_WORKAROUNDS
+   ```
+
+Дождись всех 6.
+
+Если агент вернул ошибку или пустой результат — используй пустые значения для соответствующей секции и запиши проблему в VERIFY_NOTES.
 
 Отметь в TodoWrite: `[x] Detect`
 
@@ -128,7 +139,7 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 
 ## Фаза 2 — Synthesize
 
-Агрегируй PROJECT_PROFILE из 5 findings:
+Агрегируй 6 findings в PROJECT_PROFILE:
 
 ```yaml
 PROJECT_PROFILE:
@@ -164,9 +175,17 @@ PROJECT_PROFILE:
     claude_md_quality: <из RULES_FINDINGS>
     claude_md_content: <из RULES_FINDINGS, если exists>
     other_rules: <из RULES_FINDINGS>
+    doc_content: <из RULES_FINDINGS.DOC_CONTENT>
+
+  domain:
+    models: <из DOMAIN_FINDINGS>
+    api_endpoints: <из DOMAIN_FINDINGS>
+    key_abstractions: <из DOMAIN_FINDINGS>
+    env_vars: <из DOMAIN_FINDINGS>
+    code_workarounds: <из DOMAIN_FINDINGS>
 ```
 
-Если `$ARGUMENTS` содержит описание проекта — дополни PROJECT_PROFILE полем `user_description`.
+Если передан `$ARGUMENTS` — добавь `user_description` в PROJECT_PROFILE.
 
 Отметь в TodoWrite: `[x] Synthesize`
 
@@ -182,6 +201,8 @@ Dispatch 3 агента **параллельно** через Agent tool:
    - PROJECT_PROFILE целиком
    - CLAUDE_MD_EXISTS из RULES_FINDINGS
    - CLAUDE_MD_CONTENT (если существует)
+   - DOC_CONTENT из PROJECT_PROFILE.existing_rules.doc_content
+   - DOMAIN_FINDINGS из PROJECT_PROFILE.domain
      Результат → CLAUDE_MD_STATUS:
 
    ```text
@@ -191,6 +212,8 @@ Dispatch 3 агента **параллельно** через Agent tool:
 
 2. **sp-context-generator** (haiku) — прочитай `agents/sp-context-generator.md`, передай агенту:
    - PROJECT_PROFILE целиком
+   - DOC_CONTENT из PROJECT_PROFILE.existing_rules.doc_content
+   - DOMAIN_FINDINGS из PROJECT_PROFILE.domain
      Результат → SP_CONTEXT_FILE (путь к .claude/sp-context.md)
 
 3. **automation-recommender** (haiku) — прочитай `agents/automation-recommender.md`, передай агенту:
@@ -323,10 +346,11 @@ bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill bootstrap
 
 ## Правила
 
-- **Тонкий оркестратор.** Все файловые операции делегируй агентам. Read/Write/Edit вызывают только агенты.
+- **Тонкий оркестратор.** Read/Write/Edit вызывают только агенты.
 - **Без остановок.** Работай до конца без подтверждений между фазами (кроме Confirm).
-- **Параллельный dispatch.** Phase 1: 5 агентов одновременно. Phase 3: 3 агента одновременно.
+- **Параллельный dispatch.** Phase 1: 6 агентов. Phase 3: 3 агента.
 - **TodoWrite.** Отмечай каждую фазу сразу по завершении.
-- **Вывод CLI.** Команды с длинным выводом запускай с `2>&1 | tail -20`.
+- **Вывод CLI.** Запускай команды с длинным выводом через `2>&1 | tail -20`.
 - **Идемпотентность.** При повторном запуске: CLAUDE.md дополняется (Edit через агента), sp-context перезаписывается (Write через агента).
 - **Язык контента** — русский.
+- **Подстановка.** При dispatch агента замени `{{PLACEHOLDER}}` в промте на данные из findings. Агенты получают реальные значения, не шаблонные переменные.
