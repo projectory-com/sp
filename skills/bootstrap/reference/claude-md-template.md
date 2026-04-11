@@ -77,6 +77,10 @@ npm run build # production-сборка
 - Коммиты: [conventional commits / свой формат]
 - Ветки: [стратегия ветвления]
 
+## Environment
+
+- `VAR_NAME` — [назначение]
+
 ## Non-obvious
 
 - [Почему X сделан так, а не иначе]
@@ -149,6 +153,12 @@ pnpm --filter @scope/ui build # собрать только ui-пакет
 - [Стратегия версионирования пакетов]
 - [Правила добавления новых пакетов]
 
+## Environment
+
+- Корневой `.env` — общие переменные для всех apps
+- Per-app `.env.local` — переопределения для конкретного app (не коммитятся)
+- `VAR_NAME` — [назначение]
+
 ## Non-obvious
 
 - [Порядок сборки пакетов важен: сначала X, потом Y]
@@ -166,4 +176,5 @@ pnpm --filter @scope/ui build # собрать только ui-пакет
 | Key Files    | нет     | да            | нет      |
 | Per-package  | нет     | нет           | да       |
 | Conventions  | да      | да            | да       |
+| Environment  | нет     | да            | да       |
 | Non-obvious  | нет     | да            | да       |
