@@ -17,6 +17,7 @@ description: >-
 - Конвенции → `agents/convention-scanner.md`
 - Валидация → `agents/validation-scanner.md`
 - Правила → `agents/existing-rules-detector.md`
+- Домен → `agents/domain-analyzer.md`
 - CLAUDE.md → `agents/claude-md-generator.md`
 - sp-context → `agents/sp-context-generator.md`
 - Автоматизация → `agents/automation-recommender.md`
@@ -42,7 +43,7 @@ description: >-
 
 ```text
 0. Preflight    → проверить git-repo, не sp-repo
-1. Detect       → 5 параллельных агентов исследуют проект
+1. Detect       → 6 параллельных агентов исследуют проект
 2. Synthesize   → агрегация PROJECT_PROFILE
 3. Generate     → CLAUDE.md + sp-context + рекомендации
 4. Verify       → проверить файлы и качество
@@ -80,9 +81,9 @@ SP_REPO → сообщи: "Это репозиторий sp-плагина. /boo
 
 ## Фаза 1 — Detect
 
-Прочитай все 5 detect-агентов перед dispatch.
+Прочитай все 6 detect-агентов перед dispatch.
 
-Dispatch 5 агентов **параллельно** через Agent tool (5 вызовов одновременно):
+Dispatch 6 агентов **параллельно** через Agent tool (6 вызовов одновременно):
 
 1. **stack-detector** (haiku) — прочитай `agents/stack-detector.md`, передай промт агенту.
    Результат → STACK_FINDINGS:
@@ -114,11 +115,20 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 
 5. **existing-rules-detector** (haiku) — прочитай `agents/existing-rules-detector.md`, передай промт агенту.
    Результат → RULES_FINDINGS:
+
    ```text
    CLAUDE_MD_EXISTS, CLAUDE_MD_QUALITY, CLAUDE_MD_CONTENT, OTHER_RULES, DOC_CONTENT
    ```
 
-Дождись завершения всех 5.
+6. **domain-analyzer** (sonnet) — прочитай `agents/domain-analyzer.md`, передай промт агенту.
+   domain-analyzer исследует доменную модель, API, абстракции и переменные окружения.
+   Результат → DOMAIN_FINDINGS:
+
+   ```text
+   DOMAIN_MODELS, API_ENDPOINTS, KEY_ABSTRACTIONS, ENV_VARS, CODE_WORKAROUNDS
+   ```
+
+Дождись завершения всех 6.
 
 Отметь в TodoWrite: `[x] Detect`
 
@@ -128,7 +138,7 @@ Dispatch 5 агентов **параллельно** через Agent tool (5 в
 
 ## Фаза 2 — Synthesize
 
-Агрегируй PROJECT_PROFILE из 5 findings:
+Агрегируй PROJECT_PROFILE из 6 findings:
 
 ```yaml
 PROJECT_PROFILE:
@@ -165,6 +175,13 @@ PROJECT_PROFILE:
     claude_md_content: <из RULES_FINDINGS, если exists>
     other_rules: <из RULES_FINDINGS>
     doc_content: <из RULES_FINDINGS.DOC_CONTENT>
+
+  domain:
+    models: <из DOMAIN_FINDINGS>
+    api_endpoints: <из DOMAIN_FINDINGS>
+    key_abstractions: <из DOMAIN_FINDINGS>
+    env_vars: <из DOMAIN_FINDINGS>
+    workarounds: <из DOMAIN_FINDINGS>
 ```
 
 Если `$ARGUMENTS` содержит описание проекта — дополни PROJECT_PROFILE полем `user_description`.
@@ -184,6 +201,7 @@ Dispatch 3 агента **параллельно** через Agent tool:
    - CLAUDE_MD_EXISTS из RULES_FINDINGS
    - CLAUDE_MD_CONTENT (если существует)
    - DOC_CONTENT из PROJECT_PROFILE.existing_rules.doc_content
+   - DOMAIN_FINDINGS из PROJECT_PROFILE.domain
      Результат → CLAUDE_MD_STATUS:
 
    ```text
@@ -194,6 +212,7 @@ Dispatch 3 агента **параллельно** через Agent tool:
 2. **sp-context-generator** (haiku) — прочитай `agents/sp-context-generator.md`, передай агенту:
    - PROJECT_PROFILE целиком
    - DOC_CONTENT из PROJECT_PROFILE.existing_rules.doc_content
+   - DOMAIN_FINDINGS из PROJECT_PROFILE.domain
      Результат → SP_CONTEXT_FILE (путь к .claude/sp-context.md)
 
 3. **automation-recommender** (haiku) — прочитай `agents/automation-recommender.md`, передай агенту:
@@ -328,7 +347,7 @@ bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill bootstrap
 
 - **Тонкий оркестратор.** Все файловые операции делегируй агентам. Read/Write/Edit вызывают только агенты.
 - **Без остановок.** Работай до конца без подтверждений между фазами (кроме Confirm).
-- **Параллельный dispatch.** Phase 1: 5 агентов одновременно. Phase 3: 3 агента одновременно.
+- **Параллельный dispatch.** Phase 1: 6 агентов одновременно. Phase 3: 3 агента одновременно.
 - **TodoWrite.** Отмечай каждую фазу сразу по завершении.
 - **Вывод CLI.** Команды с длинным выводом запускай с `2>&1 | tail -20`.
 - **Идемпотентность.** При повторном запуске: CLAUDE.md дополняется (Edit через агента), sp-context перезаписывается (Write через агента).
