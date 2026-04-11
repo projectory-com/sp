@@ -39,7 +39,7 @@ npm test    # запустить npm test
 
 ### Generic advice
 
-Исключай утверждения, верные для любого проекта:
+Убирай утверждения, верные для любого проекта:
 
 - "Write clean, maintainable code"
 - "Follow SOLID principles"
@@ -50,7 +50,7 @@ npm test    # запустить npm test
 ### Очевидное из контекста
 
 - Описание языка программирования ("JavaScript is a dynamic language")
-- Объяснение стандартных инструментов ("npm is a package manager")
+- Описание стандартных инструментов ("npm is a package manager")
 - Туториал по фреймворку ("React uses components")
 
 ### Временные данные

@@ -89,7 +89,7 @@ find . -type f \( -name "*.ts" -o -name "*.js" -o -name "*.py" -o -name "*.go" -
 
 Верни данные строго в этом формате:
 
-```
+```yaml
 LANGUAGES: <список через запятую>
 FRAMEWORKS: <список через запятую | NOT_FOUND>
 PACKAGE_MANAGER: <название | NOT_FOUND>

@@ -84,7 +84,7 @@ color: yellow
 
 Верни данные строго в этом формате:
 
-```
+```yaml
 NAMING:
   variables: <camelCase | snake_case | PascalCase>
   functions: <camelCase | snake_case>

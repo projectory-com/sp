@@ -20,9 +20,9 @@ color: cyan
 
 ## Процесс
 
-1. **Прочитай паттерны hooks** — `reference/hooks-patterns.md` относительно `${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/`. Извлеки паттерны Claude Code hooks и git hooks по стекам (Node.js, Python, Go, Rust).
+1. **Прочитай паттерны hooks** — `reference/hooks-patterns.md`. Извлеки паттерны Claude Code hooks и git hooks по стекам (Node.js, Python, Go, Rust).
 
-2. **Прочитай каталог MCP-серверов** — `reference/mcp-servers.md` относительно `${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/`. Извлеки MCP-серверы по категориям (Databases, Version Control, Communication, Search, Development, Cloud).
+2. **Прочитай каталог MCP-серверов** — `reference/mcp-servers.md`. Извлеки MCP-серверы по категориям (Databases, Version Control, Communication, Search, Development, Cloud).
 
 3. **Сопоставь стек с паттернами** — на основе PROJECT_PROFILE определи:
    - Язык/рантайм (Node.js, Python, Go, Rust) — какие git hooks подходят
