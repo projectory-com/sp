@@ -1,114 +1,114 @@
 # Status Protocol
 
-Протокол статусов sub-agent'ов и review loop.
+Sub-agent status protocol and review loop.
 
 ---
 
-## Статусы implementer-а
+## Implementer statuses
 
-Sub-agent возвращает один из четырёх статусов после выполнения task.
+A sub-agent returns one of four statuses after executing a task.
 
 ### DONE
 
-Задача выполнена. Verify проходит. Коммит сделан.
+Task done. Verify passes. Commit made.
 
-**Действие оркестратора:**
+**Orchestrator action:**
 
-1. Если sub-agent не закоммитил — закоммить
-2. Запусти spec review → quality review (см. Review Loop)
-3. Отметь task в TodoWrite
-4. Перейди к следующему task
+1. If the sub-agent didn't commit — commit
+2. Run spec review → quality review (see Review Loop)
+3. Mark the task in TodoWrite
+4. Move to the next task
 
 ### DONE_WITH_CONCERNS
 
-Задача выполнена, но sub-agent сомневается. Код работает, Verify проходит.
+Task done, but the sub-agent has doubts. The code works, Verify passes.
 
-**Действие оркестратора:**
+**Orchestrator action:**
 
-1. Прочитай concerns
-2. Concern о корректности или скоупе — оцени перед review:
-   - Обоснован → запиши, продолжи к review
-   - Критичен → останови как BLOCKED
-3. Concern-наблюдение (файл разрастается, нетипичный паттерн) — запиши и продолжи
-4. Запиши concerns в данные для report
-5. Закоммить если не сделано, запусти review loop
+1. Read the concerns
+2. Concern about correctness or scope — evaluate before review:
+   - Justified → record, continue to review
+   - Critical → stop as BLOCKED
+3. Observation-level concern (file bloating, atypical pattern) — record and continue
+4. Record concerns in the report data
+5. Commit if not done, run the review loop
 
 ### NEEDS_CONTEXT
 
-Sub-agent'у не хватило информации. Задача не выполнена.
+The sub-agent ran out of information. Task not completed.
 
-**Действие оркестратора:**
+**Orchestrator action:**
 
-1. Прочитай что именно нужно
-2. Найди информацию (файлы, контекст из плана)
-3. Re-dispatch sub-agent с добавленным контекстом (макс 1 retry)
-4. После retry снова NEEDS_CONTEXT → re-dispatch с более мощной моделью
-5. И это не помогло → BLOCKED
+1. Read exactly what's needed
+2. Find the information (files, context from the plan)
+3. Re-dispatch the sub-agent with the added context (max 1 retry)
+4. After retry still NEEDS_CONTEXT → re-dispatch with a stronger model
+5. That didn't help either → BLOCKED
 
 ### BLOCKED
 
-Задача не может быть выполнена.
+The task cannot be completed.
 
-**Действие оркестратора:**
+**Orchestrator action:**
 
-1. Оцени blocker:
-   - Проблема контекста → дай больше контекста, re-dispatch
-   - Задача слишком сложная → re-dispatch с более мощной моделью
-   - Задача слишком большая → разбей на части (если возможно в рамках плана)
-   - План ошибочен → запиши, продолжи с независимыми tasks
-2. Пометь зависимые tasks как SKIPPED
-3. Продолжи с независимыми tasks
+1. Evaluate the blocker:
+   - Context problem → give more context, re-dispatch
+   - Task too complex → re-dispatch with a stronger model
+   - Task too large → split into parts (if possible within the plan)
+   - Plan is wrong → record, continue with independent tasks
+2. Mark dependent tasks as SKIPPED
+3. Continue with independent tasks
 
-**Всё выполнение не останавливай.** Блокируй только tasks, зависящие от заблокированного.
+**Don't stop the whole execution.** Block only the tasks depending on the blocked one.
 
 ---
 
 ## Review Loop
 
-После каждого DONE/DONE_WITH_CONCERNS — двухэтапный review.
+After each DONE/DONE_WITH_CONCERNS — a two-stage review.
 
-### Этап 1 — Spec Compliance Review
+### Stage 1 — Spec Compliance Review
 
 Dispatch `agents/spec-reviewer.md`:
 
-- Передать: task requirements + implementer report
-- Reviewer верифицирует по коду, а не по отчёту
+- Pass: task requirements + implementer report
+- The reviewer verifies against the code, not the report
 
-**Результат:**
+**Result:**
 
-- ✅ Spec compliant → Этап 2
-- ❌ Issues → implementer фиксит → re-dispatch spec reviewer (макс 3 итерации)
-- 3 итерации без ✅ → записать issues, продолжить к quality review
+- ✅ Spec compliant → Stage 2
+- ❌ Issues → implementer fixes → re-dispatch spec reviewer (max 3 iterations)
+- 3 iterations without ✅ → record issues, continue to quality review
 
-### Этап 2 — Code Quality Review
+### Stage 2 — Code Quality Review
 
 Dispatch `agents/quality-reviewer.md`:
 
-- Передать: BASE_SHA, HEAD_SHA, task requirements
-- Dispatch только после ✅ от spec reviewer
+- Pass: BASE_SHA, HEAD_SHA, task requirements
+- Dispatch only after ✅ from the spec reviewer
 
-**Результат:**
+**Result:**
 
 - ✅ Approved → task complete
-- ❌ Critical/Important issues → implementer фиксит → re-dispatch quality reviewer (макс 3 итерации)
-- Minor issues → записать, не блокировать
-- 3 итерации без ✅ → записать issues, продолжить
+- ❌ Critical/Important issues → implementer fixes → re-dispatch quality reviewer (max 3 iterations)
+- Minor issues — record, don't block
+- 3 iterations without ✅ → record issues, continue
 
 ---
 
 ## Model Escalation
 
-Когда sub-agent не справляется:
+When a sub-agent can't cope:
 
-1. Первый dispatch — модель из agent frontmatter (обычно sonnet)
-2. BLOCKED или NEEDS_CONTEXT повторно → re-dispatch с opus
-3. Opus тоже не справился → запиши как BLOCKED, escalate в report
+1. First dispatch — the model from the agent frontmatter (usually sonnet)
+2. BLOCKED or NEEDS_CONTEXT again → re-dispatch with opus
+3. Opus also fails → record as BLOCKED, escalate in the report
 
 ---
 
 ## Parallel Dispatch
 
-При наличии parallel groups в Execution Order:
+When there are parallel groups in the Execution Order:
 
 ```
 Group 1 (parallel): Task 1, Task 2
@@ -116,32 +116,32 @@ Group 1 (parallel): Task 1, Task 2
 Group 2 (sequential): Task 3 → Task 4
 ```
 
-**Правила:**
+**Rules:**
 
-- Parallel group: dispatch все tasks одновременно через Agent tool
-- Barrier: дождись завершения всех tasks группы перед следующей
-- Sequential: dispatch по одному в порядке зависимостей
-- Task в parallel group BLOCKED → остальные tasks группы продолжай
+- Parallel group: dispatch all tasks at once via the Agent tool
+- Barrier: wait for all tasks in the group before the next one
+- Sequential: dispatch one at a time in dependency order
+- A task in a parallel group is BLOCKED → keep the remaining tasks in the group running
 
-**Не параллель:**
+**Not parallel:**
 
-- Tasks затрагивают одни и те же файлы (file intersection)
-- Tasks связаны через depends_on
-- В плане нет явных parallel groups
+- Tasks touch the same files (file intersection)
+- Tasks are linked via depends_on
+- The plan has no explicit parallel groups
 
 ---
 
-## Отслеживание
+## Tracking
 
-По каждому task записывай:
+For each task, record:
 
 - Status (DONE / DONE_WITH_CONCERNS / BLOCKED / SKIPPED)
-- Concerns (текст, если есть)
-- Block reason (текст, если BLOCKED)
-- Commit hash (если был коммит)
-- Retry count (0, 1, или 2 с model escalation)
+- Concerns (text, if any)
+- Block reason (text, if BLOCKED)
+- Commit hash (if there was a commit)
+- Retry count (0, 1, or 2 with model escalation)
 - Spec review result (✅/❌ + issues)
 - Quality review result (✅/❌ + issues)
-- Файлы, изменённые sub-agent'ом (FILES_CHANGED)
+- Files changed by the sub-agent (FILES_CHANGED)
 
-Все данные попадают в report-файл.
+All data goes into the report file.

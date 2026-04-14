@@ -1,18 +1,18 @@
 ---
 name: do
 description: >-
-  Выполнение задачи по плану. Используется когда пользователь пишет "выполни",
-  "сделай", "do", "запусти план", "execute", "реализуй", или передаёт путь
-  к plan-файлу и просит выполнить.
+  Execute a task per plan. Triggered when the user writes "execute", "do",
+  "run the plan", "implement", or passes a path to a plan file and asks to
+  execute it.
 ---
 
-# Выполнение задачи по плану
+# Execute task per plan
 
-Ты — оркестратор. Координируешь работу sub-agent'ов.
+You are the orchestrator. You coordinate sub-agents.
 
-Делегируй каждую рабочую фазу sub-agent'у через Agent tool:
+Delegate each working phase to a sub-agent via the Agent tool:
 
-- Реализация → `agents/task-executor.md`
+- Implementation → `agents/task-executor.md`
 - Spec review → `agents/spec-reviewer.md`
 - Quality review → `agents/quality-reviewer.md`
 - Polish → `agents/code-polisher.md`
@@ -21,283 +21,283 @@ description: >-
 - Format → `agents/formatter.md`
 - Report → `agents/report-writer.md`
 
-Работай от начала до конца без остановок и подтверждений.
+Work from start to finish without stops or confirmations.
 
-**Принцип:** разработчик запускает и уходит, возвращается по notification.
+**Principle:** the developer kicks it off and walks away, returning on notification.
 
 ---
 
-## Вход
+## Input
 
-`$ARGUMENTS` — путь к plan-файлу, например `docs/ai/86-black-jack-page/86-black-jack-page-plan.md`
+`$ARGUMENTS` — path to the plan file, e.g. `docs/ai/86-black-jack-page/86-black-jack-page-plan.md`
 
-Если пути нет — запроси у пользователя.
+If there is no path — ask the user.
 
 ---
 
 ## Pipeline
 
-7 этапов. Каждый отмечается в TodoWrite.
+7 stages. Each one is tracked in TodoWrite.
 
 ```
-1. Parse        → прочитать план, создать todo
+1. Parse        → read the plan, create todos
 2. Execute      → dispatch sub-agents + spec review + quality review
-3. Polish       → упростить и почистить код
+3. Polish       → simplify and clean up code
 4. Validate     → dispatch validator sub-agent
-5. Document     → обновить документацию
+5. Document     → update documentation
 6. Finalize     → format + report
-7. Complete     → review / plannotator / завершить
+7. Complete     → review / plannotator / finish
 ```
 
 ---
 
-## Фаза 1 — Parse
+## Phase 1 — Parse
 
-**1.** Прочитай plan-файл целиком.
+**1.** Read the plan file in full.
 
-**2.** Извлеки:
+**2.** Extract:
 
-- `SLUG` — из пути (`docs/ai/<slug>/`)
-- `COMPLEXITY` — из поля «Complexity»
-- `TASKS[]` — все tasks из секции «Tasks» с полным текстом (What, How, Files, Context, Verify)
-- `CONSTRAINTS` — из plan header
-- `VERIFICATION` — из секции «Verification»
-- `EXECUTION_ORDER` — из секции «Execution / Order» (parallel groups, barriers, sequence)
+- `SLUG` — from the path (`docs/ai/<slug>/`)
+- `COMPLEXITY` — from the "Complexity" field
+- `TASKS[]` — all tasks from the "Tasks" section with full text (What, How, Files, Context, Verify)
+- `CONSTRAINTS` — from the plan header
+- `VERIFICATION` — from the "Verification" section
+- `EXECUTION_ORDER` — from the "Execution / Order" section (parallel groups, barriers, sequence)
 
-**3.** Извлеки `TICKET_ID` из slug (по `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`). Передавай `TICKET_ID` и `SLUG` всем sub-agent'ам для коммитов.
+**3.** Extract `TICKET_ID` from the slug (per `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`). Pass `TICKET_ID` and `SLUG` to every sub-agent for commits.
 
-**4.** Найди task-файл: `docs/ai/<SLUG>/<SLUG>-task.md`
+**4.** Find the task file: `docs/ai/<SLUG>/<SLUG>-task.md`
 
-**5.** Создай todo list через TodoWrite:
+**5.** Create the todo list via TodoWrite:
 
 ```
-[ ] Execute: Task 1 — <название>
-[ ] Execute: Task 2 — <название>
+[ ] Execute: Task 1 — <name>
+[ ] Execute: Task 2 — <name>
 ...
-[ ] Execute: Task N — Validation (из плана)
-[ ] Polish: упростить и почистить код
+[ ] Execute: Task N — Validation (from the plan)
+[ ] Polish: simplify and clean up code
 [ ] Validate: lint + types + tests
-[ ] Documentation: обновить документацию
+[ ] Documentation: update documentation
 [ ] Finalize: format + report
-[ ] Complete: review / завершить
+[ ] Complete: review / finish
 ```
 
-**Переход:** план загружен, todo создан → Фаза 2
+**Transition:** plan loaded, todos created → Phase 2
 
 ---
 
-## Фаза 2 — Execute
+## Phase 2 — Execute
 
-Прочитай `reference/status-protocol.md` — правила обработки статусов, review loop, parallel dispatch.
+Read `reference/status-protocol.md` — rules for status handling, review loop, parallel dispatch.
 
-### Dispatch по Execution Order
+### Dispatch by Execution Order
 
-Читай Order из плана:
+Read the Order from the plan:
 
-- **Parallel group** → dispatch все tasks группы одновременно через Agent tool
-- **Sequential** → dispatch по одному
-- **Barrier** → дождаться завершения всех tasks группы
+- **Parallel group** → dispatch all tasks in the group simultaneously via the Agent tool
+- **Sequential** → dispatch one at a time
+- **Barrier** → wait for all tasks in the group to finish
 
-Без явных parallel groups — выполняй sequential по порядку.
+Without explicit parallel groups — run sequentially in order.
 
-### Для каждого task
+### For each task
 
 ```
-1. Сформируй промт для sub-agent'а:
-   - Прочитай agents/task-executor.md
-   - Подставь: task.What, task.How, task.Files, task.Context, CONSTRAINTS, task.Verify
-   - Сконструируй COMMIT_MESSAGE в формате `TICKET type(SLUG): description`
-     Пример: `#86 feat(86-black-jack-page): add game page with basic layout`
-     БЕЗ двоеточия после ticket. SLUG обязателен.
-   - Передай полный текст task, а не путь к plan-файлу
+1. Build the prompt for the sub-agent:
+   - Read agents/task-executor.md
+   - Substitute: task.What, task.How, task.Files, task.Context, CONSTRAINTS, task.Verify
+   - Construct COMMIT_MESSAGE in the format `TICKET type(SLUG): description`
+     Example: `#86 feat(86-black-jack-page): add game page with basic layout`
+     NO colon after the ticket. SLUG is required.
+   - Pass the full task text, not the path to the plan file
 
-2. Dispatch через Agent tool
-   - Дождись результата
+2. Dispatch via the Agent tool
+   - Wait for the result
 
-3. Обработай status (по reference/status-protocol.md):
-   - DONE / DONE_WITH_CONCERNS → запусти Review Loop
-   - NEEDS_CONTEXT → добавить контекст, re-dispatch
-   - BLOCKED → оценить, re-dispatch с мощной моделью или записать
+3. Handle the status (per reference/status-protocol.md):
+   - DONE / DONE_WITH_CONCERNS → run the Review Loop
+   - NEEDS_CONTEXT → add context, re-dispatch
+   - BLOCKED → evaluate, re-dispatch with a stronger model or record it
 
-4. Review Loop (для DONE / DONE_WITH_CONCERNS):
+4. Review Loop (for DONE / DONE_WITH_CONCERNS):
    a. Dispatch agents/spec-reviewer.md
-      - Передать: task requirements + implementer report
-      - ✅ → шаг b
-      - ❌ → implementer фиксит → re-dispatch spec reviewer (макс 3)
+      - Pass: task requirements + implementer report
+      - OK → step b
+      - FAIL → implementer fixes → re-dispatch spec reviewer (max 3)
 
    b. Dispatch agents/quality-reviewer.md
-      - Передать: BASE_SHA, HEAD_SHA, task requirements
-      - ✅ → task complete
-      - ❌ Critical/Important → implementer фиксит → re-dispatch (макс 3)
-      - Minor → записать, не блокировать
+      - Pass: BASE_SHA, HEAD_SHA, task requirements
+      - OK → task complete
+      - FAIL Critical/Important → implementer fixes → re-dispatch (max 3)
+      - Minor → record, don't block
 
-5. Гарантируй коммит:
-   - Проверь `git status` на незакоммиченные изменения
-   - Если есть — закоммить по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`
-   - Запиши commit hash для report
+5. Guarantee a commit:
+   - Check `git status` for uncommitted changes
+   - If any exist — commit per the convention in `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`
+   - Record the commit hash for the report
 
-6. Отметь в TodoWrite: [x]
+6. Mark in TodoWrite: [x]
 ```
 
-**При BLOCKED:** пропускай только tasks, зависящие от заблокированного. Остальные выполняй.
+**On BLOCKED:** skip only tasks that depend on the blocked one. Run the rest.
 
-При BLOCKED — отправь нотификацию:
-`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type ALERT --skill do --phase Execute --slug "$SLUG" --title "Task заблокирован" --body "<причина блокировки и количество skipped>"`
+On BLOCKED — send a notification:
+`bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type ALERT --skill do --phase Execute --slug "$SLUG" --title "Task blocked" --body "<block reason and number of skipped tasks>"`
 
-Сохрани список изменённых/созданных файлов — потребуется в Фазах 3-5.
+Save the list of changed/created files — you'll need it in Phases 3-5.
 
-**Переход:** tasks выполнены (или BLOCKED) → Фаза 3
+**Transition:** tasks done (or BLOCKED) → Phase 3
 
-**Если изменённых файлов ноль** (все tasks BLOCKED/SKIPPED):
-пропусти Фазы 3 (Polish) и 5 (Document).
-Перейди к Фазе 4 (Validate) — пропусти при отсутствии изменений.
-Затем Фаза 6 (Finalize) со статусом failed → Фаза 7 (Complete).
-
----
-
-## Фаза 3 — Polish
-
-Запусти sub-agent через Agent tool. Промт — из `agents/code-polisher.md`.
-
-Передай:
-
-- Список файлов, изменённых/созданных в Фазе 2
-- CONSTRAINTS из плана
-
-После завершения:
-
-- Коммит по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
-- Отметь в TodoWrite: [x]
-
-**Переход →** Фаза 4.
+**If there are zero changed files** (all tasks BLOCKED/SKIPPED):
+skip Phases 3 (Polish) and 5 (Document).
+Go to Phase 4 (Validate) — skip if there are no changes.
+Then Phase 6 (Finalize) with status failed → Phase 7 (Complete).
 
 ---
 
-## Фаза 4 — Validate
+## Phase 3 — Polish
 
-Запусти sub-agent через Agent tool. Промт — из `agents/validator.md`.
+Run a sub-agent via the Agent tool. Prompt — from `agents/code-polisher.md`.
 
-Передай:
+Pass:
 
-- Список изменённых файлов из Фаз 2-3
-- SLUG для коммит-конвенции
-- TICKET_ID для коммит-конвенции
-- CONSTRAINTS из плана
+- List of files changed/created in Phase 2
+- CONSTRAINTS from the plan
 
-Sub-agent определяет доступные команды из package.json scripts, запускает lint/type-check/test/build,
-фиксит failures (одна попытка), коммитит фиксы и возвращает результат каждой команды.
+After completion:
 
-Отметь в TodoWrite: [x]
+- Commit per the convention in `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
+- Mark in TodoWrite: [x]
 
-**Переход →** Фаза 5.
+**Transition →** Phase 4.
 
 ---
 
-## Фаза 5 — Document
+## Phase 4 — Validate
 
-Запусти sub-agent через Agent tool. Промт — из `agents/doc-updater.md`.
+Run a sub-agent via the Agent tool. Prompt — from `agents/validator.md`.
 
-Передай:
+Pass:
 
-- Список изменённых файлов
-- SLUG и task title
-- Requirements из plan-файла
+- List of files changed in Phases 2-3
+- SLUG for the commit convention
+- TICKET_ID for the commit convention
+- CONSTRAINTS from the plan
 
-Sub-agent решает что обновить:
+The sub-agent determines the available commands from package.json scripts, runs lint/type-check/test/build,
+fixes failures (one attempt), commits fixes, and returns the result of each command.
 
-- README — при изменении API или добавлении фичи
-- CHANGELOG — при наличии файла
-- JSDoc/TSDoc — для новых/изменённых экспортируемых функций
+Mark in TodoWrite: [x]
 
-**Обновляй существующую документацию, а не создавай с нуля.**
-
-После завершения:
-
-- Коммит по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
-- Отметь в TodoWrite: [x]
-
-**Переход →** Фаза 6.
+**Transition →** Phase 5.
 
 ---
 
-## Фаза 6 — Finalize
+## Phase 5 — Document
+
+Run a sub-agent via the Agent tool. Prompt — from `agents/doc-updater.md`.
+
+Pass:
+
+- List of changed files
+- SLUG and task title
+- Requirements from the plan file
+
+The sub-agent decides what to update:
+
+- README — on API changes or new features
+- CHANGELOG — when the file exists
+- JSDoc/TSDoc — for new/changed exported functions
+
+**Update existing documentation rather than creating from scratch.**
+
+After completion:
+
+- Commit per the convention in `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
+- Mark in TodoWrite: [x]
+
+**Transition →** Phase 6.
+
+---
+
+## Phase 6 — Finalize
 
 ### 6a. Format
 
-Запусти sub-agent через Agent tool. Промт — из `agents/formatter.md`.
+Run a sub-agent via the Agent tool. Prompt — from `agents/formatter.md`.
 
-Передай:
+Pass:
 
-- Список изменённых файлов
-- SLUG для коммит-конвенции
-- TICKET_ID для коммит-конвенции
+- List of changed files
+- SLUG for the commit convention
+- TICKET_ID for the commit convention
 
-Sub-agent определяет formatter, прогоняет на файлах и коммитит результат.
+The sub-agent determines the formatter, runs it on the files, and commits the result.
 
-Отметь в TodoWrite: [x]
+Mark in TodoWrite: [x]
 
 ### 6b. Report
 
-Запусти sub-agent через Agent tool. Промт — из `agents/report-writer.md`.
+Run a sub-agent via the Agent tool. Prompt — from `agents/report-writer.md`.
 
-Передай:
+Pass:
 
 - SLUG
-- Путь к plan-файлу
-- Собранные данные для отчёта: статусы tasks, concerns, blocked, validation results,
-  post-implementation статусы, changes summary
+- Path to the plan file
+- Collected data for the report: task statuses, concerns, blocked, validation results,
+  post-implementation statuses, changes summary
 
-Sub-agent читает `reference/report-format.md` и записывает `docs/ai/<SLUG>/<SLUG>-report.md`.
+The sub-agent reads `reference/report-format.md` and writes `docs/ai/<SLUG>/<SLUG>-report.md`.
 
 ### 6c. Commit Report Artifact
 
-Проверь: `docs/ai/` под `.gitignore`? Если да — пропусти.
+Check: is `docs/ai/` under `.gitignore`? If yes — skip.
 
-Если не под gitignore — закоммить отчёт по конвенции из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`:
+If not under gitignore — commit the report per the convention in `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`:
 
-Формат: `TICKET docs(SLUG): add execution report` (БЕЗ двоеточия после ticket).
+Format: `TICKET docs(SLUG): add execution report` (NO colon after the ticket).
 
 ```bash
 git add docs/ai/<SLUG>/<SLUG>-report.md
 git commit -m "TICKET docs(SLUG): add execution report"
 ```
 
-Пример: `#86 docs(86-black-jack-page): add execution report`
+Example: `#86 docs(86-black-jack-page): add execution report`
 
 ### 6d. Notification
 
-Выведи краткий итог: `<SLUG> done (N/M tasks)` или `<SLUG> done with issues (N/M tasks, K blocked)`.
-Путь к report-файлу.
+Print a brief summary: `<SLUG> done (N/M tasks)` or `<SLUG> done with issues (N/M tasks, K blocked)`.
+Path to the report file.
 
-Отправь нотификацию:
+Send a notification:
 `bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type STAGE_COMPLETE --skill do --phase Complete --slug "$SLUG" --title "<SLUG> done (N/M tasks)" --body "docs/ai/$SLUG/$SLUG-report.md"`
 
-**Переход →** Фаза 7.
+**Transition →** Phase 7.
 
 ---
 
-## Фаза 7 — Complete
+## Phase 7 — Complete
 
-Сообщи путь к report-файлу и предложи через AskUserQuestion 2 варианта:
+Report the path to the report file and offer 2 options via AskUserQuestion:
 
-1. **Запустить /sp:review (Recommended)** — автоматический переход к code review
-2. **Завершить** — выход
+1. **Run /sp:review (Recommended)** — automatic transition to code review
+2. **Finish** — exit
 
-**Обработка выбора:**
+**Handling the choice:**
 
-- **Запустить /sp:review:** вызови Skill tool с `/sp:review` и аргументом `<SLUG>`
-- **Завершить:** сообщи путь к report-файлу
+- **Run /sp:review:** invoke the Skill tool with `/sp:review` and argument `<SLUG>`
+- **Finish:** report the path to the report file
 
 ---
 
-## Правила
+## Rules
 
-- **Без остановок.** Работает до конца без подтверждений между шагами.
-- **Коммиты по конвенции.** Формат и ticket ID — из `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
-- **Текущая директория.** Worktrees и управление ветками запрещены.
-- **Context isolation.** Sub-agent получает полный текст своего task, а не весь план.
-- **Review после каждого task.** Spec compliance → code quality. Обязателен.
-- **TodoWrite.** Отмечай каждый шаг сразу по завершении.
-- **При BLOCKED — продолжай.** Останавливай только зависимую ветку.
-- **Вывод CLI.** Команды с длинным выводом (formatter, lint, build, test) запускай с `2>&1 | tail -20`.
-- **Язык контента** — язык оригинального plan-файла.
+- **No stops.** Run end to end without confirmations between steps.
+- **Commits by convention.** Format and ticket ID — from `${CLAUDE_PLUGIN_ROOT}/skills/gca/reference/commit-convention.md`.
+- **Current directory.** Worktrees and branch management are not allowed.
+- **Context isolation.** A sub-agent receives the full text of its task, not the whole plan.
+- **Review after each task.** Spec compliance → code quality. Mandatory.
+- **TodoWrite.** Mark each step immediately upon completion.
+- **On BLOCKED — keep going.** Stop only the dependent branch.
+- **CLI output.** Run commands with long output (formatter, lint, build, test) with `2>&1 | tail -20`.
+- **Language:** match the plan file's original language.

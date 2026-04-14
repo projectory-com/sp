@@ -1,26 +1,26 @@
 # Report Format
 
-Формат выходного файла `<slug>-report.md`. Записывается в Фазе 6.
+Format of the output file `<slug>-report.md`. Written in Phase 6.
 
 ---
 
-## Шаблон
+## Template
 
 ```markdown
 # Report: <slug>
 
-**Plan:** <путь к plan-файлу>
-**Mode:** <фактический mode (inline | sub-agents)>
+**Plan:** <path to the plan file>
+**Mode:** <actual mode (inline | sub-agents)>
 **Status:** ✅ complete | ⚠️ partial | ❌ failed
 
 ## Tasks
 
 | #   | Task       | Status                | Commit    | Concerns          |
 | --- | ---------- | --------------------- | --------- | ----------------- |
-| 1   | <название> | ✅ DONE               | `abc1234` | —                 |
-| 2   | <название> | ⚠️ DONE_WITH_CONCERNS | `def5678` | см. ниже          |
-| 3   | <название> | ❌ BLOCKED            | —         | см. ниже          |
-| 4   | <название> | ⏭️ SKIPPED            | —         | depends on Task 3 |
+| 1   | <name>     | ✅ DONE               | `abc1234` | —                 |
+| 2   | <name>     | ⚠️ DONE_WITH_CONCERNS | `def5678` | see below         |
+| 3   | <name>     | ❌ BLOCKED            | —         | see below         |
+| 4   | <name>     | ⏭️ SKIPPED            | —         | depends on Task 3 |
 | 5   | Validation | ✅ DONE               | `ghi9012` | —                 |
 
 ## Post-implementation
@@ -35,15 +35,15 @@
 
 ## Concerns
 
-### Task 2: <название>
+### Task 2: <name>
 
-<текст concerns от sub-agent'а>
+<concerns text from the sub-agent>
 
 ## Blocked
 
-### Task 3: <название>
+### Task 3: <name>
 
-**Reason:** <причина блокировки>
+**Reason:** <block reason>
 **Impact:** Task 4 skipped (depends on Task 3)
 
 ## Validation
@@ -78,12 +78,12 @@ npm run build ✅
 
 ---
 
-## Правила
+## Rules
 
-- **Status** определяется по tasks:
-  - Все DONE → `✅ complete`
-  - Есть BLOCKED или SKIPPED, но большинство DONE → `⚠️ partial`
-  - Большинство BLOCKED → `❌ failed`
-- Секции **Concerns** и **Blocked** — только при наличии соответствующих tasks.
-- **Changes summary** — собирай из FILES_CHANGED всех sub-agent'ов.
-- **Commits** — хронологический порядок, включая post-implementation.
+- **Status** is derived from tasks:
+  - All DONE → `✅ complete`
+  - Some BLOCKED or SKIPPED, but the majority DONE → `⚠️ partial`
+  - Majority BLOCKED → `❌ failed`
+- **Concerns** and **Blocked** sections — only when there are matching tasks.
+- **Changes summary** — collect from FILES_CHANGED of all sub-agents.
+- **Commits** — chronological order, including post-implementation.
