@@ -1,154 +1,154 @@
 ---
 name: explore
 description: >-
-  Исследование кодовой базы и брейнсторм. Активируется когда пользователь пишет
+  Codebase exploration and brainstorming. Activates when the user writes
   "explore", "explain", "compare", "what if", "brainstorm",
-  "исследуй", "разберись", "проанализируй", "как устроено", "как работает",
-  "объясни", "расскажи про", "почему", "что если", "сравни", "какие варианты",
-  "предложи подход", "покажи архитектуру", "брейнсторм".
+  "investigate", "figure out", "analyze", "how is it built", "how does it work",
+  "explain", "tell me about", "why", "what if", "compare", "what are the options",
+  "suggest an approach", "show the architecture", "brainstorm".
 ---
 
-# Исследование
+# Exploration
 
-Оркестрируй исследование. Принимай решения через AskUserQuestion. Файловые операции делегируй агентам.
+Orchestrate the exploration. Make decisions via AskUserQuestion. Delegate file operations to agents.
 
-Делегируй:
+Delegate:
 
-- Исследование → `agents/explore-agent.md`
-- Запись лога → `agents/explore-log-writer.md`
+- Exploration → `agents/explore-agent.md`
+- Log writing → `agents/explore-log-writer.md`
 
-Работай без остановок.
-
----
-
-## Вход
-
-`$ARGUMENTS` — первый вопрос или тема исследования.
+Work without stopping.
 
 ---
 
-## Фазы
+## Input
 
-3 фазы.
+`$ARGUMENTS` — the first question or exploration topic.
+
+---
+
+## Phases
+
+3 phases.
 
 ```
-1. Init      → инициализация переменных
-2. Loop      → user-driven Q&A с dispatch explore-agent (sonnet)
+1. Init      → initialize variables
+2. Loop      → user-driven Q&A with dispatch explore-agent (sonnet)
 3. Finalize  → slug, dispatch explore-log-writer (haiku)
 ```
 
 ---
 
-## Фаза 1 — Init
+## Phase 1 — Init
 
-Если `$ARGUMENTS` пуст — спроси через AskUserQuestion: "О чём хочешь поговорить?"
+If `$ARGUMENTS` is empty — ask via AskUserQuestion: "What would you like to talk about?"
 
-Первым вопросом считай `$ARGUMENTS` или ответ пользователя.
+Treat `$ARGUMENTS` or the user's reply as the first question.
 
-Прочитай `agents/explore-agent.md` — используй во всех итерациях Loop без повторного чтения.
+Read `agents/explore-agent.md` — use it across every Loop iteration without re-reading.
 
-Инициализируй переменные:
+Initialize variables:
 
-- `EXPLORATION_SUMMARY` = "" (накопительная цепочка ключевых выводов)
-- `QA_LOG` = [] (полный лог всех Q&A раундов)
+- `EXPLORATION_SUMMARY` = "" (cumulative chain of key findings)
+- `QA_LOG` = [] (full log of all Q&A rounds)
 - `ITERATION` = 0
 
-Переход → Фаза 2.
+Transition → Phase 2.
 
 ---
 
-## Фаза 2 — Loop (user-driven Q&A)
+## Phase 2 — Loop (user-driven Q&A)
 
-Повторяй до выхода пользователя.
+Repeat until the user exits.
 
 ### 2a. Prompt enrichment
 
-Оркестратор формирует промт для агента:
+The orchestrator builds the prompt for the agent:
 
-- Тема исследования = первый вопрос пользователя
-- Текущий вопрос = вопрос из текущей итерации
-- Предыдущие находки = EXPLORATION_SUMMARY
+- Exploration topic = the user's first question
+- Current question = the question from the current iteration
+- Previous findings = EXPLORATION_SUMMARY
 
 ### 2b. Dispatch explore-agent
 
-Dispatch через Agent tool (model: sonnet). Файл агента уже прочитан в Init.
+Dispatch via the Agent tool (model: sonnet). The agent file is already read in Init.
 
-Агент вернёт structured output: RESPONSE_TYPE, ANSWER, DETAILS, SUMMARY, KEY_FILES, WEB_SOURCES. При открытом вопросе — также OPTIONS.
+The agent returns structured output: RESPONSE_TYPE, ANSWER, DETAILS, SUMMARY, KEY_FILES, WEB_SOURCES. For an open question — also OPTIONS.
 
-### 2c. Показать результат
+### 2c. Show the result
 
-При `RESPONSE_TYPE = answer` — покажи ANSWER и DETAILS пользователю.
+For `RESPONSE_TYPE = answer` — show ANSWER and DETAILS to the user.
 
-При `RESPONSE_TYPE = brainstorm` — покажи ANSWER, DETAILS и OPTIONS пользователю.
+For `RESPONSE_TYPE = brainstorm` — show ANSWER, DETAILS and OPTIONS to the user.
 
-### 2d. Обновить состояние
+### 2d. Update state
 
-Добавь SUMMARY агента в EXPLORATION_SUMMARY.
+Append the agent's SUMMARY to EXPLORATION_SUMMARY.
 
-Добавь полную запись в QA_LOG. Передавай все поля без сжатия:
+Append the full record to QA_LOG. Pass all fields without compression:
 
 ```
-Q: <вопрос пользователя>
-CONTEXT: <зачем задан вопрос — что привело к нему, какую проблему решает, как связан с предыдущими вопросами>
-ANSWER: <ANSWER из explore-agent — основной ответ>
-DETAILS: <DETAILS из explore-agent — полностью, с file:line и фрагментами кода>
-SUMMARY: <SUMMARY из explore-agent — вывод по текущему вопросу>
-KEY_FILES: <список>
-WEB_SOURCES: <список>
-OPTIONS: <если brainstorm>
+Q: <user's question>
+CONTEXT: <why the question was asked — what led to it, what problem it solves, how it connects to previous questions>
+ANSWER: <ANSWER from explore-agent — the main answer>
+DETAILS: <DETAILS from explore-agent — in full, with file:line and code fragments>
+SUMMARY: <SUMMARY from explore-agent — conclusion for the current question>
+KEY_FILES: <list>
+WEB_SOURCES: <list>
+OPTIONS: <if brainstorm>
 ```
 
-CONTEXT формируй сам как оркестратор — на основе хода беседы, предыдущих вопросов и текущей цели пользователя.
+Build CONTEXT yourself as the orchestrator — based on the flow of the conversation, previous questions and the user's current goal.
 
 `ITERATION++`.
 
-### 2e. Следующий шаг
+### 2e. Next step
 
-AskUserQuestion — что дальше:
+AskUserQuestion — what's next:
 
-- **Задать ещё вопрос**
-- **Сохранить и завершить** → переход к Фазе 3
-- **Продолжить без сохранения** → завершить скилл, лог не записывать
+- **Ask another question**
+- **Save and finish** → go to Phase 3
+- **Continue without saving** → end the skill, do not write the log
 
-### 2f. Warning при длинной сессии
+### 2f. Warning on a long session
 
-При 20+ вопросах — предупреди: "Сессия длинная (N вопросов), рекомендую сохранить результаты."
+At 20+ questions — warn: "The session is long (N questions), I recommend saving the results."
 
-Новый вопрос пользователя → вернуться к шагу 2a.
+A new user question → return to step 2a.
 
 ---
 
-## Фаза 3 — Finalize
+## Phase 3 — Finalize
 
-Через AskUserQuestion предложи 2-3 slug-варианта по теме исследования (prefix `explore-`, kebab-case, английский, до 40 символов). Добавь вариант "Other" для ввода вручную.
+Via AskUserQuestion offer 2-3 slug variants based on the exploration topic (prefix `explore-`, kebab-case, English, up to 40 characters). Add an "Other" option for manual input.
 
-Dispatch `explore-log-writer` через Agent tool (model: haiku).
+Dispatch `explore-log-writer` via the Agent tool (model: haiku).
 
-Прочитай `agents/explore-log-writer.md`. Передай агенту:
+Read `agents/explore-log-writer.md`. Pass to the agent:
 
-- SLUG — slug исследования
-- TOPIC — первый вопрос (тема исследования)
-- QA_PAIRS — полный QA_LOG. Каждая запись содержит поля: Q, CONTEXT, ANSWER, DETAILS, SUMMARY, KEY_FILES, WEB_SOURCES, OPTIONS (если brainstorm). Передавай все поля без сжатия.
-- DATE — текущая дата
+- SLUG — the exploration slug
+- TOPIC — the first question (exploration topic)
+- QA_PAIRS — the full QA_LOG. Each record contains fields: Q, CONTEXT, ANSWER, DETAILS, SUMMARY, KEY_FILES, WEB_SOURCES, OPTIONS (if brainstorm). Pass all fields without compression.
+- DATE — the current date
 
-Агент создаст файл `docs/ai/<SLUG>/<SLUG>-exploration.md`.
+The agent will create the file `docs/ai/<SLUG>/<SLUG>-exploration.md`.
 
-Выведи результат:
+Print the result:
 
 ```
 Exploration log: docs/ai/<SLUG>/<SLUG>-exploration.md
-Вопросов исследовано: <ITERATION>
+Questions explored: <ITERATION>
 ```
 
-TodoWrite: "Exploration log записан".
+TodoWrite: "Exploration log written".
 
 ---
 
-## Правила
+## Rules
 
-- Делегируй файловые операции агентам — сам не выполняй.
-- Работай без подтверждений между фазами; AskUserQuestion в Init и Loop.
-- Жди вопросов от пользователя.
-- Накапливай выводы в EXPLORATION_SUMMARY и передавай агенту как контекст.
-- Отмечай фазы через TodoWrite (Init, Finalize), не каждый вопрос.
-- Язык контента — русский.
+- Delegate file operations to agents — don't do them yourself.
+- Work without confirmations between phases; AskUserQuestion in Init and Loop.
+- Wait for questions from the user.
+- Accumulate findings in EXPLORATION_SUMMARY and pass to the agent as context.
+- Mark phases via TodoWrite (Init, Finalize), not every question.
+- Language: match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.

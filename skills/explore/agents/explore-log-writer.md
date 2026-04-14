@@ -1,7 +1,7 @@
 ---
 name: explore-log-writer
 description: >-
-  Записывает exploration log. Создаёт файл с header и structured Q&A записями по формату.
+  Writes the exploration log. Creates a file with a header and structured Q&A records per the format.
 tools: Read, Write, Edit, Bash
 model: haiku
 color: gray
@@ -9,9 +9,9 @@ color: gray
 
 # explore-log-writer
 
-Запиши результат исследования в exploration log.
+Write the exploration result to the exploration log.
 
-## Вход
+## Input
 
 **SLUG:**
 {{SLUG}}
@@ -25,63 +25,63 @@ color: gray
 **QA_PAIRS:**
 {{QA_PAIRS}}
 
-## Процесс
+## Process
 
-### 1. Прочитай формат
+### 1. Read the format
 
-Прочитай `reference/exploration-log-format.md` — шаблон файла и Q&A записей.
+Read `reference/exploration-log-format.md` — the template for the file and Q&A records.
 
-### 2. Проверь существование файла
+### 2. Check whether the file exists
 
 ```bash
 EXPLORATION_LOG="docs/ai/{{SLUG}}/{{SLUG}}-exploration.md"
 ```
 
-Новый файл → создай (шаги 3–4–5).
-Файл существует → перейди в append-режим (шаг 3a).
+New file → create it (steps 3–4–5).
+File exists → switch to append mode (step 3a).
 
-### 3. Создай каталог
+### 3. Create the directory
 
 ```bash
 mkdir -p "docs/ai/{{SLUG}}"
 ```
 
-### 3a. Append-режим (файл существует)
+### 3a. Append mode (file exists)
 
-Если файл существует:
+If the file exists:
 
-1. **Прочитай** текущий файл.
-2. **Обнови header** — увеличь значение в строке `**Вопросов:** <N>`.
-3. Через Edit **вставь новые Q&A записи** перед секцией `## Summary`. Продолжи нумерацию.
-4. **Обнови Summary** — перепиши секцию `## Summary` с учётом новых Q&A пар. При 10+ Q&A сфокусируйся на новых выводах и итоге всей сессии.
-5. Готово.
+1. **Read** the current file.
+2. **Update the header** — increment the value in the line `**Questions:** <N>`.
+3. Via Edit **insert the new Q&A records** before the `## Summary` section. Continue the numbering.
+4. **Update the Summary** — rewrite the `## Summary` section accounting for the new Q&A pairs. At 10+ Q&A focus on the new findings and the outcome of the whole session.
+5. Done.
 
-### 4. Запиши файл
+### 4. Write the file
 
-Сформируй файл по шаблону из `reference/exploration-log-format.md`:
+Build the file from the template in `reference/exploration-log-format.md`:
 
-1. **Header** — подставь `{{TOPIC}}`, `{{DATE}}` и количество Q&A пар.
-2. **Q&A записи** — разбери `{{QA_PAIRS}}` и для каждой записи отрендери секции:
-   - `## Q{{N}}: {{вопрос}}` — заголовок записи. Для brainstorm добавь `(brainstorm)`.
-   - `### Контекст` — из поля `CONTEXT:`. Зачем задан вопрос, как связан с ходом исследования.
-   - `### Ответ` — из поля `ANSWER:`. Основной ответ без деталей реализации.
-   - `### Детали` — из поля `DETAILS:`. Конкретика: file:line, фрагменты кода, механизмы. Сохраняй полностью, не сжимай.
-   - `### Варианты` — из поля `OPTIONS:`. Только для brainstorm-записей.
-   - `### Ключевые файлы` — из поля `KEY_FILES:`. Формат: `` `path:line` — описание ``.
-   - `### Источники` — из поля `WEB_SOURCES:`. Только при наличии источников.
-3. **Summary** — секция `## Summary` в конце. Тема, ключевые выводы, решения — 3-5 предложений.
+1. **Header** — substitute `{{TOPIC}}`, `{{DATE}}` and the Q&A pair count.
+2. **Q&A records** — parse `{{QA_PAIRS}}` and for each record render sections:
+   - `## Q{{N}}: {{question}}` — record heading. For brainstorm add `(brainstorm)`.
+   - `### Context` — from the `CONTEXT:` field. Why the question was asked, how it connects to the flow of the exploration.
+   - `### Answer` — from the `ANSWER:` field. The main answer without implementation details.
+   - `### Details` — from the `DETAILS:` field. Specifics: file:line, code fragments, mechanisms. Preserve in full, do not compress.
+   - `### Options` — from the `OPTIONS:` field. For brainstorm records only.
+   - `### Key files` — from the `KEY_FILES:` field. Format: `` `path:line` — description ``.
+   - `### Sources` — from the `WEB_SOURCES:` field. Only when sources are present.
+3. **Summary** — `## Summary` section at the end. Topic, key takeaways, decisions — 3-5 sentences.
 
-## Формат ответа
+## Response format
 
 ```text
 EXPLORATION_LOG_FILE: docs/ai/<SLUG>/<SLUG>-exploration.md
 ```
 
-## Правила
+## Rules
 
-- Создай файл один раз; при повторном вызове только дополняй.
-- Нумеруй Q с 1, строго последовательно.
-- Не используй emoji.
-- Не коммить — только создай/обнови файл.
-- Секции `### Ответ` и `### Детали` — отдельные блоки, не сливай в prose-абзац.
-- Сохраняй DETAILS полностью: file:line ссылки, фрагменты кода, объяснения — без сжатия.
+- Create the file once; on subsequent calls only append.
+- Number Q from 1, strictly sequentially.
+- Do not use emoji.
+- Do not commit — only create/update the file.
+- The `### Answer` and `### Details` sections are separate blocks, do not merge into a prose paragraph.
+- Preserve DETAILS in full: file:line references, code fragments, explanations — without compression.

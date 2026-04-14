@@ -1,100 +1,100 @@
 # Exploration Log Format
 
-Формат файла `<slug>-exploration.md` и Q&A записей.
+Format for the file `<slug>-exploration.md` and Q&A records.
 
-## Header файла (при создании)
+## File header (on creation)
 
 ```markdown
 # Exploration: {{TOPIC}}
 
-**Дата:** {{YYYY-MM-DD}}
-**Вопросов:** {{N}}
+**Date:** {{YYYY-MM-DD}}
+**Questions:** {{N}}
 ```
 
 ---
 
-## Формат Q&A записи
+## Q&A record format
 
 ```markdown
-## Q{{N}}: {{вопрос}}
+## Q{{N}}: {{question}}
 
-### Контекст
+### Context
 
-{{Зачем задан вопрос — что привело к нему, какую проблему решает, как связан с предыдущими вопросами. 1-2 предложения.}}
+{{Why the question was asked — what led to it, what problem it solves, how it connects to previous questions. 1-2 sentences.}}
 
-### Ответ
+### Answer
 
-{{ANSWER из explore-agent — основной ответ на вопрос. Без деталей реализации.}}
+{{ANSWER from explore-agent — the main answer to the question. Without implementation details.}}
 
-### Детали
+### Details
 
-{{DETAILS из explore-agent — конкретика: ссылки file:line, фрагменты кода, объяснения механизмов. Может быть несколько абзацев.}}
+{{DETAILS from explore-agent — specifics: file:line references, code fragments, mechanism explanations. May be several paragraphs.}}
 
-### Ключевые файлы
+### Key files
 
-- `{{path/to/file.ts}}:{{LINE}}` — {{краткое описание, почему файл важен}}
-- `{{path/to/other.ts}}:{{LINE}}` — {{краткое описание}}
+- `{{path/to/file.ts}}:{{LINE}}` — {{short description of why the file is important}}
+- `{{path/to/other.ts}}:{{LINE}}` — {{short description}}
 
-### Источники
+### Sources
 
-- {{ссылка или упоминание источника}}
+- {{link or source mention}}
 ```
 
 ---
 
-## Формат brainstorm записи
+## Brainstorm record format
 
-Brainstorm-запись дополнительно содержит секцию `### Варианты` после `### Детали`.
+A brainstorm record additionally contains an `### Options` section after `### Details`.
 
 ```markdown
-## Q{{N}}: {{вопрос}} (brainstorm)
+## Q{{N}}: {{question}} (brainstorm)
 
-### Контекст
+### Context
 
-{{Зачем задан вопрос — контекст выбора или сравнения.}}
+{{Why the question was asked — context of the choice or comparison.}}
 
-### Ответ
+### Answer
 
-{{ANSWER — общий обзор ситуации и рекомендация.}}
+{{ANSWER — general overview of the situation and recommendation.}}
 
-### Детали
+### Details
 
-{{DETAILS — анализ текущего состояния, ограничений, зависимостей.}}
+{{DETAILS — analysis of the current state, constraints, dependencies.}}
 
-### Варианты
+### Options
 
-- [ ] **{{Метка варианта}}** — {{описание, плюсы/минусы}}
-- [ ] **{{Метка варианта}}** — {{описание, плюсы/минусы}}
+- [ ] **{{Option label}}** — {{description, pros/cons}}
+- [ ] **{{Option label}}** — {{description, pros/cons}}
 - [ ] **Other:** \_\_\_
 
-### Ключевые файлы
+### Key files
 
-- `{{path/to/file.ts}}:{{LINE}}` — {{краткое описание}}
+- `{{path/to/file.ts}}:{{LINE}}` — {{short description}}
 
-### Источники
+### Sources
 
-- {{ссылка или упоминание источника}}
+- {{link or source mention}}
 ```
 
 ---
 
-## Формат итогового summary
+## Final summary format
 
 ```markdown
 ## Summary
 
-{{3-5 предложений. Тема, ключевые выводы, принятые и отложенные решения.}}
+{{3-5 sentences. Topic, key takeaways, decisions made and deferred.}}
 ```
 
 ---
 
-## Правила
+## Rules
 
-- Нумеруй Q с 1, строго последовательно.
-- Используй формат даты `YYYY-MM-DD`.
-- Не используй emoji.
-- Секция `### Контекст` обязательна для каждой записи.
-- Секция `### Ответ` и `### Детали` — отдельные секции, не сливать в prose.
-- Секция `### Источники` — только при наличии WEB_SOURCES.
-- Секция `### Варианты` — только в brainstorm-записях.
-- Секция `## Summary` — в конце, после всех Q&A записей.
+- Number Q from 1, strictly sequentially.
+- Use date format `YYYY-MM-DD`.
+- Do not use emoji.
+- The `### Context` section is required for every record.
+- The `### Answer` and `### Details` sections are separate sections, do not merge into prose.
+- The `### Sources` section — only when WEB_SOURCES are present.
+- The `### Options` section — only in brainstorm records.
+- The `## Summary` section — at the end, after all Q&A records.
