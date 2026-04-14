@@ -1,6 +1,6 @@
 {
   "name": "sp",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "Marketplace of skills and commands for Claude Code",
   "author": { "name": "Heliotic" },
   "repository": "https://github.com/projectory-com/sp",

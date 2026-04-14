@@ -55,4 +55,4 @@ Result: `docs/ai/86-black-jack-page/86-black-jack-page-review.md`
 /sp:task → /sp:plan → /sp:do → /sp:review
 ```
 
-`/review` closes the development cycle. Analyzes the `/task`, `/plan`, `/do` artifacts and the code changes.
+`/review` closes the development cycle. It analyzes the `/task`, `/plan`, `/do` artifacts and the code diff.

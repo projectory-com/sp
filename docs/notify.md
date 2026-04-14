@@ -1,7 +1,7 @@
 # Telegram notifications
 
 Two-layer notification system: skills write JSON to a queue; a stop hook sends the accumulated messages to Telegram.
-Notifications are opt-in — without the env vars, the system silently skips sending.
+Without env vars, the system skips notifications.
 
 ---
 

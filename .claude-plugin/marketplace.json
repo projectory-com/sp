@@ -8,7 +8,7 @@
     {
       "name": "sp",
       "description": "Marketplace of skills and commands for Claude Code",
-      "version": "1.9.1",
+      "version": "1.10.0",
       "source": "./"
     },
     {

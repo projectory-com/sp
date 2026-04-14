@@ -1,7 +1,7 @@
 ---
 name: do
 description: >-
-  Execute a task per plan. Triggered when the user writes "execute", "do",
+  Executes a task per plan. Triggered when the user writes "execute", "do",
   "run the plan", "implement", or passes a path to a plan file and asks to
   execute it.
 ---
@@ -37,7 +37,7 @@ If there is no path — ask the user.
 
 ## Pipeline
 
-7 stages. Each one is tracked in TodoWrite.
+7 stages, tracked in TodoWrite.
 
 ```
 1. Parse        → read the plan, create todos

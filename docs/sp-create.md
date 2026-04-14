@@ -46,7 +46,7 @@ Updated README.md and CLAUDE.md with an entry for the new skill.
 
 ## Sub-agents
 
-Agents are created inline (prompts in SKILL.md) and launched via the Agent tool with `subagent_type: general-purpose`.
+The skill creates agents inline (prompts in SKILL.md) and launches them via the Agent tool with `subagent_type: general-purpose`.
 
 | Agent              | Model  | Role                                                            |
 | ------------------ | ------ | --------------------------------------------------------------- |
@@ -73,4 +73,4 @@ Local skill for sp development. Creates skills that become part of the pipeline:
 /sp:gca → /sp:gp → /sp:pr → /sp:sp-release
 ```
 
-`/sp:sp-create` creates skills; `/sp:sp-release` publishes them — together they form the plugin development cycle.
+`/sp:sp-create` creates skills; `/sp:sp-release` publishes them — the complete plugin development cycle.

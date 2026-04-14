@@ -1,14 +1,14 @@
 ---
 name: plan
 description: >-
-  Build an implementation plan from a task file. Triggered when the user writes
+  Builds an implementation plan from a task file. Triggered when the user writes
   "build a plan", "make a plan", "plan", "plan the implementation", "prepare a plan",
   or passes a path to a task file and asks to plan execution.
 ---
 
 # Build an implementation plan
 
-You are the orchestrator. Coordinate sub-agents and talk to the user.
+You are the orchestrator. Coordinate sub-agents and communicate with the user.
 
 Delegate codebase investigation and design through the Agent tool:
 

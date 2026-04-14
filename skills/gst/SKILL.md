@@ -1,7 +1,7 @@
 ---
 name: gst
 description: >-
-  Show development status in the repository: branch, uncommitted changes,
+  Shows development status in the repository: branch, uncommitted changes,
   recent commits, diff vs main, hot files, semantic summary.
   Used when a developer writes "status", "gst", "git status",
   "what's going on", "repo state", "show changes".

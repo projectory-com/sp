@@ -1,7 +1,7 @@
 # Skill /fix
 
 Compressed pipeline for small changes and fixes (1–3 files). Replaces the unstructured
-"just fix it in chat" with a real flow: investigation, implementation (opus), post-processing, artifact.
+"just fix it in chat" with a structured pipeline: investigation, implementation (opus), post-processing, artifact.
 Two modes: post-flow (after task/plan/do) and standalone. Supports chains of fixes and "fix from PR comment URL".
 
 ## Input
@@ -51,7 +51,7 @@ The fix log contains: description, status, changed files, validation results, co
 /sp:fix fix email validation
 ```
 
-Result: the fix is implemented (opus), polished, validated; an entry is added to `docs/ai/<slug>/<slug>-fixes.md`.
+Result: opus implements, polishes, and validates the fix; the skill appends an entry to `docs/ai/<slug>/<slug>-fixes.md`.
 
 ## Connections
 

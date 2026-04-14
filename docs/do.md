@@ -15,7 +15,7 @@ and comes back to a notification.
 
 ## Pipeline
 
-7 stages. Each is tracked in TodoWrite. No confirmations between steps.
+TodoWrite tracks each of the 7 stages. No confirmations between steps.
 
 | Stage | Name         | What happens                                                                                   |
 | ----- | ------------ | ---------------------------------------------------------------------------------------------- |
@@ -48,7 +48,7 @@ File `docs/ai/<slug>/<slug>-report.md` with the following structure:
 | `inline`                | trivial / simple | Sequential in the current thread, minimum overhead                  |
 | `sub-agents sequential` | medium / complex | Each task is a separate sub-agent via Agent tool, context isolation |
 
-V1 runs everything sequentially. `Parallel: true` in the plan is ignored.
+V1 runs everything sequentially. `/do` ignores `Parallel: true` in the plan.
 `Mode: agent-team` → falls back to sub-agents sequential.
 
 ## Status protocol

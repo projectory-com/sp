@@ -1,7 +1,7 @@
 # Skill /pr
 
 Creates or updates a GitHub Pull Request. Builds the description from sp flow artifacts
-(review + report), with a focus on "what to check during review". Without artifacts, falls back
+(review + report), targeting what reviewers need to check. Without artifacts, falls back
 to commits and diff. Supports PR templates, auto-labels, and update markers.
 
 ## Input
@@ -34,8 +34,8 @@ to commits and diff. Supports PR templates, auto-labels, and update markers.
 
 ## PR body
 
-Generated content is wrapped in `<!-- sp:start -->` / `<!-- sp:end -->` markers.
-On update, only the content between the markers is replaced — the user's text is preserved.
+The skill wraps generated content in `<!-- sp:start -->` / `<!-- sp:end -->` markers.
+On update, the skill replaces only the content between the markers and preserves the user's text.
 
 Principle: the description answers "what to check during review".
 

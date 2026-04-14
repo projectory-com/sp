@@ -163,7 +163,7 @@ Pass the prompt prepared in Phase 3 (TASK_WHAT, TASK_HOW, TASK_FILES, TASK_CONTE
 - **NEEDS_CONTEXT** → add context, re-dispatch (1 retry). Repeated → BLOCKED
 - **BLOCKED** → record the reason, Phase 6 (artifact with status BLOCKED)
 
-Opus on code phases reduces input errors, the validator catches regressions — the review loop is redundant.
+Opus on code phases reduces input errors; the validator catches regressions.
 
 Task-executor commits using COMMIT_MESSAGE from the prompt. If its status is DONE — the commit is guaranteed.
 
@@ -173,7 +173,7 @@ Transition → Phase 5.
 
 ## Phase 5 — Post-process
 
-Full pipeline from /do in a single run. Save the list of files changed in Phase 4.
+Full /do pipeline. Save the list of files changed in Phase 4.
 
 ### 5a. Polish
 

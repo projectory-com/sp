@@ -14,7 +14,7 @@ The output is a plan file that `/sp:do` executes autonomously.
 
 ## Phases
 
-The skill runs autonomously through 6 sequential phases. The only interaction point is Checkpoint.
+Runs 6 sequential phases autonomously; one checkpoint for user input.
 
 | Phase | Name           | What happens                                                                                                |
 | ----- | -------------- | ----------------------------------------------------------------------------------------------------------- |

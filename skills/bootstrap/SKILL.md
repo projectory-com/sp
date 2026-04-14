@@ -1,7 +1,7 @@
 ---
 name: bootstrap
 description: >-
-  Prepare a project for the sp flow — stack detection, generation of CLAUDE.md
+  Prepares a project for the sp flow — stack detection, generation of CLAUDE.md
   and sp-context.md. Used when the user writes "bootstrap", "set up sp",
   "prepare the project", "sp init", "setup sp", "first run",
   "connect sp", "create CLAUDE.md".
@@ -26,7 +26,7 @@ Delegate each phase to an agent via the Agent tool:
 
 Work from start to finish.
 
-**Principle:** one-time project onboarding. Run once when connecting sp to a project.
+**Principle:** run once to connect sp to a project.
 
 ---
 

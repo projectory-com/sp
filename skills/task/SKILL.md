@@ -1,7 +1,7 @@
 ---
 name: task
 description: >-
-  Draft a task file for AI implementation. Triggered when the user writes
+  Drafts a task file for AI implementation. Triggered when the user writes
   "create a task", "task from ticket", "draft a task", "prepare an implementation
   prompt", or passes a ticket URL / feature description.
 ---

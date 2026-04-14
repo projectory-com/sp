@@ -25,7 +25,7 @@ A structured overview:
 ## Notes
 
 - Informational skill — no sub-agents, no side effects
-- Static content, printed directly in the main thread
+- Prints content in the main thread
 
 ## Example
 

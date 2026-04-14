@@ -37,4 +37,4 @@ Fires on prompts like: "bootstrap", "configure sp", "prepare the project", "init
 
 ## Connections
 
-The first step before using sp flow. After bootstrap, use the full cycle: `/task` → `/plan` → `/do`.
+Run before starting sp flow. Then use the full cycle: `/task` → `/plan` → `/do`.

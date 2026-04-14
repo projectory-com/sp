@@ -131,7 +131,7 @@ Read `agents/explore-log-writer.md`. Pass to the agent:
 - QA_PAIRS — the full QA_LOG. Each record contains fields: Q, CONTEXT, ANSWER, DETAILS, SUMMARY, KEY_FILES, WEB_SOURCES, OPTIONS (if brainstorm). Pass all fields without compression.
 - DATE — the current date
 
-The agent will create the file `docs/ai/<SLUG>/<SLUG>-exploration.md`.
+The agent creates the file `docs/ai/<SLUG>/<SLUG>-exploration.md`.
 
 Print the result:
 

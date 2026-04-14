@@ -1,6 +1,6 @@
 ---
 name: hi
-description: Greets the user and explains available sp skills. Activate when the user writes "hi", "hello", "what can you do", "help", "where do I start", "what skills are available", or on first contact with sp.
+description: Greets the user and explains available sp skills. Activates when the user writes "hi", "hello", "what can you do", "help", "where do I start", "what skills are available", or on first contact with sp.
 ---
 
 # Welcome to sp
