@@ -300,4 +300,4 @@ Report the path to the report file and offer 2 options via AskUserQuestion:
 - **TodoWrite.** Mark each step immediately upon completion.
 - **On BLOCKED — keep going.** Stop only the dependent branch.
 - **CLI output.** Run commands with long output (formatter, lint, build, test) with `2>&1 | tail -20`.
-- **Language:** match the plan file's original language.
+- Language: match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.

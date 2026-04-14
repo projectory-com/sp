@@ -286,7 +286,7 @@ Offer 3 options through AskUserQuestion:
 
 ## Rules
 
-- Content language — the language of the original ticket
+- Language: match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.
 - task-slug — English kebab-case
 - One task — one file, no decomposition
 - Write in active voice. Omit needless words. Name files and lines instead of abstractions.

@@ -302,7 +302,7 @@ Offer 3 options through AskUserQuestion:
 
 ## Rules
 
-- Content language — the language of the original task file
+- Language: match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.
 - Answer is in the code — decide and write the plan immediately.
 - Each task is one atomic commit. Larger than "create file" + "add import", smaller than "do everything".
 - Context isolation: each task contains only the files and context it needs.

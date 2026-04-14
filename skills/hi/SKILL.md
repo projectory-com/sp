@@ -37,7 +37,7 @@ Reads the task file, explores the codebase, makes design decisions, and decompos
 
 ### /do — executing the task by plan
 
-Delegates tasks to sub-agents, runs a two-stage review (spec compliance -> code quality), polishes the code, validates, updates documentation, writes the report.
+Delegates tasks to sub-agents, runs a two-stage review (spec compliance → code quality), polishes the code, validates, updates documentation, writes the report.
 
 **Input:** path to plan file → **Output:** implemented code + `docs/ai/<slug>/<slug>-report.md`
 
@@ -74,7 +74,7 @@ Analyzes changes against origin/main. Produces a report: key areas, complex deci
 
 Analyzes changed files, classifies them into groups, and produces atomic commits with Conventional Commits in English. Determines the ticket ID from arguments, the branch, or the sp flow.
 
-**Input:** optionally ticket ID or URL -> **Output:** atomic git commits
+**Input:** optionally ticket ID or URL → **Output:** atomic git commits
 
 ```
 /sp:gca
