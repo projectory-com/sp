@@ -352,5 +352,5 @@ Mark in TodoWrite: `[x] Commit`
 - **TodoWrite.** Mark each phase immediately upon completion.
 - **CLI output.** Run commands with long output through `2>&1 | tail -20`.
 - **Idempotency.** On re-run: CLAUDE.md is extended (Edit via an agent), sp-context is overwritten (Write via an agent).
-- Language: match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.
+- **Language.** Match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.
 - **Substitution.** When dispatching an agent, replace `{{PLACEHOLDER}}` in the prompt with data from findings. Agents receive real values, not template variables.

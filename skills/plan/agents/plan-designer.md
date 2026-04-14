@@ -54,7 +54,7 @@ The map fixes boundaries before the split into tasks.
 Split implementation into tasks. Each task:
 
 ```
-### Task N: <title in the task file's language>
+### Task N: <title>
 - **Files:** <file paths — create or change>
 - **Depends on:** <Task M | none>
 - **Scope:** <S | M | L>

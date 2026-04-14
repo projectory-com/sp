@@ -4,8 +4,8 @@ description: >-
   Codebase exploration and brainstorming. Activates when the user writes
   "explore", "explain", "compare", "what if", "brainstorm",
   "investigate", "figure out", "analyze", "how is it built", "how does it work",
-  "explain", "tell me about", "why", "what if", "compare", "what are the options",
-  "suggest an approach", "show the architecture", "brainstorm".
+  "tell me about", "why", "what are the options",
+  "suggest an approach", "show the architecture".
 ---
 
 # Exploration

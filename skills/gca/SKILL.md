@@ -1,11 +1,6 @@
 ---
 name: gca
-description: >-
-  Git staging and commit with smart file grouping and SP workflow awareness.
-  Used when the user writes "commit", "gca", "commit it",
-  "make a commit", "commit the changes", "save my work",
-  or when another skill has finished and the result needs to be committed.
-  Also after running /task, /plan, /do, /review to record artifacts.
+description: Git staging and commit with smart file grouping. Activated when the user writes "commit", "gca", "make a commit", "commit changes", or after /task, /plan, /do, /review.
 ---
 
 # Git Commit with smart grouping

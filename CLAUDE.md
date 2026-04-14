@@ -27,6 +27,7 @@ Components (`skills/`, `commands/`) live at the repository root, NOT inside `.cl
 ## Plugin System
 
 - **Skills** (`skills/<name>/SKILL.md`): model-invoked, activated automatically by `description` in YAML frontmatter
+- **Agents** (`skills/<name>/agents/<agent>.md`): model-invoked sub-agents dispatched by skill orchestrators via the Agent tool; YAML frontmatter with `name` and `description`
 - **Commands** (`commands/<name>.md`): user-invoked via `/sp:<name>`, YAML frontmatter with `name` and `description`
 - **Namespace**: all components are available as `/sp:<name>` after installation
 - **`$ARGUMENTS`**: placeholder for user input in commands

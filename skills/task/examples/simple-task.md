@@ -59,8 +59,10 @@ Figma: https://figma.com/file/aB3k.../forgot-password
 
 # Add password reset via email
 
+**Slug:** 112-password-reset-email
 **Ticket:** https://github.com/org/repo/issues/112
 **Complexity:** simple
+**Type:** general
 
 ## Task
 

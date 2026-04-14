@@ -1,9 +1,6 @@
 ---
 name: pr
-description: >-
-  Create and update GitHub Pull Requests. Used when the user writes
-  "pr", "pull request", "create pr", "update pr", "open pr",
-  or after running /gp to create a pull request.
+description: Create or update a GitHub Pull Request. Activated on "pr", "pull request", "create pr", "update pr", "open pr", or after /gp.
 ---
 
 # Creating and updating Pull Requests

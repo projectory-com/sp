@@ -61,7 +61,7 @@ Agents are created inline (prompts in SKILL.md) and launched via the Agent tool 
 /sp:sp-create a skill for auto-merging PRs after CI passes
 ```
 
-Result: skill `/merge` is created in `skills/merge/`, documentation in `docs/merge.md`, entries added to README.md and CLAUDE.md.
+Result: creates skill `/merge` in `skills/merge/`, documentation in `docs/merge.md`, and adds entries to README.md and CLAUDE.md.
 
 ## Connections
 

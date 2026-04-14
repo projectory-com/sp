@@ -65,7 +65,7 @@ Extract the key paths from CLAUDE.md (directories and files mentioned in Archite
 
 ### Step 5. Quality score
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/reference/quality-criteria.md` and rate CLAUDE.md across 6 criteria:
+Read `reference/quality-criteria.md` and rate CLAUDE.md across 6 criteria:
 
 1. **Commands** (20 points) — are the key commands documented
 2. **Architecture** (20 points) — is the project structure described

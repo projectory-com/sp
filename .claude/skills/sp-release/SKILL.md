@@ -46,7 +46,7 @@ Run the checks sequentially. On the first error — report and exit.
 test -f .claude-plugin/plugin.json
 ```
 
-If the file is not found → report: "Run from the sp project root (`cd /home/heliotik/project/projectory-com/sp`)". Exit.
+If the file is not found → report: "Run from the sp project root (the directory containing .claude-plugin/plugin.json).". Exit.
 
 ### 0b. main branch
 

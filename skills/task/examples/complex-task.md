@@ -108,8 +108,10 @@ Approach B is architecturally cleaner and leaves the player-station protocol alo
 
 # Real-time leaderboard updates
 
+**Slug:** RSA-44-leaderboard-realtime
 **Ticket:** https://youtrack.example.com/issue/RSA-44
 **Complexity:** complex
+**Type:** frontend
 
 ## Task
 

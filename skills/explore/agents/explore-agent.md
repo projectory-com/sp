@@ -97,4 +97,4 @@ WEB_SOURCES:
 - Read-only. Write and Edit are unavailable.
 - Cite file:line for every claim about code.
 - Take previous findings into account; don't repeat them.
-- Language — English.
+- Language: match the ticket/input language, or follow the project-level definition in CLAUDE.md / AGENTS.md.

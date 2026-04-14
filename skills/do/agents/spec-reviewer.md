@@ -1,6 +1,6 @@
 ---
 name: spec-reviewer
-description: Verifies that the implementation matches the task spec. Verifies against the code, not the implementer's report.
+description: Verifies that the implementation matches the task spec — checks the code, not the implementer's report.
 tools: Read, Glob, Grep, LS
 model: sonnet
 color: cyan
