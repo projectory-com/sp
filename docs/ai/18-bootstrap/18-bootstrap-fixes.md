@@ -6,27 +6,27 @@
 
 ## Fix 1: integrate project documentation into bootstrap pipeline
 
-**Дата:** 2026-04-11
-**Статус:** done
+**Date:** 2026-04-11
+**Status:** done
 
-### Что изменено
+### What changed
 
-Скилл bootstrap не учитывал документацию проекта (README.md, CONTRIBUTING.md, docs/) при генерации CLAUDE.md и sp-context.md. Добавлена интеграция: existing-rules-detector теперь собирает DOC_CONTENT, который прокидывается через pipeline до генераторов.
+The bootstrap skill did not consider project documentation (README.md, CONTRIBUTING.md, docs/) when generating CLAUDE.md and sp-context.md. Integration was added: existing-rules-detector now collects DOC_CONTENT, which is passed through the pipeline down to the generators.
 
-### Файлы
+### Files
 
-| Файл                                                   | Action   | Описание                                                                           |
+| File                                                   | Action   | Description                                                                        |
 | ------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------- |
-| skills/bootstrap/agents/existing-rules-detector.md     | modified | добавлен сбор DOC_CONTENT из README.md, CONTRIBUTING.md, docs/*.md               |
-| skills/bootstrap/SKILL.md                              | modified | добавлено прокидывание DOC_CONTENT через Detect → Synthesize → Generate          |
-| skills/bootstrap/agents/claude-md-generator.md         | modified | добавлен вход DOC_CONTENT, используется при создании/обогащении CLAUDE.md        |
-| skills/bootstrap/agents/sp-context-generator.md        | modified | добавлен вход DOC_CONTENT, используется при формировании sp-context.md           |
+| skills/bootstrap/agents/existing-rules-detector.md     | modified | added DOC_CONTENT collection from README.md, CONTRIBUTING.md, docs/*.md            |
+| skills/bootstrap/SKILL.md                              | modified | added DOC_CONTENT propagation through Detect → Synthesize → Generate               |
+| skills/bootstrap/agents/claude-md-generator.md         | modified | added DOC_CONTENT input, used when creating/enriching CLAUDE.md                    |
+| skills/bootstrap/agents/sp-context-generator.md        | modified | added DOC_CONTENT input, used when producing sp-context.md                         |
 
 ### Validation
 
-PASS — frontmatter валиден, JSON OK, pipeline консистентен
+PASS — frontmatter valid, JSON OK, pipeline consistent
 
-### Коммиты
+### Commits
 
 - `d6d0446` #18 fix(18-bootstrap): integrate project documentation into bootstrap pipeline
 
@@ -34,29 +34,29 @@ PASS — frontmatter валиден, JSON OK, pipeline консистентен
 
 ## Fix 6: fix remaining plugin validation and style issues
 
-**Дата:** 2026-04-11
-**Статус:** done
+**Date:** 2026-04-11
+**Status:** done
 
-### Что изменено
+### What changed
 
-Исправлены оставшиеся замечания plugin-валидации и Elements of Style: добавлена обработка ошибок агентов в Phase 1, документирование {{PLACEHOLDER}} конвенции для условного контента, yaml-маркеры в structured output аген­тов, упрощение путей в automation-recommender, стилистические правки в 7 файлах (Environment check, критерии, guidelines).
+Fixed the remaining plugin-validation and Elements of Style notes: added agent error handling in Phase 1, documented the {{PLACEHOLDER}} convention for conditional content, yaml markers in agents' structured output, simplified paths in automation-recommender, stylistic edits in 7 files (Environment check, criteria, guidelines).
 
-### Файлы
+### Files
 
-| Файл                                              | Action   | Описание                                           |
+| File                                              | Action   | Description                                        |
 | ------------------------------------------------- | -------- | -------------------------------------------------- |
-| skills/bootstrap/SKILL.md                        | modified | обработка ошибок агентов, документирование {{PLACEHOLDER}}, стилистика |
-| skills/bootstrap/agents/stack-detector.md        | modified | yaml маркер в structured output                   |
-| skills/bootstrap/agents/convention-scanner.md    | modified | yaml маркер в structured output                   |
-| skills/bootstrap/agents/automation-recommender.md | modified | упрощение путей reference/                       |
-| skills/bootstrap/agents/bootstrap-verifier.md    | modified | стилистика Environment check                      |
-| skills/bootstrap/reference/quality-criteria.md   | modified | стилистика критериев                             |
-| skills/bootstrap/reference/update-guidelines.md  | modified | стилистика                                        |
+| skills/bootstrap/SKILL.md                        | modified | agent error handling, documenting {{PLACEHOLDER}}, style |
+| skills/bootstrap/agents/stack-detector.md        | modified | yaml marker in structured output                   |
+| skills/bootstrap/agents/convention-scanner.md    | modified | yaml marker in structured output                   |
+| skills/bootstrap/agents/automation-recommender.md | modified | simplified reference/ paths                      |
+| skills/bootstrap/agents/bootstrap-verifier.md    | modified | Environment check style                            |
+| skills/bootstrap/reference/quality-criteria.md   | modified | criteria style                                     |
+| skills/bootstrap/reference/update-guidelines.md  | modified | style                                              |
 
 ### Validation
 
 PASS
 
-### Коммиты
+### Commits
 
 - `9e2c9ee` #18 fix(18-bootstrap): fix remaining plugin validation and style issues

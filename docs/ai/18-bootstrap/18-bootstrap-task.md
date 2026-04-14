@@ -1,148 +1,148 @@
-# Скилл /bootstrap — подготовка проекта к sp flow
+# /bootstrap skill — preparing a project for the sp flow
 
 **Slug:** 18-bootstrap
-**Тикет:** https://github.com/projectory-com/sp/issues/18
-**Сложность:** complex
-**Тип:** general
+**Ticket:** https://github.com/projectory-com/sp/issues/18
+**Complexity:** complex
+**Type:** general
 
 ## Task
 
-Создать скилл `/bootstrap` — одноразовую подготовку проекта к sp flow. Скилл детектирует стек и архитектуру, генерирует или обогащает CLAUDE.md до Grade A, создаёт `.claude/sp-context.md`, формирует рекомендации по hooks и MCP. Обновить 7 агентов: каждый при наличии `sp-context.md` читает его, при отсутствии — работает как прежде.
+Create the `/bootstrap` skill — a one-shot preparation of a project for the sp flow. The skill detects the stack and architecture, generates or enriches CLAUDE.md up to Grade A, creates `.claude/sp-context.md`, and produces recommendations for hooks and MCP. Update 7 agents: each one reads `sp-context.md` when present; otherwise it works as before.
 
 ## Context
 
-### Архитектура области
+### Area architecture
 
-Плагин sp — маркетплейс скиллов для Claude Code. Каждый скилл живёт в `skills/<name>/` и содержит `SKILL.md` (оркестратор), опциональные `agents/` (sub-agents) и `reference/` (вспомогательные материалы).
+The sp plugin is a skill marketplace for Claude Code. Each skill lives in `skills/<name>/` and contains `SKILL.md` (orchestrator), optional `agents/` (sub-agents), and `reference/` (supporting materials).
 
-Структура скилла:
+Skill structure:
 
 ```
 skills/<name>/
-  SKILL.md              # оркестратор, YAML frontmatter (name, description)
+  SKILL.md              # orchestrator, YAML frontmatter (name, description)
   agents/<role>.md       # sub-agents, frontmatter (name, description, tools, model, color)
-  reference/<file>.md    # шаблоны, правила, гайды
+  reference/<file>.md    # templates, rules, guides
 ```
 
-Модели по ролям: haiku — сбор данных и write; sonnet — исследование и review; opus — архитектура и реализация.
+Models by role: haiku — data collection and write; sonnet — exploration and review; opus — architecture and implementation.
 
-Внутри скилла пути относительные (`reference/file.md`). Между скиллами — абсолютные: `${CLAUDE_PLUGIN_ROOT}/skills/<name>/reference/file.md`.
+Inside a skill paths are relative (`reference/file.md`). Between skills they are absolute: `${CLAUDE_PLUGIN_ROOT}/skills/<name>/reference/file.md`.
 
-### Файлы для создания
+### Files to create
 
-**SKILL.md и агенты (15 файлов):**
+**SKILL.md and agents (15 files):**
 
-- `skills/bootstrap/SKILL.md` — оркестратор, 6 фаз (Preflight → Detect → Synthesize → Generate → Verify → Confirm → Commit)
-- `skills/bootstrap/agents/stack-detector.md` — haiku, cyan, read-only. Определяет языки, фреймворки, package manager, runtime
-- `skills/bootstrap/agents/architecture-mapper.md` — sonnet, yellow, read-only. Строит карту директорий, слоёв, entry points, паттернов
-- `skills/bootstrap/agents/convention-scanner.md` — sonnet, yellow, read-only. Извлекает naming, import style, code style из кода
-- `skills/bootstrap/agents/validation-scanner.md` — haiku, cyan, read-only. Собирает команды lint/test/build/format из конфигов и скриптов
-- `skills/bootstrap/agents/existing-rules-detector.md` — haiku, cyan, read-only. Ищет CLAUDE.md, README, CONTRIBUTING, .cursorrules и оценивает качество
-- `skills/bootstrap/agents/claude-md-generator.md` — sonnet, green, write. Создаёт или дополняет CLAUDE.md по шаблону и quality-criteria
-- `skills/bootstrap/agents/sp-context-generator.md` — haiku, gray, write. Записывает `.claude/sp-context.md` по шаблону
-- `skills/bootstrap/agents/automation-recommender.md` — haiku, cyan, read-only. Формирует рекомендации по hooks и MCP
-- `skills/bootstrap/agents/bootstrap-verifier.md` — sonnet, cyan, read-only. Проверяет файлы: секции, пути, команды
+- `skills/bootstrap/SKILL.md` — orchestrator, 6 phases (Preflight → Detect → Synthesize → Generate → Verify → Confirm → Commit)
+- `skills/bootstrap/agents/stack-detector.md` — haiku, cyan, read-only. Determines languages, frameworks, package manager, runtime
+- `skills/bootstrap/agents/architecture-mapper.md` — sonnet, yellow, read-only. Builds a map of directories, layers, entry points, patterns
+- `skills/bootstrap/agents/convention-scanner.md` — sonnet, yellow, read-only. Extracts naming, import style, code style from the code
+- `skills/bootstrap/agents/validation-scanner.md` — haiku, cyan, read-only. Collects lint/test/build/format commands from configs and scripts
+- `skills/bootstrap/agents/existing-rules-detector.md` — haiku, cyan, read-only. Searches for CLAUDE.md, README, CONTRIBUTING, .cursorrules and assesses quality
+- `skills/bootstrap/agents/claude-md-generator.md` — sonnet, green, write. Creates or augments CLAUDE.md per template and quality-criteria
+- `skills/bootstrap/agents/sp-context-generator.md` — haiku, gray, write. Writes `.claude/sp-context.md` per template
+- `skills/bootstrap/agents/automation-recommender.md` — haiku, cyan, read-only. Produces recommendations for hooks and MCP
+- `skills/bootstrap/agents/bootstrap-verifier.md` — sonnet, cyan, read-only. Verifies files: sections, paths, commands
 
-**Reference-файлы (5 файлов):**
+**Reference files (5 files):**
 
-- `skills/bootstrap/reference/quality-criteria.md` — адаптированная рубрика из claude-md-management (6 критериев, 100 баллов, грейды A-F)
-- `skills/bootstrap/reference/claude-md-template.md` — шаблоны CLAUDE.md (minimal, comprehensive, monorepo)
-- `skills/bootstrap/reference/update-guidelines.md` — что включать, что исключать, red flags
-- `skills/bootstrap/reference/hooks-patterns.md` — паттерны hooks по стекам из claude-code-setup
-- `skills/bootstrap/reference/mcp-servers.md` — рекомендованные MCP серверы по типу интеграций
+- `skills/bootstrap/reference/quality-criteria.md` — adapted rubric from claude-md-management (6 criteria, 100 points, grades A-F)
+- `skills/bootstrap/reference/claude-md-template.md` — CLAUDE.md templates (minimal, comprehensive, monorepo)
+- `skills/bootstrap/reference/update-guidelines.md` — what to include, what to exclude, red flags
+- `skills/bootstrap/reference/hooks-patterns.md` — hook patterns by stack from claude-code-setup
+- `skills/bootstrap/reference/mcp-servers.md` — recommended MCP servers by integration type
 
-Reference-файлы создать на основе [claude-md-management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) и [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup).
+Build the reference files on top of [claude-md-management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) and [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup).
 
-### Файлы для изменения (обновление 7 агентов)
+### Files to change (updating 7 agents)
 
-Каждому агенту добавить "Шаг 0 — Context" — graceful чтение `sp-context.md`:
+Add "Step 0 — Context" to each agent — a graceful read of `sp-context.md`:
 
-- `skills/task/agents/task-explorer.md` — перед "1. Обнаружение фичи" (строка 17)
-- `skills/task/agents/task-architect.md` — перед "1. Анализ паттернов" (строка 14), расширить существующее чтение CLAUDE.md
-- `skills/plan/agents/plan-explorer.md` — перед первым шагом процесса
-- `skills/plan/agents/plan-designer.md` — перед первым шагом процесса
-- `skills/do/agents/task-executor.md` — перед "Прочитай все файлы из Context" (после "Before You Begin")
-- `skills/do/agents/validator.md` — перед валидацией (critical: берёт Validation Commands)
-- `skills/do/agents/formatter.md` — перед форматированием (critical: берёт format command)
-- `skills/review/agents/review-analyzer.md` — перед анализом (берёт Conventions, Architecture)
-- `skills/explore/agents/explore-agent.md` — дополнить строку 37 (уже читает CLAUDE.md, добавить sp-context.md)
-- `skills/fix/agents/fix-investigator.md` — дополнить строку 39 (уже читает CLAUDE.md, добавить sp-context.md)
+- `skills/task/agents/task-explorer.md` — before "1. Feature discovery" (line 17)
+- `skills/task/agents/task-architect.md` — before "1. Pattern analysis" (line 14), extend the existing CLAUDE.md read
+- `skills/plan/agents/plan-explorer.md` — before the first process step
+- `skills/plan/agents/plan-designer.md` — before the first process step
+- `skills/do/agents/task-executor.md` — before "Read all files from Context" (after "Before You Begin")
+- `skills/do/agents/validator.md` — before validation (critical: takes Validation Commands)
+- `skills/do/agents/formatter.md` — before formatting (critical: takes the format command)
+- `skills/review/agents/review-analyzer.md` — before analysis (takes Conventions, Architecture)
+- `skills/explore/agents/explore-agent.md` — extend line 37 (already reads CLAUDE.md, add sp-context.md)
+- `skills/fix/agents/fix-investigator.md` — extend line 39 (already reads CLAUDE.md, add sp-context.md)
 
-Также обновить:
+Also update:
 
-- `CLAUDE.md` — добавить `/bootstrap` в секцию "Implemented skills"
+- `CLAUDE.md` — add `/bootstrap` to the "Implemented skills" section
 
-### Паттерны для повторения
+### Patterns to reuse
 
-**SKILL.md оркестратор с фазами:** `skills/task/SKILL.md` — 6 фаз с TodoWrite, notify.sh, AskUserQuestion. Повторить структуру: вход, фазы, правила.
+**Orchestrator SKILL.md with phases:** `skills/task/SKILL.md` — 6 phases with TodoWrite, notify.sh, AskUserQuestion. Reuse the structure: input, phases, rules.
 
-**Параллельный dispatch агентов:** `skills/do/SKILL.md` — параллельные группы через Agent tool. Применить в Phase 1 (5 агентов одновременно).
+**Parallel agent dispatch:** `skills/do/SKILL.md` — parallel groups via the Agent tool. Apply in Phase 1 (5 agents at once).
 
-**Read-only агенты:** `skills/explore/agents/explore-agent.md` — tools: `Glob, Grep, LS, Read, Bash, WebSearch, WebFetch`. Без Write и Edit. Применить к 5 detect-агентам и automation-recommender.
+**Read-only agents:** `skills/explore/agents/explore-agent.md` — tools: `Glob, Grep, LS, Read, Bash, WebSearch, WebFetch`. No Write or Edit. Apply to the 5 detect agents and automation-recommender.
 
-**Нотификации:** `bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type TYPE --skill bootstrap --phase PHASE --slug "bootstrap" --title "..." --body "..."`. ACTION_REQUIRED перед AskUserQuestion, STAGE_COMPLETE по завершении.
+**Notifications:** `bash ${CLAUDE_PLUGIN_ROOT}/lib/notify.sh --type TYPE --skill bootstrap --phase PHASE --slug "bootstrap" --title "..." --body "..."`. ACTION_REQUIRED before AskUserQuestion, STAGE_COMPLETE on completion.
 
-**Cross-skill ссылки:** `skills/fix/SKILL.md` — `${CLAUDE_PLUGIN_ROOT}/skills/do/agents/task-executor.md`. Применить для ссылки на commit-convention.
+**Cross-skill links:** `skills/fix/SKILL.md` — `${CLAUDE_PLUGIN_ROOT}/skills/do/agents/task-executor.md`. Apply for the link to commit-convention.
 
-**Graceful degradation:** "Если `sp-context.md` существует — прочитай. Иначе — определи контекст самостоятельно."
+**Graceful degradation:** "If `sp-context.md` exists — read it. Otherwise — determine the context on your own."
 
-### Тесты
+### Tests
 
-Тестов нет. Валидация через:
+No tests. Validation runs via:
 
 ```bash
-# Проверить YAML frontmatter
+# Check YAML frontmatter
 head -1 skills/bootstrap/SKILL.md skills/bootstrap/agents/*.md
-# Проверить JSON манифесты
+# Check JSON manifests
 python3 -c "import json; json.load(open('.claude-plugin/plugin.json')); print('OK')"
-# Проверить что reference-файлы существуют
+# Check that reference files exist
 ls skills/bootstrap/reference/
 ```
 
 ## Requirements
 
-1. Создать `skills/bootstrap/SKILL.md` — оркестратор с 6 фазами: Preflight (git-repo, не sp-repo), Detect (5 параллельных read-only агентов), Synthesize (агрегация PROJECT_PROFILE), Generate (claude-md-generator + sp-context-generator + automation-recommender), Verify (проверка файлов и CLAUDE.md quality), Confirm (AskUserQuestion: коммитить / редактировать / отменить), Commit (git add + commit).
-2. Создать 10 агентов в `skills/bootstrap/agents/` с корректным frontmatter (name, description, tools, model, color). Read-only агенты — без Write/Edit. Write-агенты (claude-md-generator, sp-context-generator) — с Write/Edit.
-3. Создать 5 reference-файлов в `skills/bootstrap/reference/` на основе [claude-md-management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) и [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup). Адаптировать под bootstrap, не копировать дословно.
-4. Phase 0 (Preflight): `git rev-parse --is-inside-work-tree` + убедиться, что `.claude-plugin/plugin.json` отсутствует. При невалидном окружении — abort с сообщением.
-5. Phase 1 (Detect): запустить 5 агентов параллельно через Agent tool. Каждый возвращает structured output. Оркестратор ждёт завершения всех пяти перед Synthesize.
-6. Phase 2 (Synthesize): оркестратор агрегирует findings в PROJECT_PROFILE (in-memory). Структура: name, languages, frameworks, package_manager, architecture (pattern, layers, entry_points, key_dirs), commands (dev, build, test, lint, format, typecheck), conventions, existing_rules.
-7. Phase 3 (Generate): claude-md-generator создаёт или дополняет CLAUDE.md (Edit при существующем, Write при новом). sp-context-generator записывает `.claude/sp-context.md` (всегда Write). automation-recommender формирует текст рекомендаций, файлы не меняет.
-8. Phase 4 (Verify): bootstrap-verifier проверяет: файлы существуют, обязательные секции присутствуют, пути из CLAUDE.md валидны, команды валидации запускаются. Цель — Grade A (90+ баллов). При проблемах оркестратор исправляет через Edit.
-9. Phase 5 (Confirm): показать сводку (PROJECT_PROFILE, quality score, содержимое файлов, рекомендации). AskUserQuestion: Закоммитить (Recommended) / Просмотреть и отредактировать / Отменить. При редактировании — re-verify, затем Confirm.
-10. Phase 6 (Commit): `git add CLAUDE.md .claude/sp-context.md && git commit`. Формат: `chore: bootstrap sp flow context`. Нотификация STAGE_COMPLETE.
-11. Обновить 7+ агентов — добавить "Шаг 0 — Context" с graceful чтением `sp-context.md`. Формат: "Если существует — прочитай. Иначе — работай как прежде." Без hard dependency.
-12. `/bootstrap` идемпотентен: повторный запуск обновляет файлы, сохраняет пользовательский контент CLAUDE.md. sp-context.md перезаписывается полностью — source of truth остаётся кодовая база.
-13. Добавить `/bootstrap` в секцию "Implemented skills" в `CLAUDE.md`.
+1. Create `skills/bootstrap/SKILL.md` — orchestrator with 6 phases: Preflight (git-repo, not sp-repo), Detect (5 parallel read-only agents), Synthesize (PROJECT_PROFILE aggregation), Generate (claude-md-generator + sp-context-generator + automation-recommender), Verify (file and CLAUDE.md quality checks), Confirm (AskUserQuestion: commit / edit / cancel), Commit (git add + commit).
+2. Create 10 agents in `skills/bootstrap/agents/` with correct frontmatter (name, description, tools, model, color). Read-only agents — no Write/Edit. Write agents (claude-md-generator, sp-context-generator) — with Write/Edit.
+3. Create 5 reference files in `skills/bootstrap/reference/` based on [claude-md-management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) and [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup). Adapt them for bootstrap, do not copy verbatim.
+4. Phase 0 (Preflight): `git rev-parse --is-inside-work-tree` + make sure `.claude-plugin/plugin.json` is absent. On invalid environment — abort with a message.
+5. Phase 1 (Detect): launch 5 agents in parallel via the Agent tool. Each returns structured output. The orchestrator waits for all five to complete before Synthesize.
+6. Phase 2 (Synthesize): the orchestrator aggregates findings into PROJECT_PROFILE (in-memory). Structure: name, languages, frameworks, package_manager, architecture (pattern, layers, entry_points, key_dirs), commands (dev, build, test, lint, format, typecheck), conventions, existing_rules.
+7. Phase 3 (Generate): claude-md-generator creates or augments CLAUDE.md (Edit when it exists, Write when it is new). sp-context-generator writes `.claude/sp-context.md` (always Write). automation-recommender produces recommendation text, does not modify files.
+8. Phase 4 (Verify): bootstrap-verifier checks: files exist, required sections are present, paths in CLAUDE.md are valid, validation commands run. Target — Grade A (90+ points). On problems the orchestrator fixes via Edit.
+9. Phase 5 (Confirm): show a summary (PROJECT_PROFILE, quality score, file contents, recommendations). AskUserQuestion: Commit (Recommended) / Review and edit / Cancel. On edit — re-verify, then Confirm.
+10. Phase 6 (Commit): `git add CLAUDE.md .claude/sp-context.md && git commit`. Format: `chore: bootstrap sp flow context`. STAGE_COMPLETE notification.
+11. Update 7+ agents — add "Step 0 — Context" with a graceful read of `sp-context.md`. Format: "If it exists — read it. Otherwise — work as before." No hard dependency.
+12. `/bootstrap` is idempotent: a repeat run updates files and preserves the user's CLAUDE.md content. sp-context.md is fully overwritten — the source of truth remains the codebase.
+13. Add `/bootstrap` to the "Implemented skills" section in `CLAUDE.md`.
 
 ## Constraints
 
-- `.claude-plugin/plugin.json` и `.claude-plugin/marketplace.json` оставить без изменений.
-- claude-md-generator дополняет существующий CLAUDE.md через Edit, сохраняя пользовательский контент. Write — только для нового файла.
-- automation-recommender формирует текст рекомендаций для Phase 5, файлы не меняет.
-- sp-context.md коммитить (`.claude/sp-context.md`). Если `.claude/` в `.gitignore` — предупредить пользователя в Phase 6.
-- Агенты читают sp-context.md при наличии, без него работают как прежде. Hard dependency запрещена.
-- `_skills/` (черновики) и `docs/` (кроме `docs/ai/`) оставить без изменений.
-- Scope issue #18 — удаление hardcoded toolchain из скиллов вынесено в #54.
-- Контент скилла — на русском. task-slug и файлы — английский kebab-case.
+- Leave `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` unchanged.
+- claude-md-generator augments the existing CLAUDE.md via Edit, preserving user content. Write only for a new file.
+- automation-recommender produces recommendation text for Phase 5 and does not modify files.
+- Commit sp-context.md (`.claude/sp-context.md`). If `.claude/` is in `.gitignore` — warn the user in Phase 6.
+- Agents read sp-context.md when it is present; without it they work as before. Hard dependency is forbidden.
+- Leave `_skills/` (drafts) and `docs/` (except `docs/ai/`) unchanged.
+- Issue #18 scope — removing hardcoded toolchains from skills is moved to #54.
+- Skill content — in Russian. task-slug and files — English kebab-case.
 
 ## Verification
 
-- `head -1 skills/bootstrap/SKILL.md` → `---` (валидный YAML frontmatter)
-- `head -1 skills/bootstrap/agents/*.md` → каждый файл начинается с `---`
-- `ls skills/bootstrap/agents/ | wc -l` → 10 агентов
-- `ls skills/bootstrap/reference/ | wc -l` → 5 reference-файлов
-- `grep -l "sp-context" skills/task/agents/task-explorer.md skills/task/agents/task-architect.md skills/plan/agents/plan-explorer.md skills/plan/agents/plan-designer.md skills/do/agents/task-executor.md skills/do/agents/validator.md skills/do/agents/formatter.md skills/review/agents/review-analyzer.md skills/explore/agents/explore-agent.md skills/fix/agents/fix-investigator.md` → все 10 файлов содержат упоминание sp-context
-- `grep "bootstrap" CLAUDE.md` → `/bootstrap` в списке Implemented skills
-- `python3 -c "import json; json.load(open('.claude-plugin/plugin.json')); print('OK')"` → OK (манифест не сломан)
-- Повторный запуск `/bootstrap` → обновляет файлы без ошибок, пользовательский контент CLAUDE.md сохранён
+- `head -1 skills/bootstrap/SKILL.md` → `---` (valid YAML frontmatter)
+- `head -1 skills/bootstrap/agents/*.md` → each file begins with `---`
+- `ls skills/bootstrap/agents/ | wc -l` → 10 agents
+- `ls skills/bootstrap/reference/ | wc -l` → 5 reference files
+- `grep -l "sp-context" skills/task/agents/task-explorer.md skills/task/agents/task-architect.md skills/plan/agents/plan-explorer.md skills/plan/agents/plan-designer.md skills/do/agents/task-executor.md skills/do/agents/validator.md skills/do/agents/formatter.md skills/review/agents/review-analyzer.md skills/explore/agents/explore-agent.md skills/fix/agents/fix-investigator.md` → all 10 files mention sp-context
+- `grep "bootstrap" CLAUDE.md` → `/bootstrap` in the Implemented skills list
+- `python3 -c "import json; json.load(open('.claude-plugin/plugin.json')); print('OK')"` → OK (manifest not broken)
+- Repeat run of `/bootstrap` → updates files without errors, the user's CLAUDE.md content is preserved
 
-## Материалы
+## Materials
 
-- [Issue #18](https://github.com/projectory-com/sp/issues/18) — архитектура, фазы, агенты
-- [claude-md-management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) — рубрика качества CLAUDE.md, шаблоны, guidelines
-- [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) — детекция стека, hooks, MCP
-- `skills/task/SKILL.md` — паттерн оркестратора с фазами, notify, commit
-- `skills/explore/agents/explore-agent.md` — паттерн read-only агента
-- `skills/fix/SKILL.md` — паттерн cross-skill agent reuse
-- `skills/gca/reference/commit-convention.md` — конвенция коммитов
+- [Issue #18](https://github.com/projectory-com/sp/issues/18) — architecture, phases, agents
+- [claude-md-management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) — CLAUDE.md quality rubric, templates, guidelines
+- [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) — stack detection, hooks, MCP
+- `skills/task/SKILL.md` — orchestrator pattern with phases, notify, commit
+- `skills/explore/agents/explore-agent.md` — read-only agent pattern
+- `skills/fix/SKILL.md` — cross-skill agent reuse pattern
+- `skills/gca/reference/commit-convention.md` — commit convention
