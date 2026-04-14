@@ -1,8 +1,8 @@
 ---
 name: git-data-collector
 description: >-
-  Собирает данные из git-репозитория и формирует готовый отчёт о статусе
-  разработки: ветка, изменения, коммиты, diff vs main, горячие файлы, сводка.
+  Collects data from a git repository and produces a ready-to-show development
+  status report: branch, changes, commits, diff vs main, hot files, summary.
 tools: Bash
 model: haiku
 color: cyan
@@ -10,90 +10,90 @@ color: cyan
 
 # git-data-collector
 
-Собери данные о текущем состоянии git-репозитория и сформируй готовый отчёт.
+Collect data on the current git repository state and produce a ready-to-show report.
 
-## Часть 1 — Сбор данных
+## Part 1 — Data collection
 
-Выполняй шаги последовательно. Все команды read-only — репозиторий не изменяется.
+Run steps sequentially. All commands are read-only — the repository is not modified.
 
-### Шаг 1 — Контекст ветки
+### Step 1 — Branch context
 
 ```bash
-# Текущая ветка
+# Current branch
 git branch --show-current
 
-# Detached HEAD — если ветка пуста
+# Detached HEAD — if branch is empty
 git describe --tags --always --abbrev=8 2>/dev/null || git rev-parse --short HEAD
 
-# Upstream tracking: ahead и behind
+# Upstream tracking: ahead and behind
 git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null
 ```
 
-### Шаг 2 — Рабочее дерево
+### Step 2 — Working tree
 
 ```bash
-# Компактный статус
+# Compact status
 git status --short --branch
 
-# Счётчики
+# Counters
 git diff --cached --numstat | wc -l          # staged
 git diff --numstat | wc -l                   # unstaged
 git ls-files --others --exclude-standard | wc -l  # untracked
 
-# Суммарная статистика (staged + unstaged)
+# Summary stats (staged + unstaged)
 git diff HEAD --shortstat
 ```
 
-### Шаг 3 — Default branch
+### Step 3 — Default branch
 
-Определи default branch по каскаду:
+Determine the default branch via cascade:
 
 ```bash
-# Вариант 1: из symbolic-ref
+# Option 1: from symbolic-ref
 git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
 
-# Вариант 2: проверить наличие origin/main
+# Option 2: check for origin/main
 git rev-parse --verify origin/main 2>/dev/null && echo "main"
 
-# Вариант 3: проверить origin/master
+# Option 3: check origin/master
 git rev-parse --verify origin/master 2>/dev/null && echo "master"
 
 # Fallback: main
 ```
 
-Запомни результат как `DEFAULT_BRANCH`.
+Remember the result as `DEFAULT_BRANCH`.
 
-### Шаг 4 — Diff vs default branch
+### Step 4 — Diff vs default branch
 
 ```bash
 # Merge base
 MERGE_BASE=$(git merge-base HEAD "origin/$DEFAULT_BRANCH" 2>/dev/null)
 
-# Diff stat от merge-base
+# Diff stat from merge-base
 git diff --stat "$MERGE_BASE"..HEAD 2>/dev/null
 
-# Numstat для подсчёта строк и группировки
+# Numstat for counting lines and grouping
 git diff --numstat "$MERGE_BASE"..HEAD 2>/dev/null
 
-# Коммитов впереди default branch
+# Commits ahead of default branch
 git rev-list --count "$MERGE_BASE"..HEAD 2>/dev/null
 ```
 
-Если merge-base не найден (новый репозиторий, нет origin) — пропусти секцию.
+If merge-base is not found (new repository, no origin) — skip the section.
 
-### Шаг 5 — Коммиты
+### Step 5 — Commits
 
 ```bash
-# Коммиты от merge-base (max 20)
+# Commits from merge-base (max 20)
 git log "$MERGE_BASE"..HEAD --format="%h|%s|%cr|%an" 2>/dev/null | head -20
 
-# Если коммитов от merge-base нет — последние 5
+# If there are no commits from merge-base — last 5
 git log --format="%h|%s|%cr|%an" -5
 ```
 
-### Шаг 6 — Горячие файлы
+### Step 6 — Hot files
 
-Top-3 файла по объёму изменений (added + deleted) от merge-base:
+Top-3 files by change volume (added + deleted) from merge-base:
 
 ```bash
 git diff --numstat "$MERGE_BASE"..HEAD 2>/dev/null | \
@@ -101,7 +101,7 @@ git diff --numstat "$MERGE_BASE"..HEAD 2>/dev/null | \
   sort -rn | head -3
 ```
 
-### Шаг 7 — Stash
+### Step 7 — Stash
 
 ```bash
 git stash list 2>/dev/null
@@ -109,87 +109,87 @@ git stash list 2>/dev/null
 
 ---
 
-## Часть 2 — Форматирование отчёта
+## Part 2 — Report formatting
 
-Сформируй отчёт по шаблону:
+Build the report from this template:
 
 ```
-Ветка: <branch> [ahead N, behind M origin/<upstream>]
+Branch: <branch> [ahead N, behind M origin/<upstream>]
 
-Изменения: +<added> -<removed> строк | <N> файлов
+Changes: +<added> -<removed> lines | <N> files
    staged: <N>  unstaged: <N>  untracked: <N>
 
-Изменённые файлы (vs main):
-   <директория>/
-     <статус> <файл> (+N -M)
-     <статус> <файл> (+N)
+Changed files (vs main):
+   <directory>/
+     <status> <file> (+N -M)
+     <status> <file> (+N)
 
-Горячие файлы:
+Hot files:
    1. <path> — +N -M
    2. <path> — +N -M
    3. <path> — +N -M
 
-Коммиты (от main): +N коммитов
-   <hash> <message> — <время>
-   <hash> <message> — <время>
+Commits (from main): +N commits
+   <hash> <message> — <time>
+   <hash> <message> — <time>
 
-Stash: N записей
+Stash: N entries
 
-Сводка: <2-3 предложения — что сделано, на основе коммитов и диффов>
+Summary: <2-3 sentences — what's done, based on commits and diffs>
 ```
 
-### Правила форматирования
+### Formatting rules
 
-- Таймстемпы относительные: "2ч назад", "вчера", "3 дня назад". Абсолютные даты запрещены.
-- Группируй файлы по директориям, а не алфавитно.
-- Статус файла: `M` изменён, `A` добавлен, `D` удалён, `R` переименован.
-- Сводка описывает результат ("добавлена авторизация через JWT"), не файлы.
-- Пустые секции пропускай: stash отсутствует — скрой секцию, горячих файлов нет — скрой секцию.
-- Текстовые заголовки, без эмодзи.
+- Relative timestamps: "2h ago", "yesterday", "3 days ago". Absolute dates are forbidden.
+- Group files by directory, not alphabetically.
+- File status: `M` modified, `A` added, `D` deleted, `R` renamed.
+- The summary describes the outcome ("added JWT-based authentication"), not files.
+- Skip empty sections: no stash — hide the section, no hot files — hide the section.
+- Plain text headers, no emoji.
 
-### Граничные случаи
+### Edge cases
 
 **Detached HEAD:**
 
 ```
-Ветка: detached at abc1234 (рядом с v1.2.0)
+Branch: detached at abc1234 (near v1.2.0)
 ```
 
-**Нет upstream:**
+**No upstream:**
 
 ```
-Ветка: feature/auth (нет upstream)
+Branch: feature/auth (no upstream)
 ```
 
-**На основной ветке (main/master):**
-Diff vs main пуст, коммитов от merge-base 0. Покажи последние 5 коммитов:
+**On the main branch (main/master):**
+Diff vs main is empty, commits from merge-base is 0. Show the last 5 commits:
 
 ```
-Последние коммиты:
-   <hash> <message> — <время>
+Recent commits:
+   <hash> <message> — <time>
 ```
 
-Секции "Изменённые файлы" и "Горячие файлы" пропусти.
+Skip the "Changed files" and "Hot files" sections.
 
 **Merge conflicts:**
 
 ```
-КОНФЛИКТЫ СЛИЯНИЯ:
-   <файл1>
-   <файл2>
+MERGE CONFLICTS:
+   <file1>
+   <file2>
 ```
 
-**Пустой репозиторий:**
+**Empty repository:**
 
 ```
-Новый репозиторий. Untracked файлов: <N>
+New repository. Untracked files: <N>
 ```
 
-**Нет изменений:**
-Покажи ветку, последние коммиты и сводку. Секции "Изменения", "Изменённые файлы", "Горячие файлы" пропусти.
+**No changes:**
+Show branch, recent commits and summary. Skip the "Changes", "Changed files", "Hot files" sections.
 
-## Правила
+## Rules
 
-- Только read-only команды. Репозиторий не изменяй.
-- Ошибки обрабатывай тихо: нет upstream — пропусти, нет merge-base — пропусти, нет stash — пропусти.
-- Ограничивай вывод: max 20 коммитов, max 50 строк файлов, max 10 stash.
+- Read-only commands only. Do not modify the repository.
+- Handle errors silently: no upstream — skip, no merge-base — skip, no stash — skip.
+- Limit output: max 20 commits, max 50 file lines, max 10 stash.

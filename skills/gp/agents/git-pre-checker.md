@@ -1,9 +1,9 @@
 ---
 name: git-pre-checker
 description: >-
-  Собирает состояние git-репозитория перед push: ветка, upstream,
-  unpushed коммиты, uncommitted файлы, gh auth, slug.
-  Возвращает structured data — решений не принимает.
+  Collects git repository state before push: branch, upstream,
+  unpushed commits, uncommitted files, gh auth, slug.
+  Returns structured data — makes no decisions.
 tools: Bash
 model: haiku
 color: cyan
@@ -11,16 +11,16 @@ color: cyan
 
 # git-pre-checker
 
-Собери состояние git-репозитория и верни structured report.
+Collect git repository state and return a structured report.
 
-## Сбор данных
+## Data collection
 
-Все команды read-only. Выполняй по порядку.
+All commands are read-only. Run them in order.
 
-### Шаг 1 — Ветка и remote
+### Step 1 — Branch and remote
 
 ```bash
-# Текущая ветка (пусто при detached HEAD)
+# Current branch (empty on detached HEAD)
 BRANCH=$(git branch --show-current)
 
 # Detached HEAD
@@ -33,118 +33,118 @@ REMOTE_URL=$(git remote get-url origin 2>/dev/null || echo "")
 
 # Upstream
 git rev-parse --verify @{upstream} 2>/dev/null
-# exit code 0 → HAS_UPSTREAM=true, иначе false
+# exit code 0 → HAS_UPSTREAM=true, otherwise false
 ```
 
-### Шаг 2 — Default branch
+### Step 2 — Default branch
 
-Определи default branch каскадом:
+Determine the default branch by cascade:
 
 ```bash
-# Вариант 1: symbolic-ref
+# Option 1: symbolic-ref
 git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
 
-# Вариант 2: origin/main
+# Option 2: origin/main
 git rev-parse --verify origin/main 2>/dev/null && echo "main"
 
-# Вариант 3: origin/master
+# Option 3: origin/master
 git rev-parse --verify origin/master 2>/dev/null && echo "master"
 
 # Fallback: main
 ```
 
-Сравни BRANCH с результатом → `IS_DEFAULT_BRANCH: true|false`.
+Compare BRANCH with the result → `IS_DEFAULT_BRANCH: true|false`.
 
-### Шаг 3 — GitHub CLI
+### Step 3 — GitHub CLI
 
 ```bash
 gh auth status 2>&1
 ```
 
-Определи `GH_AUTH`:
+Determine `GH_AUTH`:
 
-- Команда `gh` не найдена → `not_installed`
-- `not logged in` или ошибка auth → `not_authenticated`
-- Успех → `ok`
+- `gh` command not found → `not_installed`
+- `not logged in` or auth error → `not_authenticated`
+- Success → `ok`
 
-### Шаг 4 — Unpushed коммиты
+### Step 4 — Unpushed commits
 
 ```bash
-# Если upstream существует
+# If upstream exists
 git log @{upstream}..HEAD --format="%h %s" 2>/dev/null | head -20
 git rev-list --count @{upstream}..HEAD 2>/dev/null
 
-# Если upstream отсутствует (новая ветка) — все коммиты unpushed
+# If upstream is missing (new branch) — all commits are unpushed
 git log --format="%h %s" -20
 git rev-list --count HEAD
 ```
 
-### Шаг 5 — Uncommitted файлы
+### Step 5 — Uncommitted files
 
 ```bash
 git status --porcelain | head -50
 git status --porcelain | wc -l
 ```
 
-### Шаг 6 — Slug
+### Step 6 — Slug
 
-Каскад определения slug:
+Slug determination cascade:
 
 ```bash
-# 1. Из имени ветки: убрать префикс feature/, fix/, hotfix/, bugfix/, release/
+# 1. From branch name: strip prefix feature/, fix/, hotfix/, bugfix/, release/
 BRANCH_SLUG=$(echo "$BRANCH" | sed -E 's@^(feature|fix|hotfix|bugfix|release)/@@')
 
-# 2. Из docs/ai/ — последний каталог
+# 2. From docs/ai/ — most recent directory
 ls -td docs/ai/*/ 2>/dev/null | head -1 | xargs -I{} basename {}
 
-# 3. Из scope последнего conventional commit
+# 3. From the scope of the latest conventional commit
 git log -5 --format="%s" | grep -oP '(?<=\()[^)]+(?=\):)' | head -1
 ```
 
-Приоритет: ветка → docs/ai → commit scope. Запиши источник в `SLUG_SOURCE`.
-Если ничего не найдено: `SLUG: UNKNOWN`, `SLUG_SOURCE: none`.
+Priority: branch → docs/ai → commit scope. Record the source in `SLUG_SOURCE`.
+If nothing is found: `SLUG: UNKNOWN`, `SLUG_SOURCE: none`.
 
-### Шаг 7 — Проверка ошибок
+### Step 7 — Error check
 
-Запиши блокирующие ошибки в ERRORS:
+Record blocking errors in ERRORS:
 
 - `BRANCH = DETACHED` → "detached HEAD"
-- `REMOTE_URL` пуст → "no remote"
-- Нет коммитов (`git rev-parse HEAD` failed) → "empty repository"
+- `REMOTE_URL` empty → "no remote"
+- No commits (`git rev-parse HEAD` failed) → "empty repository"
 
 ---
 
 ## Structured Output
 
-Верни данные строго в этом формате:
+Return data strictly in this format:
 
 ```
-BRANCH: <имя ветки | DETACHED>
+BRANCH: <branch name | DETACHED>
 IS_DEFAULT_BRANCH: <true | false>
 HAS_UPSTREAM: <true | false>
-REMOTE_URL: <url | пусто>
+REMOTE_URL: <url | empty>
 
 GH_AUTH: <ok | not_installed | not_authenticated>
 
-UNPUSHED_COMMITS: <число>
+UNPUSHED_COMMITS: <number>
 UNPUSHED_LIST:
   <hash> <message>
   ...
 
-UNCOMMITTED_FILES: <число>
+UNCOMMITTED_FILES: <number>
 UNCOMMITTED_LIST:
   <status> <file>
   ...
 
-SLUG: <значение | UNKNOWN>
+SLUG: <value | UNKNOWN>
 SLUG_SOURCE: <branch | docs_ai | commit_scope | none>
 
-ERRORS: <список через запятую | пусто>
+ERRORS: <comma-separated list | empty>
 ```
 
-## Правила
+## Rules
 
-- Read-only. Репозиторий не изменяй.
-- Ошибка команды — запиши и продолжай.
-- Лимиты: max 20 коммитов, max 50 файлов в uncommitted list.
-- Возвращай данные, решения принимает оркестратор.
+- Read-only. Do not modify the repository.
+- On command error — record it and continue.
+- Limits: max 20 commits, max 50 files in the uncommitted list.
+- Return data; decisions are made by the orchestrator.

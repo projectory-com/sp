@@ -1,156 +1,156 @@
 ---
 name: gp
 description: >-
-  Git push с проверками и отчётом. Используется когда пользователь пишет
-  "push", "пуш", "gp", "запушь", "отправь коммиты", "git push",
-  или после выполнения /do и /review для отправки изменений.
+  Git push with checks and report. Used when the user writes
+  "push", "gp", "git push", or after running /do and /review
+  to send changes.
 ---
 
-# Git push с проверками и отчётом
+# Git push with checks and report
 
-Ты — оркестратор. Делегируй bash-команды агентам через Agent tool:
+You are the orchestrator. Delegate bash commands to agents via the Agent tool:
 
 - Pre-check → `agents/git-pre-checker.md`
 - Push + Report → `agents/git-pusher.md`
 
 ---
 
-## Вход
+## Input
 
-`$ARGUMENTS` — опциональные флаги (`--force-with-lease`).
-
----
-
-## Фаза 1 — Pre-check
-
-Запусти `git-pre-checker` через Agent tool:
-
-- Агент: `${CLAUDE_PLUGIN_ROOT}/skills/gp/agents/git-pre-checker.md`
-- Промпт: «Собери состояние репозитория перед push»
-
-Агент вернёт structured data. Переход → Фаза 2.
+`$ARGUMENTS` — optional flags (`--force-with-lease`).
 
 ---
 
-## Фаза 2 — Decide
+## Phase 1 — Pre-check
 
-Обработай данные pre-checker. Проверки идут от блокирующих к интерактивным.
+Run `git-pre-checker` via the Agent tool:
 
-### 1. Блокирующие ошибки — выход
+- Agent: `${CLAUDE_PLUGIN_ROOT}/skills/gp/agents/git-pre-checker.md`
+- Prompt: "Collect repository state before push"
 
-- `BRANCH = DETACHED` → сообщи: «Checkout ветку перед push», выйди
-- `GH_AUTH = not_installed` → сообщи: «Установи gh CLI: https://cli.github.com», выйди
-- `GH_AUTH = not_authenticated` → сообщи: «Авторизуйся: `gh auth login`», выйди
-- `REMOTE_URL` пуст → сообщи: «Добавь remote: `git remote add origin <url>`», выйди
-- `UNPUSHED_COMMITS = 0` и `HAS_UPSTREAM = true` и `UNCOMMITTED_FILES = 0` → сообщи: «Nothing to push», выйди
+The agent returns structured data. Transition → Phase 2.
 
-### 2. Защита default branch
+---
 
-Если `IS_DEFAULT_BRANCH = true` → AskUserQuestion:
+## Phase 2 — Decide
 
-> Push в `<BRANCH>` — default branch. Продолжить?
+Process the pre-checker data. Checks go from blocking to interactive.
 
-Варианты:
+### 1. Blocking errors — exit
 
-- **Продолжить**
-- **Отменить** → выйди
+- `BRANCH = DETACHED` → report: "Checkout a branch before push", exit
+- `GH_AUTH = not_installed` → report: "Install gh CLI: https://cli.github.com", exit
+- `GH_AUTH = not_authenticated` → report: "Authenticate: `gh auth login`", exit
+- `REMOTE_URL` empty → report: "Add remote: `git remote add origin <url>`", exit
+- `UNPUSHED_COMMITS = 0` and `HAS_UPSTREAM = true` and `UNCOMMITTED_FILES = 0` → report: "Nothing to push", exit
+
+### 2. Default branch protection
+
+If `IS_DEFAULT_BRANCH = true` → AskUserQuestion:
+
+> Push to `<BRANCH>` — default branch. Continue?
+
+Options:
+
+- **Continue**
+- **Cancel** → exit
 
 ### 3. Uncommitted changes
 
-Если `UNCOMMITTED_FILES > 0` → AskUserQuestion:
+If `UNCOMMITTED_FILES > 0` → AskUserQuestion:
 
-> Незакоммиченные изменения (N файлов):
+> Uncommitted changes (N files):
 
-Покажи список файлов из `UNCOMMITTED_LIST`.
+Show the list of files from `UNCOMMITTED_LIST`.
 
-Варианты:
+Options:
 
-- **Закоммитить и пушить** → запроси commit message через AskUserQuestion, стейджи файлы из `UNCOMMITTED_LIST` по именам (не `git add -A`), выполни `git commit -m "<message>"`
-- **Пушить только закоммиченное** → продолжай
-- **Отменить** → выйди
+- **Commit and push** → request a commit message via AskUserQuestion, stage files from `UNCOMMITTED_LIST` by name (not `git add -A`), run `git commit -m "<message>"`
+- **Push only committed** → continue
+- **Cancel** → exit
 
-### 4. Nothing to push после коммита
+### 4. Nothing to push after commit
 
-Если пользователь выбрал «Пушить только закоммиченное» и `UNPUSHED_COMMITS = 0` → сообщи: «Nothing to push», выйди.
+If the user chose "Push only committed" and `UNPUSHED_COMMITS = 0` → report: "Nothing to push", exit.
 
-### 5. Определить PUSH_MODE
+### 5. Determine PUSH_MODE
 
 - `HAS_UPSTREAM = false` → `set-upstream`
-- `$ARGUMENTS` содержит `--force-with-lease` → `force-with-lease`
-- Иначе → `normal`
+- `$ARGUMENTS` contains `--force-with-lease` → `force-with-lease`
+- Otherwise → `normal`
 
-Переход → Фаза 3.
-
----
-
-## Фаза 3 — Push + Report
-
-Запусти `git-pusher` через Agent tool:
-
-- Агент: `${CLAUDE_PLUGIN_ROOT}/skills/gp/agents/git-pusher.md`
-- Промпт: «Выполни push и собери отчёт. BRANCH: `<BRANCH>`, PUSH_MODE: `<PUSH_MODE>`, SLUG: `<SLUG>`»
-
-### Если PUSH_STATUS = FAILED
-
-Покажи `PUSH_ERROR`.
-
-Если ошибка содержит «non-fast-forward» → предложи:
-
-> `git pull --rebase` или `/sp:gp --force-with-lease`
-
-Выйди.
-
-Переход → Фаза 4.
+Transition → Phase 3.
 
 ---
 
-## Фаза 4 — Report
+## Phase 3 — Push + Report
 
-Выведи отчёт пользователю:
+Run `git-pusher` via the Agent tool:
+
+- Agent: `${CLAUDE_PLUGIN_ROOT}/skills/gp/agents/git-pusher.md`
+- Prompt: "Run push and collect the report. BRANCH: `<BRANCH>`, PUSH_MODE: `<PUSH_MODE>`, SLUG: `<SLUG>`"
+
+### If PUSH_STATUS = FAILED
+
+Show `PUSH_ERROR`.
+
+If the error contains "non-fast-forward" → suggest:
+
+> `git pull --rebase` or `/sp:gp --force-with-lease`
+
+Exit.
+
+Transition → Phase 4.
+
+---
+
+## Phase 4 — Report
+
+Print the report to the user:
 
 ```
-Pushed to origin/<BRANCH>: +N коммитов
+Pushed to origin/<BRANCH>: +N commits
 
-Коммиты:
+Commits:
   <hash> <message>
   <hash> <message>
 
-Статистика: <DIFF_STAT>
+Stats: <DIFF_STAT>
 
-Ссылка: <BRANCH_URL>
+Link: <BRANCH_URL>
 ```
 
-Если `PR_EXISTS = true` — добавь:
+If `PR_EXISTS = true` — add:
 
 ```
 PR: <PR_TITLE> (<PR_URL>)
 ```
 
-Если `PR_EXISTS = false` — добавь:
+If `PR_EXISTS = false` — add:
 
 ```
-PR не найден.
+PR not found.
 ```
 
-AskUserQuestion — что дальше:
+AskUserQuestion — what's next:
 
-Если `PR_EXISTS = true`:
+If `PR_EXISTS = true`:
 
-- **Обновить PR через /sp:pr (Recommended)** — `<PR_TITLE>` (`<PR_URL>`)
-- **Завершить** → выйди
+- **Update PR via /sp:pr (Recommended)** — `<PR_TITLE>` (`<PR_URL>`)
+- **Finish** → exit
 
-Если `PR_EXISTS = false`:
+If `PR_EXISTS = false`:
 
-- **Создать PR через /sp:pr (Recommended)**
-- **Завершить** → выйди
+- **Create PR via /sp:pr (Recommended)**
+- **Finish** → exit
 
-Обработка: `/sp:pr` → вызвать Skill tool с `/sp:pr`. Завершить → выйди.
+Handling: `/sp:pr` → invoke the Skill tool with `/sp:pr`. Finish → exit.
 
 ---
 
-## Правила
+## Rules
 
-- Делегируй bash-команды агентам.
-- AskUserQuestion — только в оркестраторе.
-- Remote: `origin`. При нескольких remote — пушить в origin.
-- Лимиты вывода: max 20 коммитов, max 30 файлов.
+- Delegate bash commands to agents.
+- AskUserQuestion — only in the orchestrator.
+- Remote: `origin`. When multiple remotes exist — push to origin.
+- Output limits: max 20 commits, max 30 files.

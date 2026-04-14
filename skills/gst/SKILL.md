@@ -1,21 +1,21 @@
 ---
 name: gst
 description: >-
-  Показать статус разработки в репозитории: ветка, незакоммиченные изменения,
-  последние коммиты, diff относительно main, горячие файлы, семантическая сводка.
-  Используется когда разработчик пишет "статус", "gst", "git status",
-  "что происходит", "состояние репо", "покажи изменения".
+  Show development status in the repository: branch, uncommitted changes,
+  recent commits, diff vs main, hot files, semantic summary.
+  Used when a developer writes "status", "gst", "git status",
+  "what's going on", "repo state", "show changes".
 ---
 
-# Статус разработки
+# Development status
 
-Git-команды и анализ выполняй только через агента, не в основном треде.
+Run git commands and analysis only through the agent, not in the main thread.
 
-## Единственное действие
+## The only action
 
-Запусти `git-data-collector` через Agent tool:
+Run `git-data-collector` via the Agent tool:
 
-- Агент: `${CLAUDE_PLUGIN_ROOT}/skills/gst/agents/git-data-collector.md`
-- Промпт: «Собери данные о текущем состоянии git-репозитория и сформируй отчёт»
+- Agent: `${CLAUDE_PLUGIN_ROOT}/skills/gst/agents/git-data-collector.md`
+- Prompt: "Collect data on the current git repository state and produce a report"
 
-Выведи результат агента пользователю как есть.
+Output the agent's result to the user as is.
