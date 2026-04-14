@@ -1,97 +1,97 @@
-# Рубрика качества CLAUDE.md
+# CLAUDE.md quality rubric
 
-Оценка качества CLAUDE.md по 6 критериям. Максимум 100 баллов, грейды A-F.
+CLAUDE.md quality scoring across 6 criteria. Maximum 100 points, grades A-F.
 
-## Критерии
+## Criteria
 
-### 1. Commands (20 баллов)
+### 1. Commands (20 points)
 
-Задокументированы ли build, test, lint, deploy?
+Are build, test, lint, deploy documented?
 
-| Баллы | Описание                                                           |
-| ----- | ------------------------------------------------------------------ |
-| 20    | Все ключевые команды с пояснениями, покрыты build/test/lint/deploy |
-| 15    | Основные команды есть, но без пояснений или пропущена категория    |
-| 10    | Только build или только test, остальное отсутствует                |
-| 5     | Упомянуты вскользь без точных команд                               |
-| 0     | Команды отсутствуют                                                |
+| Points | Description                                                              |
+| ------ | ------------------------------------------------------------------------ |
+| 20     | All key commands with explanations, covering build/test/lint/deploy      |
+| 15     | Core commands present, but without explanations or missing one category  |
+| 10     | Only build or only test, the rest absent                                 |
+| 5      | Mentioned in passing without exact commands                              |
+| 0      | Commands absent                                                          |
 
-### 2. Architecture (20 баллов)
+### 2. Architecture (20 points)
 
-Описана ли структура проекта: директории, ключевые файлы, data flow?
+Is the project structure described: directories, key files, data flow?
 
-| Баллы | Описание                                     |
-| ----- | -------------------------------------------- |
-| 20    | Дерево директорий с ролями и data flow       |
-| 15    | Дерево директорий с ролями, но без data flow |
-| 10    | Перечислены директории без объяснения ролей  |
-| 5     | Общее описание без структуры                 |
-| 0     | Архитектура не описана                       |
+| Points | Description                                       |
+| ------ | ------------------------------------------------- |
+| 20     | Directory tree with roles and data flow           |
+| 15     | Directory tree with roles, but without data flow  |
+| 10     | Directories listed without explaining their roles |
+| 5      | General description without structure             |
+| 0      | Architecture not described                        |
 
-### 3. Non-obvious (15 баллов)
+### 3. Non-obvious (15 points)
 
-Зафиксированы ли неочевидные решения, gotchas, workarounds, обязательные env vars?
+Are non-obvious decisions, gotchas, workarounds, required env vars captured?
 
-| Баллы | Описание                                                      |
-| ----- | ------------------------------------------------------------- |
-| 15    | 3+ неочевидных факта («почему так»), env vars документированы |
-| 10    | 1-2 неочевидных факта                                         |
-| 5     | Упомянуты без объяснения                                      |
-| 0     | Отсутствуют                                                   |
+| Points | Description                                                         |
+| ------ | ------------------------------------------------------------------- |
+| 15     | 3+ non-obvious facts ("why this way"), env vars documented          |
+| 10     | 1-2 non-obvious facts                                               |
+| 5      | Mentioned without explanation                                       |
+| 0      | Absent                                                              |
 
-### 4. Conciseness (15 баллов)
+### 4. Conciseness (15 points)
 
-Файл лаконичен без generic advice и boilerplate?
+Is the file concise, free of generic advice and boilerplate?
 
-| Баллы | Описание                                                                |
-| ----- | ----------------------------------------------------------------------- |
-| 15    | Каждая строка несёт project-specific информацию                         |
-| 10    | Есть 1-2 generic-секции, но основа конкретная                           |
-| 5     | Половина — generic advice ("write clean code", "follow best practices") |
-| 0     | Преимущественно boilerplate                                             |
+| Points | Description                                                             |
+| ------ | ----------------------------------------------------------------------- |
+| 15     | Every line carries project-specific information                         |
+| 10     | 1-2 generic sections, but the core is concrete                          |
+| 5      | Half is generic advice ("write clean code", "follow best practices")    |
+| 0      | Mostly boilerplate                                                      |
 
-### 5. Currency (15 баллов)
+### 5. Currency (15 points)
 
-Файл актуален? Команды работают, пути существуют, версии совпадают?
+Is the file current? Commands run, paths exist, versions match?
 
-| Баллы | Описание                                    |
-| ----- | ------------------------------------------- |
-| 15    | Всё проверяемо и актуально на момент оценки |
-| 10    | В основном актуально, 1-2 устаревших факта  |
-| 5     | Значительная часть устарела                 |
-| 0     | Файл не обновлялся после крупных изменений  |
+| Points | Description                                          |
+| ------ | ---------------------------------------------------- |
+| 15     | Everything is verifiable and current at review time  |
+| 10     | Mostly current, 1-2 outdated facts                   |
+| 5      | A significant portion is outdated                    |
+| 0      | File has not been updated since major changes        |
 
-### 6. Actionability (15 баллов)
+### 6. Actionability (15 points)
 
-Может ли Claude Code действовать по этому файлу без дополнительных вопросов?
+Can Claude Code act from this file without additional questions?
 
-| Баллы | Описание                                                             |
-| ----- | -------------------------------------------------------------------- |
-| 15    | Claude может build/test/lint/deploy без уточнений                    |
-| 10    | Может выполнить основные операции, но для edge cases нужны уточнения |
-| 5     | Нужны уточнения для базовых операций                                 |
-| 0     | Файл не помогает в работе                                            |
+| Points | Description                                                             |
+| ------ | ----------------------------------------------------------------------- |
+| 15     | Claude can build/test/lint/deploy without clarifications                |
+| 10     | Can perform core operations, but edge cases need clarifications         |
+| 5      | Clarifications are needed for basic operations                          |
+| 0      | The file does not help                                                  |
 
-## Грейды
+## Grades
 
-| Грейд | Баллы  | Описание                                    |
+| Grade | Points | Description                                 |
 | ----- | ------ | ------------------------------------------- |
-| A     | 90-100 | Production-ready, Claude работает автономно |
-| B     | 70-89  | Хорошая основа, минимальные уточнения       |
-| C     | 55-69  | Рабочий файл, но пропущены важные секции    |
-| D     | 40-54  | Базовый скелет, требует доработки           |
-| F     | 0-39   | Отсутствует или бесполезен                  |
+| A     | 90-100 | Production-ready, Claude works autonomously |
+| B     | 70-89  | Good foundation, minimal clarifications     |
+| C     | 55-69  | Working file, but missing important sections |
+| D     | 40-54  | Basic skeleton, needs work                  |
+| F     | 0-39   | Absent or useless                           |
 
-## Процесс оценки
+## Scoring process
 
-1. **Прочитай CLAUDE.md** целиком
-2. **Проверь команды** — запусти `build`, `test`, `lint` из файла, убедись что работают
-3. **Проверь пути** — убедись что упомянутые директории и файлы существуют
-4. **Оцени каждый критерий** — выстави баллы с обоснованием
-5. **Суммируй** — определи грейд
-6. **Сформулируй рекомендации** — топ-3 улучшения для повышения грейда
+1. **Read CLAUDE.md** in full
+2. **Verify commands** — run `build`, `test`, `lint` from the file and confirm they work
+3. **Verify paths** — confirm the directories and files mentioned exist
+4. **Score each criterion** — assign points with rationale
+5. **Sum up** — determine the grade
+6. **Formulate recommendations** — top 3 improvements to raise the grade
 
-### Пример вывода
+### Example output
 
 ```yaml
 FILES_OK: true
@@ -101,7 +101,7 @@ PATHS_OK: false — src/: exist, config/: exist, src/config.ts: missing (moved t
 QUALITY_SCORE: 85
 QUALITY_GRADE: B
 ISSUES:
-  - Commands: deploy-команда отсутствует в package.json (-5 Commands)
-  - Non-obvious: 2 gotchas без объяснения причин (-5 Non-obvious)
-  - Currency: устаревший путь src/config.ts → src/config/index.ts (-5 Currency)
+  - Commands: deploy command missing from package.json (-5 Commands)
+  - Non-obvious: 2 gotchas without explanations of the reasons (-5 Non-obvious)
+  - Currency: outdated path src/config.ts → src/config/index.ts (-5 Currency)
 ```

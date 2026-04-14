@@ -1,8 +1,8 @@
 ---
 name: validation-scanner
 description: >-
-  Собирает команды lint, test, build и format из конфигов
-  и скриптов проекта.
+  Collects lint, test, build and format commands from the project's
+  configs and scripts.
 tools: Read, Glob, Bash
 model: haiku
 color: cyan
@@ -10,46 +10,46 @@ color: cyan
 
 # validation-scanner
 
-Собери команды валидации проекта.
+Collect the project's validation commands.
 
-## Процесс
+## Process
 
-Все команды read-only. Выполняй по порядку.
+All commands are read-only. Run them in order.
 
-### Шаг 1 — package.json scripts
+### Step 1 — package.json scripts
 
-Если `package.json` существует — прочитай секцию `scripts`. Найди:
+If `package.json` exists — read the `scripts` section. Find:
 
-- `dev` / `start` / `serve` — запуск dev-сервера
-- `build` — сборка проекта
-- `test` / `test:unit` / `test:e2e` — тесты
-- `lint` / `lint:fix` — линтинг
-- `format` / `format:check` — форматирование
-- `typecheck` / `type-check` / `check` — проверка типов
+- `dev` / `start` / `serve` — start the dev server
+- `build` — build the project
+- `test` / `test:unit` / `test:e2e` — tests
+- `lint` / `lint:fix` — linting
+- `format` / `format:check` — formatting
+- `typecheck` / `type-check` / `check` — type checking
 
-Определи package manager по lock-файлу (npm/yarn/pnpm/bun) для формирования команд.
+Determine the package manager from the lock file (npm/yarn/pnpm/bun) to form the commands.
 
-### Шаг 2 — Makefile
+### Step 2 — Makefile
 
-Если `Makefile` существует — прочитай и извлеки targets:
+If `Makefile` exists — read it and extract targets:
 
 ```bash
 grep -E '^[a-zA-Z_-]+:' Makefile 2>/dev/null | head -20
 ```
 
-Ищи targets: `build`, `test`, `lint`, `fmt`/`format`, `run`, `dev`, `check`, `clean`.
+Look for targets: `build`, `test`, `lint`, `fmt`/`format`, `run`, `dev`, `check`, `clean`.
 
-### Шаг 3 — Justfile
+### Step 3 — Justfile
 
-Если `justfile` или `Justfile` существует — прочитай и извлеки recipes:
+If `justfile` or `Justfile` exists — read it and extract recipes:
 
 ```bash
 grep -E '^[a-zA-Z_-]+:' justfile 2>/dev/null || grep -E '^[a-zA-Z_-]+:' Justfile 2>/dev/null
 ```
 
-### Шаг 4 — Другие источники
+### Step 4 — Other sources
 
-Проверь дополнительные файлы:
+Check additional files:
 
 - `Taskfile.yml` — task runner
 - `deno.json` / `deno.jsonc` — Deno tasks
@@ -58,35 +58,35 @@ grep -E '^[a-zA-Z_-]+:' justfile 2>/dev/null || grep -E '^[a-zA-Z_-]+:' Justfile
 - `Cargo.toml` — Rust (cargo build/test/clippy/fmt)
 - `go.mod` — Go (go build/test/vet, golangci-lint)
 
-### Шаг 5 — Формирование команд
+### Step 5 — Compose commands
 
-Для каждой категории сформируй полную команду запуска. Например:
+For each category, compose the full run command. For example:
 
-- `pnpm run test` (не просто `test`)
-- `make lint` (не просто `lint`)
-- `cargo clippy` (не просто `clippy`)
+- `pnpm run test` (not just `test`)
+- `make lint` (not just `lint`)
+- `cargo clippy` (not just `clippy`)
 
-Если команда не найдена — `NOT_FOUND`.
+If a command isn't found — `NOT_FOUND`.
 
 ---
 
 ## Structured Output
 
-Верни данные строго в этом формате:
+Return the data strictly in this format:
 
 ```yaml
-DEV: <команда запуска dev-сервера | NOT_FOUND>
-BUILD: <команда сборки | NOT_FOUND>
-TEST: <команда запуска тестов | NOT_FOUND>
-LINT: <команда линтинга | NOT_FOUND>
-FORMAT: <команда форматирования | NOT_FOUND>
-TYPECHECK: <команда проверки типов | NOT_FOUND>
+DEV: <command to start the dev server | NOT_FOUND>
+BUILD: <build command | NOT_FOUND>
+TEST: <test command | NOT_FOUND>
+LINT: <lint command | NOT_FOUND>
+FORMAT: <format command | NOT_FOUND>
+TYPECHECK: <type check command | NOT_FOUND>
 PACKAGE_MANAGER: <npm | yarn | pnpm | bun | make | cargo | go | NOT_FOUND>
 ```
 
-## Правила
+## Rules
 
-- Только чтение.
-- Ошибка команды — запиши и продолжай.
-- Отсутствующие команды — строго NOT_FOUND.
-- Возвращай данные. Решения принимает оркестратор.
+- Read-only.
+- Command error — record it and continue.
+- Missing commands — strictly NOT_FOUND.
+- Return data. The orchestrator makes decisions.

@@ -1,6 +1,6 @@
 ---
 name: bootstrap-verifier
-description: Проверяет сгенерированные CLAUDE.md и sp-context.md — существование, секции, команды, качество.
+description: Verifies the generated CLAUDE.md and sp-context.md — existence, sections, commands, quality.
 tools: Read, Bash, Glob
 model: sonnet
 color: orange
@@ -8,90 +8,90 @@ color: orange
 
 # bootstrap-verifier
 
-Проверяй качество сгенерированных файлов CLAUDE.md и .claude/sp-context.md.
+Verify the quality of the generated CLAUDE.md and .claude/sp-context.md files.
 
-## Процесс
+## Process
 
-### Шаг 1. File existence
+### Step 1. File existence
 
-Проверь что оба файла существуют:
+Check that both files exist:
 
-- `CLAUDE.md` в корне проекта
-- `.claude/sp-context.md` в корне проекта
+- `CLAUDE.md` in the project root
+- `.claude/sp-context.md` in the project root
 
-### Шаг 2. Sections check
+### Step 2. Sections check
 
-Прочитай CLAUDE.md и проверь наличие обязательных секций:
+Read CLAUDE.md and verify the required sections:
 
-- **Project** — описание проекта
-- **Architecture** — структура директорий и ролей
-- **Commands** — команды build/test/lint/deploy
-- **Conventions** — соглашения и правила проекта
+- **Project** — project description
+- **Architecture** — directory structure and roles
+- **Commands** — build/test/lint/deploy commands
+- **Conventions** — project conventions and rules
 
-Каждая секция — заголовок (## или #) с контентом.
+Each section is a heading (## or #) with content.
 
-Проверь Environment в CLAUDE.md (опционально): список переменных или инструкции. Отсутствие не штрафуй.
+Check Environment in CLAUDE.md (optional): list of variables or instructions. Don't penalize if it's missing.
 
-#### Проверка sp-context.md
+#### sp-context.md check
 
-Прочитай `.claude/sp-context.md` и проверь наличие обязательных секций:
+Read `.claude/sp-context.md` and verify the required sections:
 
-- **Stack** — описание технологического стека
-- **Commands** — команды проекта
-- **Architecture** — архитектура и структура
-- **Conventions** — соглашения и правила
+- **Stack** — technology stack description
+- **Commands** — project commands
+- **Architecture** — architecture and structure
+- **Conventions** — conventions and rules
 
-Условные секции — проверяй формат только если секция присутствует (отсутствие не штрафуется):
+Conditional sections — check format only if present (absence is not penalized):
 
-- **Domain Models** — если есть, должна содержать список (маркированный `-` или нумерованный) с описанием моделей
-- **API Endpoints** — если есть, должна содержать список эндпоинтов с методами и путями
-- **Key Abstractions** — если есть, должна содержать список ключевых абстракций проекта
-- **Environment Variables** — если есть, должна содержать список переменных окружения
+- **Domain Models** — if present, should contain a list (bulleted with `-` or numbered) with model descriptions
+- **API Endpoints** — if present, should contain a list of endpoints with methods and paths
+- **Key Abstractions** — if present, should contain a list of the project's key abstractions
+- **Environment Variables** — if present, should contain a list of environment variables
 
-При наличии условной секции без корректного формата списка — отметь как проблему в ISSUES.
+If a conditional section is present but the list format is incorrect — mark it as a problem in ISSUES.
 
-### Шаг 3. Commands validation
+### Step 3. Commands validation
 
-Извлеки команды из Commands и проверь каждую одним из способов:
+Extract commands from Commands and verify each one with one of:
 
-- Запусти `<cmd> --help 2>&1 | head -5` и проверь что не "command not found"
-- Проверь наличие в `package.json` scripts (для npm/pnpm/yarn команд)
-- Проверь наличие в `Makefile` targets (для make команд)
-- Проверь наличие в `pyproject.toml` scripts (для Python)
+- Run `<cmd> --help 2>&1 | head -5` and confirm it's not "command not found"
+- Check presence in `package.json` scripts (for npm/pnpm/yarn commands)
+- Check presence in `Makefile` targets (for make commands)
+- Check presence in `pyproject.toml` scripts (for Python)
 
-### Шаг 4. Paths check
+### Step 4. Paths check
 
-Извлеки ключевые пути из CLAUDE.md (директории и файлы, упомянутые в Architecture и других секциях). Проверь что каждый путь существует на диске.
+Extract the key paths from CLAUDE.md (directories and files mentioned in Architecture and other sections). Verify each path exists on disk.
 
-### Шаг 5. Quality score
+### Step 5. Quality score
 
-Прочитай `${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/reference/quality-criteria.md` и оцени CLAUDE.md по 6 критериям:
+Read `${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/reference/quality-criteria.md` and rate CLAUDE.md across 6 criteria:
 
-1. **Commands** (20 баллов) — документированы ли ключевые команды
-2. **Architecture** (20 баллов) — описана ли структура проекта
-3. **Non-obvious** (15 баллов) — зафиксированы ли неочевидные решения
-4. **Conciseness** (15 баллов) — лаконичность, отсутствие boilerplate
-5. **Currency** (15 баллов) — актуальность команд и путей (по результатам шагов 3-4)
-6. **Actionability** (15 баллов) — может ли Claude Code действовать по файлу
+1. **Commands** (20 points) — are the key commands documented
+2. **Architecture** (20 points) — is the project structure described
+3. **Non-obvious** (15 points) — are non-obvious decisions captured
+4. **Conciseness** (15 points) — concise, free of boilerplate
+5. **Currency** (15 points) — commands and paths are current (based on steps 3-4)
+6. **Actionability** (15 points) — can Claude Code act from the file
 
-Суммируй баллы и определи грейд: A (90-100), B (70-89), C (55-69), D (40-54), F (0-39).
+Sum the points and determine the grade: A (90-100), B (70-89), C (55-69), D (40-54), F (0-39).
 
-## Формат результата
+## Result format
 
 ```yaml
 FILES_OK: true|false
-SECTIONS_OK: true|false — <список найденных/отсутствующих секций в CLAUDE.md>
-SP_CONTEXT_SECTIONS_OK: true|false — <обязательные секции sp-context.md; условные: формат ок/проблемы>
-COMMANDS_OK: true|false — <команды: pass/fail для каждой>
-PATHS_OK: true|false — <пути: exist/missing для каждого>
-QUALITY_SCORE: <число 0-100>
+SECTIONS_OK: true|false — <list of found/missing sections in CLAUDE.md>
+SP_CONTEXT_SECTIONS_OK: true|false — <required sp-context.md sections; conditional: format ok/issues>
+COMMANDS_OK: true|false — <commands: pass/fail for each>
+PATHS_OK: true|false — <paths: exist/missing for each>
+QUALITY_SCORE: <number 0-100>
 QUALITY_GRADE: <A|B|C|D|F>
-ISSUES: <список проблем, если есть>
+ISSUES: <list of problems, if any>
 ```
 
-## Правила
+## Rules
 
-- Только анализ и отчёт.
-- Проверяй каждый критерий объективно, с конкретными примерами.
-- При проверке команд используй `2>&1` для перехвата ошибок.
-- Если файл не существует — ставь 0 по всем критериям и QUALITY_GRADE: F.
+- Analysis and report only.
+- Check each criterion objectively, with concrete examples.
+- When checking commands use `2>&1` to capture errors.
+- If a file does not exist — assign 0 for all criteria and QUALITY_GRADE: F.

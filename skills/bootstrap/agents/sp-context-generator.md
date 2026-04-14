@@ -1,6 +1,6 @@
 ---
 name: sp-context-generator
-description: Записывает .claude/sp-context.md — структурированный справочник проекта для sp-скиллов.
+description: Writes .claude/sp-context.md — a structured project reference for sp skills.
 tools: Write, Bash
 model: haiku
 color: gray
@@ -8,68 +8,68 @@ color: gray
 
 # sp-context-generator
 
-Ты — генератор sp-context. Записываешь `.claude/sp-context.md`.
+You are the sp-context generator. You write `.claude/sp-context.md`.
 
-## Вход
+## Input
 
 **PROJECT_PROFILE:**
 {{PROJECT_PROFILE}}
 
-**DOC_CONTENT (документация проекта):**
+**DOC_CONTENT (project documentation):**
 {{DOC_CONTENT}}
 
-**DOMAIN_FINDINGS (доменный контекст):**
+**DOMAIN_FINDINGS (domain context):**
 {{DOMAIN_FINDINGS}}
 
-## Процесс
+## Process
 
-### 1. Создай директорию
+### 1. Create the directory
 
 ```bash
 mkdir -p .claude
 ```
 
-### 2. Сформируй sp-context.md
+### 2. Compose sp-context.md
 
-Извлеки данные из PROJECT_PROFILE и запиши `.claude/sp-context.md`. Обогащай описание и архитектуру из DOC_CONTENT: назначение проекта, ключевые решения, ограничения.
+Extract data from PROJECT_PROFILE and write `.claude/sp-context.md`. Enrich the description and architecture from DOC_CONTENT: project purpose, key decisions, constraints.
 
-Формат файла:
+File format:
 
 ```markdown
 # SP Context: <project-name>
 
 ## Stack
 
-- Languages: <из PROJECT_PROFILE>
-- Frameworks: <из PROJECT_PROFILE>
-- Package manager: <из PROJECT_PROFILE>
-- Runtime: <из PROJECT_PROFILE>
+- Languages: <from PROJECT_PROFILE>
+- Frameworks: <from PROJECT_PROFILE>
+- Package manager: <from PROJECT_PROFILE>
+- Runtime: <from PROJECT_PROFILE>
 
 ## Commands
 
-- Dev: <команда | NOT_FOUND>
-- Build: <команда | NOT_FOUND>
-- Test: <команда | NOT_FOUND>
-- Lint: <команда | NOT_FOUND>
-- Format: <команда | NOT_FOUND>
-- Typecheck: <команда | NOT_FOUND>
+- Dev: <command | NOT_FOUND>
+- Build: <command | NOT_FOUND>
+- Test: <command | NOT_FOUND>
+- Lint: <command | NOT_FOUND>
+- Format: <command | NOT_FOUND>
+- Typecheck: <command | NOT_FOUND>
 
 ## Architecture
 
-- Pattern: <из PROJECT_PROFILE>
-- Key dirs: <список>
-- Entry points: <список>
-- Layers: <список>
+- Pattern: <from PROJECT_PROFILE>
+- Key dirs: <list>
+- Entry points: <list>
+- Layers: <list>
 
 ## Conventions
 
 - Naming: <camelCase|snake_case|...>
 - File naming: <kebab|snake|...>
-- Import style: <из PROJECT_PROFILE>
+- Import style: <from PROJECT_PROFILE>
 
 ## Domain Models
 
-- <model> — <назначение> (source: <path>)
+- <model> — <purpose> (source: <path>)
 
 ## API Endpoints
 
@@ -77,25 +77,25 @@ mkdir -p .claude
 
 ## Key Abstractions
 
-- <abstraction> — <методы> (source: <path>)
+- <abstraction> — <methods> (source: <path>)
 
 ## Environment Variables
 
-- `<VAR>` — <назначение>
+- `<VAR>` — <purpose>
 ```
 
-### 3. Запиши файл
+### 3. Write the file
 
-Используй Write для записи `.claude/sp-context.md`. Всегда перезаписывай — source of truth это кодовая база, файл генерируется заново при каждом запуске.
+Use Write to write `.claude/sp-context.md`. Always overwrite — the source of truth is the codebase, the file is regenerated on every run.
 
-## Правила
+## Rules
 
-- Перезаписывай файл (Write, не Edit) — source of truth это кодовая база
-- Если данные отсутствуют в PROJECT_PROFILE — ставь `NOT_FOUND`
-- Формат строго фиксированный — sp-скиллы парсят этот файл
-- Базовые секции (Stack, Commands, Architecture, Conventions) — обязательные. Domain Models, API Endpoints, Key Abstractions, Environment Variables — условные: пиши только при наличии данных в DOMAIN_FINDINGS
+- Overwrite the file (Write, not Edit) — the source of truth is the codebase
+- If data is missing from PROJECT_PROFILE — use `NOT_FOUND`
+- The format is strictly fixed — sp skills parse this file
+- Base sections (Stack, Commands, Architecture, Conventions) are required. Domain Models, API Endpoints, Key Abstractions, Environment Variables are conditional: include only when data is present in DOMAIN_FINDINGS
 
-## Формат ответа
+## Response format
 
 ```text
 SP_CONTEXT_FILE: .claude/sp-context.md

@@ -1,8 +1,8 @@
 ---
 name: convention-scanner
 description: >-
-  Извлекает конвенции именования, стиль импортов и код-стиль
-  из исходного кода проекта.
+  Extracts naming conventions, import style and code style
+  from the project's source code.
 tools: Glob, Grep, Read
 model: sonnet
 color: yellow
@@ -10,62 +10,62 @@ color: yellow
 
 # convention-scanner
 
-Извлеки конвенции кода из проекта.
+Extract code conventions from the project.
 
-## Процесс
+## Process
 
-Все команды read-only. Выполняй по порядку.
+All commands are read-only. Run them in order.
 
-### Шаг 1 — Выбор файлов для анализа
+### Step 1 — Pick files to analyze
 
-Найди 3-5 репрезентативных исходных файлов (не конфиги, не тесты):
+Find 3-5 representative source files (not configs, not tests):
 
-- Предпочитай файлы из `src/`, `lib/`, `app/`, `pkg/`, `internal/`
-- Выбирай файлы разных типов (модель, сервис, утилита, хендлер)
-- Пропускай auto-generated файлы, lock-файлы, минифицированный код
+- Prefer files from `src/`, `lib/`, `app/`, `pkg/`, `internal/`
+- Pick files of different kinds (model, service, utility, handler)
+- Skip auto-generated files, lock files, minified code
 
-Прочитай выбранные файлы.
+Read the selected files.
 
-### Шаг 2 — Naming conventions
+### Step 2 — Naming conventions
 
-Определи из прочитанного кода:
+From the code you read, determine:
 
-- **Переменные и функции**: camelCase, snake_case, PascalCase
-- **Классы/типы**: PascalCase, camelCase
-- **Константы**: UPPER_SNAKE_CASE, camelCase
-- **Приватные**: префикс `_`, `#`, модификатор доступа
+- **Variables and functions**: camelCase, snake_case, PascalCase
+- **Classes/types**: PascalCase, camelCase
+- **Constants**: UPPER_SNAKE_CASE, camelCase
+- **Private**: `_` prefix, `#`, access modifier
 
-### Шаг 3 — Import style
+### Step 3 — Import style
 
-Определи стиль импортов:
+Identify the import style:
 
 - **ES modules**: `import X from 'Y'`
 - **CommonJS**: `const X = require('Y')`
 - **Path aliases**: `@/`, `~/`, `#`
 - **Relative**: `./`, `../`
 - **Barrel exports**: `index.ts` re-exports
-- **Go**: `import "package"`, группировка stdlib/external/internal
+- **Go**: `import "package"`, stdlib/external/internal grouping
 - **Python**: `import X`, `from X import Y`, absolute vs relative
 
-### Шаг 4 — File naming
+### Step 4 — File naming
 
-Определи паттерн именования файлов:
+Identify the file naming pattern:
 
 - `kebab-case.ts` / `snake_case.py` / `PascalCase.tsx` / `camelCase.js`
-- Суффиксы: `.service.ts`, `.controller.ts`, `.test.ts`, `.spec.ts`
-- Группировка: по feature (`user/`) или по type (`services/`)
+- Suffixes: `.service.ts`, `.controller.ts`, `.test.ts`, `.spec.ts`
+- Grouping: by feature (`user/`) or by type (`services/`)
 
-### Шаг 5 — Test conventions
+### Step 5 — Test conventions
 
-Найди тестовые файлы и определи:
+Find test files and determine:
 
-- Расположение: `__tests__/`, рядом с кодом, `test/`, `tests/`
-- Именование: `*.test.ts`, `*.spec.ts`, `*_test.go`, `test_*.py`
-- Фреймворк: Jest, Vitest, Mocha, pytest, go test, RSpec
+- Location: `__tests__/`, colocated, `test/`, `tests/`
+- Naming: `*.test.ts`, `*.spec.ts`, `*_test.go`, `test_*.py`
+- Framework: Jest, Vitest, Mocha, pytest, go test, RSpec
 
-### Шаг 6 — Code style конфигурация
+### Step 6 — Code style configuration
 
-Проверь наличие и прочитай:
+Check for and read:
 
 - `.eslintrc`, `.eslintrc.json`, `.eslintrc.js`, `eslint.config.js`, `eslint.config.mjs`
 - `.prettierrc`, `.prettierrc.json`, `prettier.config.js`
@@ -73,16 +73,16 @@ color: yellow
 - `.editorconfig`
 - `rustfmt.toml`
 - `.rubocop.yml`
-- `pyproject.toml` (секции `[tool.black]`, `[tool.ruff]`, `[tool.isort]`)
+- `pyproject.toml` (sections `[tool.black]`, `[tool.ruff]`, `[tool.isort]`)
 - `.golangci.yml`
 
-Извлеки ключевые настройки: табы vs пробелы, ширина, trailing commas, semicolons, quotes.
+Extract the key settings: tabs vs spaces, width, trailing commas, semicolons, quotes.
 
 ---
 
 ## Structured Output
 
-Верни данные строго в этом формате:
+Return the data strictly in this format:
 
 ```yaml
 NAMING:
@@ -90,21 +90,21 @@ NAMING:
   functions: <camelCase | snake_case>
   classes: <PascalCase>
   constants: <UPPER_SNAKE_CASE | camelCase>
-IMPORT_STYLE: <описание стиля импортов>
-FILE_NAMING: <kebab-case | snake_case | PascalCase | camelCase> + суффиксы если есть
+IMPORT_STYLE: <description of the import style>
+FILE_NAMING: <kebab-case | snake_case | PascalCase | camelCase> + suffixes if any
 TEST_CONVENTIONS:
   location: <__tests__ | colocated | test/ | tests/>
   naming: <*.test.ts | *.spec.ts | *_test.go | test_*.py>
-  framework: <название | NOT_FOUND>
+  framework: <name | NOT_FOUND>
 CODE_STYLE:
   formatter: <prettier | biome | black | rustfmt | NOT_FOUND>
   linter: <eslint | biome | ruff | golangci-lint | NOT_FOUND>
-  key_settings: <ключевые настройки через запятую | NOT_FOUND>
+  key_settings: <comma-separated key settings | NOT_FOUND>
 ```
 
-## Правила
+## Rules
 
-- Только чтение.
-- Анализируй существующий код, не делай предположений.
-- Если паттерн неконсистентный — укажи оба варианта.
-- Возвращай данные. Решения принимает оркестратор.
+- Read-only.
+- Analyze existing code, don't make assumptions.
+- If a pattern is inconsistent — list both variants.
+- Return data. The orchestrator makes decisions.

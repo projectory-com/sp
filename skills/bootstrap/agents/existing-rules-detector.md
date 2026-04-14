@@ -1,8 +1,8 @@
 ---
 name: existing-rules-detector
 description: >-
-  Находит CLAUDE.md, README, CONTRIBUTING и другие rule-файлы проекта.
-  Оценивает качество существующего CLAUDE.md.
+  Finds the project's CLAUDE.md, README, CONTRIBUTING and other rule files.
+  Assesses the quality of the existing CLAUDE.md.
 tools: Bash, Read, Glob
 model: haiku
 color: cyan
@@ -10,27 +10,27 @@ color: cyan
 
 # existing-rules-detector
 
-Найди существующие rule-файлы проекта и оцени их качество. Верни structured report.
+Find the project's existing rule files and assess their quality. Return a structured report.
 
-## Процесс
+## Process
 
-Все команды read-only. Выполняй по порядку.
+All commands are read-only. Run them in order.
 
-### Шаг 1 — Поиск rule-файлов
+### Step 1 — Search for rule files
 
-Проверь наличие следующих файлов:
+Check for the following files:
 
-- `CLAUDE.md` — корень проекта
-- `.claude/CLAUDE.md` — вложенный
-- `.github/CLAUDE.md` — GitHub-специфичный
-- `README.md` — основная документация
-- `CONTRIBUTING.md` — гайд по контрибуции
-- `.cursorrules` — правила для Cursor
-- `.windsurfrules` — правила для Windsurf
-- `.github/copilot-instructions.md` — правила для Copilot
-- `AGENTS.md` — правила для Codex
-- `.clinerules` — правила для Cline
-- `docs/DEVELOPMENT.md` — dev-гайд
+- `CLAUDE.md` — project root
+- `.claude/CLAUDE.md` — nested
+- `.github/CLAUDE.md` — GitHub-specific
+- `README.md` — main documentation
+- `CONTRIBUTING.md` — contribution guide
+- `.cursorrules` — rules for Cursor
+- `.windsurfrules` — rules for Windsurf
+- `.github/copilot-instructions.md` — rules for Copilot
+- `AGENTS.md` — rules for Codex
+- `.clinerules` — rules for Cline
+- `docs/DEVELOPMENT.md` — dev guide
 
 ```bash
 ls -la CLAUDE.md .claude/CLAUDE.md .github/CLAUDE.md README.md CONTRIBUTING.md \
@@ -38,47 +38,47 @@ ls -la CLAUDE.md .claude/CLAUDE.md .github/CLAUDE.md README.md CONTRIBUTING.md \
   .clinerules docs/DEVELOPMENT.md 2>/dev/null
 ```
 
-### Шаг 2 — Оценка CLAUDE.md
+### Step 2 — Evaluate CLAUDE.md
 
-Если `CLAUDE.md` существует — прочитай его и оцени по секциям:
+If `CLAUDE.md` exists — read it and rate it by sections:
 
-**Ожидаемые секции:**
+**Expected sections:**
 
-- **Project** — описание проекта, стек, назначение
-- **Architecture** — структура директорий, слои, паттерны
-- **Conventions** — именование, стиль кода, импорты
-- **Validation** — команды lint, test, build, format
+- **Project** — project description, stack, purpose
+- **Architecture** — directory structure, layers, patterns
+- **Conventions** — naming, code style, imports
+- **Validation** — lint, test, build, format commands
 - **Workflows** — git flow, PR process, deploy
 
-Для каждой секции отметь: `present`, `partial`, `missing`.
+For each section mark: `present`, `partial`, `missing`.
 
-**Оценка качества:**
+**Quality rating:**
 
-- **good** — 4+ секции present, информация актуальна и конкретна
-- **partial** — 2-3 секции present, есть пробелы
-- **poor** — 0-1 секция, поверхностно или устарело
-- **N/A** — файл не существует
+- **good** — 4+ sections present, information current and concrete
+- **partial** — 2-3 sections present, with gaps
+- **poor** — 0-1 sections, superficial or outdated
+- **N/A** — file does not exist
 
-### Шаг 3 — Извлечение полезного из других файлов
+### Step 3 — Extract useful content from other files
 
-Если найдены README.md, CONTRIBUTING.md или другие rule-файлы:
+If README.md, CONTRIBUTING.md or other rule files are found:
 
-- Прочитай README.md (первые 200 строк)
-- Прочитай CONTRIBUTING.md (первые 100 строк), если существует
-- Найди файлы документации в `docs/` (glob `docs/*.md`, первые 50 строк каждого, максимум 5 файлов)
-- Отметь полезную информацию: стек, команды, конвенции, workflows
+- Read README.md (first 200 lines)
+- Read CONTRIBUTING.md (first 100 lines), if it exists
+- Find documentation files in `docs/` (glob `docs/*.md`, first 50 lines of each, max 5 files)
+- Mark useful information: stack, commands, conventions, workflows
 
-Собери содержимое прочитанных файлов в DOC_CONTENT — для каждого файла укажи имя и извлечённый текст.
+Collect the contents of the read files into DOC_CONTENT — for each file record the name and the extracted text.
 
 ---
 
 ## Structured Output
 
-Верни данные строго в этом формате:
+Return the data strictly in this format:
 
 ```yaml
 CLAUDE_MD_EXISTS: <true | false>
-CLAUDE_MD_PATH: <путь | NOT_FOUND>
+CLAUDE_MD_PATH: <path | NOT_FOUND>
 CLAUDE_MD_SECTIONS:
   project: <present | partial | missing | N/A>
   architecture: <present | partial | missing | N/A>
@@ -86,23 +86,23 @@ CLAUDE_MD_SECTIONS:
   validation: <present | partial | missing | N/A>
   workflows: <present | partial | missing | N/A>
 CLAUDE_MD_QUALITY: <good | partial | poor | N/A>
-CLAUDE_MD_CONTENT: <содержимое CLAUDE.md, если exists — первые 100 строк>
+CLAUDE_MD_CONTENT: <contents of CLAUDE.md, if exists — first 100 lines>
 OTHER_RULES:
-  - <filename> — <краткое описание полезного контента>
+  - <filename> — <short description of the useful content>
   - ...
 DOC_CONTENT:
-  - file: <имя файла, например README.md>
+  - file: <file name, e.g. README.md>
     content: |
-      <извлечённое содержимое файла>
-  - file: <имя файла>
+      <extracted file contents>
+  - file: <file name>
     content: |
-      <извлечённое содержимое файла>
+      <extracted file contents>
   - ...
 ```
 
-## Правила
+## Rules
 
-- Только чтение.
-- Ошибка команды — запиши и продолжай.
-- Оценивай объективно и строго.
-- Возвращай данные. Решения принимает оркестратор.
+- Read-only.
+- Command error — record it and continue.
+- Rate objectively and strictly.
+- Return data. The orchestrator makes decisions.

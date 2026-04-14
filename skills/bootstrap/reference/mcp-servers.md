@@ -1,12 +1,12 @@
-# Каталог MCP-серверов
+# MCP server catalog
 
-Категоризированный список MCP-серверов для рекомендации в bootstrap. Для каждого: назначение, когда рекомендовать, пример конфигурации.
+Categorized list of MCP servers to recommend during bootstrap. For each: purpose, when to recommend, example configuration.
 
 ## Databases
 
 ### PostgreSQL / MySQL
 
-**Когда:** проект использует SQL-базу, есть Prisma/Drizzle/Sequelize/SQLAlchemy.
+**When:** the project uses an SQL database, or has Prisma/Drizzle/Sequelize/SQLAlchemy.
 
 ```json
 {
@@ -24,7 +24,7 @@
 
 ### SQLite
 
-**Когда:** локальная БД, embedded storage, `.db` файлы в проекте.
+**When:** local DB, embedded storage, `.db` files in the project.
 
 ```json
 {
@@ -41,7 +41,7 @@
 
 ### GitHub
 
-**Когда:** проект на GitHub, нужна работа с issues, PRs, reviews.
+**When:** the project is on GitHub, you need to work with issues, PRs, reviews.
 
 ```json
 {
@@ -59,7 +59,7 @@
 
 ### GitLab
 
-**Когда:** проект на GitLab, self-hosted или cloud.
+**When:** the project is on GitLab, self-hosted or cloud.
 
 ```json
 {
@@ -80,7 +80,7 @@
 
 ### Slack
 
-**Когда:** команда использует Slack, нужны нотификации или поиск по каналам.
+**When:** the team uses Slack, you need notifications or channel search.
 
 ```json
 {
@@ -98,7 +98,7 @@
 
 ### Linear
 
-**Когда:** трекер задач Linear, нужна синхронизация issues.
+**When:** Linear task tracker, issue sync is needed.
 
 ```json
 {
@@ -118,7 +118,7 @@
 
 ### Brave Search
 
-**Когда:** нужен веб-поиск из Claude Code.
+**When:** you need web search from Claude Code.
 
 ```json
 {
@@ -136,7 +136,7 @@
 
 ### Context7
 
-**Когда:** нужна актуальная документация библиотек и фреймворков.
+**When:** you need up-to-date library and framework documentation.
 
 ```json
 {
@@ -153,7 +153,7 @@
 
 ### Filesystem
 
-**Когда:** нужен доступ к файлам за пределами рабочей директории.
+**When:** you need access to files outside the working directory.
 
 ```json
 {
@@ -168,7 +168,7 @@
 
 ### Puppeteer / Playwright
 
-**Когда:** нужен браузер для тестирования UI, скриншоты, e2e.
+**When:** you need a browser for UI testing, screenshots, e2e.
 
 ```json
 {
@@ -183,7 +183,7 @@
 
 ### Sentry
 
-**Когда:** проект использует Sentry для error tracking.
+**When:** the project uses Sentry for error tracking.
 
 ```json
 {
@@ -203,7 +203,7 @@
 
 ### AWS
 
-**Когда:** инфраструктура на AWS, нужно управление ресурсами.
+**When:** infrastructure on AWS, resource management is needed.
 
 ```json
 {
@@ -223,7 +223,7 @@
 
 ### Cloudflare
 
-**Когда:** деплой на Cloudflare Workers/Pages, R2, D1.
+**When:** deploy to Cloudflare Workers/Pages, R2, D1.
 
 ```json
 {
@@ -241,7 +241,7 @@
 
 ### Vercel
 
-**Когда:** деплой на Vercel, нужно управление проектами и деплоями.
+**When:** deploy to Vercel, project and deployment management is needed.
 
 ```json
 {
@@ -257,14 +257,14 @@
 }
 ```
 
-## Как выбирать MCP-серверы
+## How to pick MCP servers
 
-При bootstrap анализируй проект:
+During bootstrap, analyze the project:
 
-1. **package.json / requirements.txt / go.mod** — зависимости указывают на нужные серверы
-2. **Наличие .env** — уже настроенные сервисы
-3. **CI/CD конфиги** — используемые платформы (Vercel, AWS, Cloudflare)
-4. **Трекер задач** — Linear, Jira, GitHub Issues
-5. **.mcp.json в проекте** — уже настроенные MCP-серверы (не дублировать)
+1. **package.json / requirements.txt / go.mod** — dependencies point to the servers you need
+2. **Presence of .env** — services already configured
+3. **CI/CD configs** — platforms in use (Vercel, AWS, Cloudflare)
+4. **Task tracker** — Linear, Jira, GitHub Issues
+5. **.mcp.json in the project** — MCP servers already configured (do not duplicate)
 
-Рекомендуй только релевантные серверы. Пропускай AWS для pet-проекта на Vercel.
+Recommend only relevant servers. Skip AWS for a pet project on Vercel.

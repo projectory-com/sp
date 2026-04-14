@@ -1,129 +1,129 @@
-# Шаблоны CLAUDE.md
+# CLAUDE.md templates
 
-Три шаблона для разных типов проектов. Выбирай подходящий, адаптируй под проект.
+Three templates for different project types. Pick the one that fits and adapt it to the project.
 
-## Minimal — простой проект
+## Minimal — simple project
 
-Для скриптов, CLI-утилит, небольших библиотек (1-5 файлов).
+For scripts, CLI utilities, small libraries (1-5 files).
 
 ```markdown
 # CLAUDE.md
 
 ## Project
 
-[Название] — [одно предложение: что делает, на чём написан].
+[Name] — [one sentence: what it does, what it's written in].
 
 ## Commands
 
 \`\`\`bash
-[package-manager] install # установить зависимости
-[package-manager] test # запустить тесты
-[package-manager] build # собрать проект
+[package-manager] install # install dependencies
+[package-manager] test # run tests
+[package-manager] build # build the project
 \`\`\`
 
 ## Conventions
 
-- [Язык/стиль кода]
-- [Формат коммитов]
-- [Ключевое соглашение]
+- [Language/code style]
+- [Commit format]
+- [Key convention]
 ```
 
-## Comprehensive — стандартный проект
+## Comprehensive — standard project
 
-Для веб-приложений, API-сервисов, библиотек с тестами (5-50 файлов).
+For web apps, API services, libraries with tests (5-50 files).
 
 ```markdown
 # CLAUDE.md
 
 ## Project
 
-[Название] — [что делает, ключевые технологии, для кого].
+[Name] — [what it does, key technologies, for whom].
 
 ## Architecture
 
 \`\`\`
 src/
-api/ # [роль]
-services/ # [роль]
-models/ # [роль]
-utils/ # [роль]
-tests/ # [структура тестов]
-config/ # [что конфигурируется]
+api/ # [role]
+services/ # [role]
+models/ # [role]
+utils/ # [role]
+tests/ # [test structure]
+config/ # [what is configured]
 \`\`\`
 
-[Data flow: откуда входят данные → как проходят → куда выходят]
+[Data flow: where data comes in → how it flows → where it goes out]
 
 ## Commands
 
 \`\`\`bash
-npm install # установить зависимости
-npm run dev # запустить dev-сервер (port XXXX)
-npm test # запустить тесты
-npm run test:watch # тесты в watch-режиме
-npm run lint # линтер
-npm run build # production-сборка
+npm install # install dependencies
+npm run dev # start the dev server (port XXXX)
+npm test # run tests
+npm run test:watch # tests in watch mode
+npm run lint # linter
+npm run build # production build
 \`\`\`
 
 ## Key Files
 
-- `src/index.ts` — точка входа
-- `src/config.ts` — конфигурация (env vars)
-- `src/types.ts` — общие типы
+- `src/index.ts` — entry point
+- `src/config.ts` — configuration (env vars)
+- `src/types.ts` — shared types
 
 ## Conventions
 
-- [Язык]: [версия], [стиль]
-- Тесты: [фреймворк], файлы `*.test.ts` рядом с исходниками
-- Коммиты: [conventional commits / свой формат]
-- Ветки: [стратегия ветвления]
+- [Language]: [version], [style]
+- Tests: [framework], `*.test.ts` files next to sources
+- Commits: [conventional commits / custom format]
+- Branches: [branching strategy]
 
 ## Environment
 
-- `VAR_NAME` — [назначение]
+- `VAR_NAME` — [purpose]
 
 ## Non-obvious
 
-- [Почему X сделан так, а не иначе]
-- [Известный workaround и причина]
-- [Gotcha при работе с Y]
+- [Why X is done this way and not another]
+- [Known workaround and reason]
+- [Gotcha when working with Y]
 ```
 
-## Monorepo — мульти-пакетный проект
+## Monorepo — multi-package project
 
-Для monorepo с workspace-ами (Turborepo, Nx, pnpm workspaces).
+For monorepos with workspaces (Turborepo, Nx, pnpm workspaces).
 
 ```markdown
 # CLAUDE.md
 
 ## Project
 
-[Название] — [назначение monorepo].
+[Name] — [purpose of the monorepo].
 
 ## Architecture
 
 \`\`\`
 apps/
-web/ # [фреймворк] — [роль]
-api/ # [фреймворк] — [роль]
-admin/ # [фреймворк] — [роль]
+web/ # [framework] — [role]
+api/ # [framework] — [role]
+admin/ # [framework] — [role]
 packages/
-ui/ # shared UI-компоненты
-config/ # shared конфигурации (tsconfig, eslint)
-db/ # Prisma-схема и клиент
-utils/ # shared утилиты
+ui/ # shared UI components
+config/ # shared configs (tsconfig, eslint)
+db/ # Prisma schema and client
+utils/ # shared utilities
 \`\`\`
 
-Зависимости между пакетами: `web` → `ui`, `db`, `utils`; `api` → `db`, `utils`.
+Dependencies between packages: `web` → `ui`, `db`, `utils`; `api` → `db`, `utils`.
 
 ## Commands
 
 \`\`\`bash
-pnpm install # установить все зависимости
-pnpm dev # запустить все apps в dev-режиме
-pnpm build # собрать все пакеты
-pnpm test # тесты во всех пакетах
-pnpm --filter web dev # запустить только web
-pnpm --filter @scope/ui build # собрать только ui-пакет
+pnpm install # install all dependencies
+pnpm dev # run all apps in dev mode
+pnpm build # build all packages
+pnpm test # tests across all packages
+pnpm --filter web dev # run only web
+pnpm --filter @scope/ui build # build only the ui package
 \`\`\`
 
 ## Per-package notes
@@ -132,49 +132,49 @@ pnpm --filter @scope/ui build # собрать только ui-пакет
 
 - Framework: [Next.js / Remix / etc]
 - Port: [XXXX]
-- [Специфичные команды или gotchas]
+- [Specific commands or gotchas]
 
 ### apps/api
 
 - Framework: [Express / Fastify / etc]
 - Port: [XXXX]
-- [Миграции БД: команда]
+- [DB migrations: command]
 
 ### packages/db
 
 - ORM: [Prisma / Drizzle / etc]
-- `pnpm --filter db generate` — сгенерировать клиент после изменения схемы
-- `pnpm --filter db migrate` — применить миграции
+- `pnpm --filter db generate` — regenerate the client after a schema change
+- `pnpm --filter db migrate` — apply migrations
 
 ## Conventions
 
-- Package manager: [pnpm / npm / yarn] с workspaces
-- Shared типы: в `packages/types`, импорт через `@scope/types`
-- [Стратегия версионирования пакетов]
-- [Правила добавления новых пакетов]
+- Package manager: [pnpm / npm / yarn] with workspaces
+- Shared types: in `packages/types`, imported via `@scope/types`
+- [Package versioning strategy]
+- [Rules for adding new packages]
 
 ## Environment
 
-- Корневой `.env` — общие переменные для всех apps
-- Per-app `.env.local` — переопределения для конкретного app (не коммитятся)
-- `VAR_NAME` — [назначение]
+- Root `.env` — variables shared across all apps
+- Per-app `.env.local` — overrides for a specific app (not committed)
+- `VAR_NAME` — [purpose]
 
 ## Non-obvious
 
-- [Порядок сборки пакетов важен: сначала X, потом Y]
-- [Env vars: корневой .env vs per-app .env.local]
-- [Gotcha: при изменении packages/db нужно перегенерировать клиент]
+- [Package build order matters: first X, then Y]
+- [Env vars: root .env vs per-app .env.local]
+- [Gotcha: when changing packages/db you must regenerate the client]
 ```
 
-## Секции — когда включать
+## Sections — when to include
 
-| Секция       | Minimal | Comprehensive | Monorepo |
+| Section      | Minimal | Comprehensive | Monorepo |
 | ------------ | ------- | ------------- | -------- |
-| Project      | да      | да            | да       |
-| Architecture | нет     | да            | да       |
-| Commands     | да      | да            | да       |
-| Key Files    | нет     | да            | нет      |
-| Per-package  | нет     | нет           | да       |
-| Conventions  | да      | да            | да       |
-| Environment  | нет     | да            | да       |
-| Non-obvious  | нет     | да            | да       |
+| Project      | yes     | yes           | yes      |
+| Architecture | no      | yes           | yes      |
+| Commands     | yes     | yes           | yes      |
+| Key Files    | no      | yes           | no       |
+| Per-package  | no      | no            | yes      |
+| Conventions  | yes     | yes           | yes      |
+| Environment  | no      | yes           | yes      |
+| Non-obvious  | no      | yes           | yes      |

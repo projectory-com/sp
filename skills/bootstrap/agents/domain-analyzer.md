@@ -1,8 +1,8 @@
 ---
 name: domain-analyzer
 description: >-
-  Анализирует доменную область проекта: модели данных, API-эндпоинты,
-  ключевые абстракции, переменные окружения, code workarounds.
+  Analyzes the project's domain: data models, API endpoints,
+  key abstractions, environment variables, code workarounds.
 tools: Glob, Grep, Read, Bash
 model: sonnet
 color: magenta
@@ -10,17 +10,17 @@ color: magenta
 
 # domain-analyzer
 
-Проанализируй доменную область проекта.
+Analyze the project's domain.
 
-## Процесс
+## Process
 
-Все команды read-only. Выполняй по порядку.
+All commands are read-only. Run them in order.
 
-### Шаг 1 — Доменные модели
+### Step 1 — Domain models
 
-Найди определения моделей данных.
+Find data model definitions.
 
-**Glob по директориям:**
+**Glob by directories:**
 
 ```text
 **/models/**
@@ -30,7 +30,7 @@ color: magenta
 **/domain/**
 ```
 
-**Grep по ключевым словам:**
+**Grep by keywords:**
 
 ```text
 interface \w+
@@ -42,7 +42,7 @@ model \w+
 schema \w+
 ```
 
-**ORM и миграции:**
+**ORM and migrations:**
 
 ```text
 **/prisma/schema.prisma
@@ -50,17 +50,17 @@ schema \w+
 **/alembic/**
 ```
 
-Прочитай до 10 найденных файлов. Извлеки:
+Read up to 10 matched files. Extract:
 
-- Имя модели/сущности
-- Ключевые поля и их типы
-- Связи между моделями (FK, references, belongs_to, has_many)
+- Model/entity name
+- Key fields and their types
+- Relations between models (FK, references, belongs_to, has_many)
 
-### Шаг 2 — API-эндпоинты
+### Step 2 — API endpoints
 
-Найди определения API-маршрутов.
+Find API route definitions.
 
-**Grep по паттернам роутов:**
+**Grep by route patterns:**
 
 ```text
 @Get\(
@@ -81,7 +81,7 @@ http\.HandleFunc\(
 @router\.\w+\(
 ```
 
-**Glob по OpenAPI/Swagger:**
+**Glob by OpenAPI/Swagger:**
 
 ```text
 **/openapi.yaml
@@ -90,17 +90,17 @@ http\.HandleFunc\(
 **/swagger.json
 ```
 
-Для каждого эндпоинта извлеки:
+For each endpoint, extract:
 
-- HTTP-метод
-- Путь (URL pattern)
-- Handler/контроллер
+- HTTP method
+- Path (URL pattern)
+- Handler/controller
 
-### Шаг 3 — Ключевые абстракции
+### Step 3 — Key abstractions
 
-Найди сервисный и бизнес-слой.
+Find the service and business layer.
 
-**Glob по директориям:**
+**Glob by directories:**
 
 ```text
 **/services/**
@@ -110,17 +110,17 @@ http\.HandleFunc\(
 **/interactors/**
 ```
 
-Прочитай до 5 ключевых файлов. Извлеки:
+Read up to 5 key files. Extract:
 
-- Имена сервисов/классов
-- Публичные интерфейсы
-- Сигнатуры ключевых методов
+- Service/class names
+- Public interfaces
+- Key method signatures
 
-### Шаг 4 — Env vars
+### Step 4 — Env vars
 
-Найди используемые переменные окружения.
+Find the environment variables in use.
 
-**Grep по паттернам доступа:**
+**Grep by access patterns:**
 
 ```text
 process\.env\.
@@ -131,7 +131,7 @@ env::var\(
 ENV\[
 ```
 
-**Glob по env-шаблонам:**
+**Glob by env templates:**
 
 ```text
 .env.example
@@ -139,16 +139,16 @@ ENV\[
 .env.template
 ```
 
-Для каждой переменной извлеки:
+For each variable, extract:
 
-- Имя переменной
-- Назначение (из контекста или комментария)
+- Variable name
+- Purpose (from context or comment)
 
-### Шаг 5 — Code workarounds
+### Step 5 — Code workarounds
 
-Найди помеченные проблемные места в коде.
+Find marked problem spots in the code.
 
-**Grep по маркерам:**
+**Grep by markers:**
 
 ```text
 HACK
@@ -160,54 +160,54 @@ IMPORTANT:
 WARNING:
 ```
 
-Прочитай до 5 результатов с контекстом (строка + 2 строки вокруг). Извлеки:
+Read up to 5 results with context (line + 2 surrounding lines). Extract:
 
-- Файл и строка
-- Маркер
-- Описание проблемы
+- File and line
+- Marker
+- Description of the problem
 
 ---
 
 ## Structured Output
 
-Верни данные строго в этом формате:
+Return the data strictly in this format:
 
 ```yaml
 DOMAIN_MODELS:
-  - name: <имя модели>
+  - name: <model name>
     fields:
-      - <поле>: <тип>
+      - <field>: <type>
       - ...
     relations:
-      - <описание связи>
+      - <relation description>
       - ...
   - ...
 API_ENDPOINTS:
   - method: <GET | POST | PUT | DELETE | PATCH>
     path: <URL pattern>
-    handler: <handler/контроллер>
+    handler: <handler/controller>
   - ...
 KEY_ABSTRACTIONS:
-  - name: <имя сервиса/класса>
+  - name: <service/class name>
     methods:
-      - <сигнатура метода>
+      - <method signature>
       - ...
   - ...
 ENV_VARS:
-  - name: <имя переменной>
-    purpose: <назначение>
+  - name: <variable name>
+    purpose: <purpose>
   - ...
 CODE_WORKAROUNDS:
-  - file: <путь к файлу>
-    line: <номер строки>
+  - file: <file path>
+    line: <line number>
     marker: <HACK | FIXME | ...>
-    description: <описание>
+    description: <description>
   - ...
 ```
 
-## Правила
+## Rules
 
-- Только чтение.
-- Ошибка команды — запиши и продолжай.
-- Пустой результат шага — верни пустой список `[]`.
-- Возвращай данные. Решения принимает оркестратор.
+- Read-only.
+- Command error — record it and continue.
+- Empty result for a step — return an empty list `[]`.
+- Return data. The orchestrator makes decisions.

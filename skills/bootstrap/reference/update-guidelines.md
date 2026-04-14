@@ -1,45 +1,45 @@
-# Правила обновления CLAUDE.md
+# CLAUDE.md update guidelines
 
-Что включать, что исключать, red flags и правила идемпотентности.
+What to include, what to exclude, red flags, and idempotency rules.
 
-## Включать
+## Include
 
-### Project-specific факты
+### Project-specific facts
 
-- Точные команды build/test/lint/deploy, проверенные в проекте
-- Структура директорий с ролями (не общее описание фреймворка)
-- Пути к ключевым файлам: точка входа, конфиг, типы
-- Env vars, необходимые для запуска (без значений секретов)
-- Версии runtime (Node 20, Python 3.12) если важно для совместимости
-- Non-obvious решения: workarounds, gotchas, "почему так"
+- Exact build/test/lint/deploy commands, verified in the project
+- Directory structure with roles (not a general framework description)
+- Paths to key files: entry point, config, types
+- Env vars required to run (without secret values)
+- Runtime versions (Node 20, Python 3.12) if important for compatibility
+- Non-obvious decisions: workarounds, gotchas, "why this way"
 
-### Команды
+### Commands
 
-- Каждая команда — копируемая, запускаемая as-is
-- Для команд с аргументами — пример с реальным значением
-- Комментарий после `#` объясняет что делает, не повторяя команду
+- Each command is copyable and runnable as-is
+- For commands with arguments — an example with a real value
+- The `#` comment explains what it does, without repeating the command
 
 ```
-# Хорошо
-npm run test:unit -- --watch    # тесты в watch-режиме
-npx prisma migrate dev          # применить миграции к dev-БД
+# Good
+npm run test:unit -- --watch    # tests in watch mode
+npx prisma migrate dev          # apply migrations to the dev DB
 
-# Плохо
-npm test    # запустить npm test
+# Bad
+npm test    # run npm test
 ```
 
 ### Conventions
 
-- Только то, что отличает этот проект от дефолтов фреймворка
-- Формат коммитов, если нестандартный
-- Стратегия ветвления, если нестандартная
-- Naming conventions, если отличаются от language defaults
+- Only what distinguishes this project from framework defaults
+- Commit format, if non-standard
+- Branching strategy, if non-standard
+- Naming conventions, if they differ from language defaults
 
-## Исключать
+## Exclude
 
 ### Generic advice
 
-Убирай утверждения, верные для любого проекта:
+Remove claims that are true for any project:
 
 - "Write clean, maintainable code"
 - "Follow SOLID principles"
@@ -47,56 +47,56 @@ npm test    # запустить npm test
 - "Use meaningful variable names"
 - "Handle errors properly"
 
-### Очевидное из контекста
+### Obvious from context
 
-- Описание языка программирования ("JavaScript is a dynamic language")
-- Описание стандартных инструментов ("npm is a package manager")
-- Туториал по фреймворку ("React uses components")
+- Description of a programming language ("JavaScript is a dynamic language")
+- Description of standard tools ("npm is a package manager")
+- Framework tutorial ("React uses components")
 
-### Временные данные
+### Temporary data
 
-- TODO-листы и планы (используй issues/tasks)
-- "Currently working on X" (устареет)
-- Даты последнего обновления (git log покажет)
+- TODO lists and plans (use issues/tasks)
+- "Currently working on X" (will become stale)
+- Last update dates (git log will show them)
 
 ## Red flags
 
-Признаки проблемного CLAUDE.md:
+Signs of a problematic CLAUDE.md:
 
-| Red flag                             | Проблема                               | Решение                        |
-| ------------------------------------ | -------------------------------------- | ------------------------------ |
-| Файл > 300 строк                     | Превышает контекстное окно Claude      | Вынести детали в docs/         |
-| Команды без проверки                 | Могут не работать                      | Запустить каждую перед записью |
-| "Don't modify X" без причины         | Непонятно почему, будут нарушать       | Добавить причину               |
-| Дублирование README                  | README для людей, CLAUDE.md для Claude | Убрать пересечение             |
-| Список всех файлов проекта           | Шум, Claude видит файлы через tools    | Оставить только ключевые       |
-| Generic coding guidelines            | Не помогают, занимают контекст         | Убрать полностью               |
-| Инструкции для IDE (VSCode settings) | Claude не использует IDE               | Убрать или вынести             |
+| Red flag                             | Problem                                   | Fix                                  |
+| ------------------------------------ | ----------------------------------------- | ------------------------------------ |
+| File > 300 lines                     | Exceeds Claude's context window           | Move details into docs/              |
+| Unverified commands                  | May not work                              | Run each before recording            |
+| "Don't modify X" without a reason    | Unclear why, people will violate it       | Add the reason                       |
+| Duplicating README                   | README is for humans, CLAUDE.md for Claude | Remove the overlap                   |
+| Listing every project file           | Noise, Claude sees files via tools        | Keep only the key ones               |
+| Generic coding guidelines            | Don't help, take up context               | Remove entirely                      |
+| IDE instructions (VSCode settings)   | Claude doesn't use an IDE                 | Remove or move them out              |
 
-## Правила идемпотентности
+## Idempotency rules
 
-При повторном запуске bootstrap на том же проекте CLAUDE.md не должен расти бесконтрольно.
+On re-running bootstrap against the same project, CLAUDE.md must not grow uncontrollably.
 
-### Принципы
+### Principles
 
-1. **Merge, не append** — если секция существует, обнови содержимое, не дублируй секцию
-2. **Проверяй перед записью** — прочитай текущий CLAUDE.md, сравни с новыми данными
-3. **Не теряй ручные правки** — сохраняй пользовательские секции при обновлении
-4. **Детерминированность** — одинаковый проект при повторном запуске даёт одинаковый результат
+1. **Merge, not append** — if a section exists, update its content, don't duplicate the section
+2. **Check before writing** — read the current CLAUDE.md, compare against the new data
+3. **Don't lose manual edits** — preserve user-added sections on update
+4. **Determinism** — the same project yields the same result on re-run
 
-### Алгоритм обновления
+### Update algorithm
 
 ```
-1. Прочитай текущий CLAUDE.md
-2. Для каждой секции:
-   a. Секция есть и актуальна → не трогай
-   b. Секция есть, но устарела → обнови содержимое
-   c. Секции нет → добавь в правильное место
-   d. Секция есть, но пользовательская (не из шаблона) → сохрани
-3. Убери дубликаты
-4. Проверь что команды работают
+1. Read the current CLAUDE.md
+2. For each section:
+   a. Section exists and is current → don't touch
+   b. Section exists but is outdated → update the content
+   c. Section missing → add it in the right place
+   d. Section exists but is user-added (not from the template) → preserve
+3. Remove duplicates
+4. Verify that commands work
 ```
 
-### Маркеры пользовательского контента
+### Markers of user content
 
-Секции, добавленные пользователем (не из шаблона bootstrap), сохраняются при обновлении. Определяются по заголовкам, которых нет в шаблоне.
+Sections added by the user (not from the bootstrap template) are preserved on update. Identified by headings not present in the template.
